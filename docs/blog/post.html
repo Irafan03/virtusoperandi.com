@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- CMS field: title -->
+<title>From 9 Months to 3 Weeks — How AI Factory Rewrites MES Customization · Virtus Operandi Blog</title>
+<!-- CMS field: excerpt (used as meta description) -->
+<meta name="description" content="We embedded in a tier-1 plant running Delmia Apriso. Here's what the AI co-pilot actually changed — and where it still needs a human in the loop." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/site.css" />
+<style>
+  /* ── Blog post — page-scoped styles ──────────────────────── */
+
+  /* Constrain post content to a comfortable reading width */
+  .post-container {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* Post header block */
+  .post-header {
+    padding: clamp(40px, 6vw, 72px) var(--gutter) clamp(24px, 4vw, 40px);
+    background:
+      radial-gradient(60% 50% at 85% 35%, rgba(0,102,255,0.05), transparent 70%),
+      var(--paper);
+    border-bottom: 1px solid var(--border);
+  }
+  .post-header__inner {
+    max-width: 740px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* Tag pill inside header */
+  .post-tag {
+    display: inline-flex;
+    width: max-content;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(0,102,255,0.08);
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Post title — CMS field: title */
+  .post-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -1.2px;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* Metadata bar: date · author · read time */
+  .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .post-meta .sep { opacity: 0.4; }
+
+  /* Cover image — CMS field: coverImage */
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+    margin: clamp(28px, 4vw, 40px) 0;
+    background: var(--paper-2);
+  }
+  /* Placeholder when no real image */
+  .post-cover-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: clamp(28px, 4vw, 40px) 0;
+    background: var(--paper-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  /* ── Rich-text body — CMS field: body ───────────────────── */
+  .post-body {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .post-body p { margin-bottom: 20px; }
+  .post-body p:last-child { margin-bottom: 0; }
+
+  .post-body h2 {
+    font-size: clamp(22px, 2.4vw, 26px);
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    margin: 40px 0 14px;
+    color: var(--ink);
+  }
+  .post-body h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin: 28px 0 10px;
+    color: var(--ink);
+  }
+
+  .post-body ul,
+  .post-body ol {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+  .post-body li { margin-bottom: 8px; }
+
+  .post-body a {
+    color: var(--blue);
+    border-bottom: 1px solid rgba(0,102,255,0.3);
+    transition: border-color .15s ease;
+  }
+  .post-body a:hover { border-bottom-color: var(--blue); }
+
+  .post-body strong { color: var(--ink); font-weight: 600; }
+
+  /* Callout / pull-quote block */
+  .post-body blockquote {
+    margin: 28px 0;
+    padding: 18px 24px;
+    border-left: 3px solid var(--blue);
+    background: rgba(0,102,255,0.04);
+    border-radius: 0 8px 8px 0;
+    font-size: 16px;
+    color: var(--ink);
+    font-style: normal;
+  }
+  .post-body blockquote p { margin-bottom: 0; }
+
+  /* Inline code */
+  .post-body code {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    background: var(--paper-2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  /* ── Post navigation ─────────────────────────────────────── */
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 560px) { .post-nav { grid-template-columns: 1fr; } }
+
+  .post-nav__link {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 18px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .post-nav__link:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .post-nav__link--next { text-align: right; }
+
+  .post-nav__label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .post-nav__title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  /* Back to blog button */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    padding: 10px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* ── Sample switcher (static, Phase 1 only) ──────────────── */
+  /* Tabs to browse the 3 hardcoded sample posts */
+  .sample-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px var(--gutter);
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--border);
+    max-width: 100%;
+  }
+  .sample-tab {
+    padding: 6px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .sample-tab:hover,
+  .sample-tab[aria-selected="true"] {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: rgba(0,102,255,0.06);
+  }
+
+  /* Each sample post section; only the active one is shown */
+  .sample-post { display: none; }
+  .sample-post.active { display: block; }
+</style>
+</head>
+
+
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="meta">
+  <div class="meta-inner">
+    <span class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Blog · field notes &amp; write-ups</span>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="../home.html" class="brand" aria-label="Virtus Operandi home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../home.html#products">Products</a>
+      <a class="nav-link" href="../home.html#industries">Industries</a>
+      <a class="nav-link" href="../solutions.html">Solutions</a>
+      <a class="nav-link" href="../pricing.html">Tarifs</a>
+      <a class="nav-link" href="../about.html">Company</a>
+      <a class="nav-link" href="../insights.html">Insights</a>
+      <a class="nav-link" href="../blog.html" aria-current="page">Blog</a>
+      <a class="nav-link" href="../contact.html">Contact</a>
+      <a class="nav-cta" href="../contact.html">Book a demo</a>
+    </nav>
+    <button class="hamburger" id="ham" aria-label="Open menu" aria-expanded="false"><span class="bars" aria-hidden="true"></span></button>
+  </div>
+</header>
+
+<aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="../home.html#products">Products</a>
+  <a href="../home.html#industries">Industries</a>
+  <a href="../solutions.html">Solutions</a>
+  <a href="../pricing.html">Tarifs</a>
+  <a href="../about.html">Company</a>
+  <a href="../insights.html">Insights</a>
+  <a href="../blog.html" aria-current="page">Blog</a>
+  <a href="../contact.html">Contact</a>
+  <a href="../contact.html" class="mob-cta">Book a demo</a>
+</aside>
+
+<!-- ── Static sample switcher (Phase 1 design preview only) ── -->
+<!-- Remove this block when wired to a real CMS/router       -->
+<div class="sample-tabs" role="tablist" aria-label="Sample posts">
+  <button class="sample-tab" role="tab" aria-selected="true"  aria-controls="sample-1">01 · Engineering</button>
+  <button class="sample-tab" role="tab" aria-selected="false" aria-controls="sample-2">02 · Case study</button>
+  <button class="sample-tab" role="tab" aria-selected="false" aria-controls="sample-3">03 · Field notes</button>
+</div>
+
+<main id="main">
+
+
+  <!-- ════════════════════════════════════════════════════════
+       SAMPLE 1 — Engineering write-up
+       CMS slug: mes-customization-ai-factory
+       ════════════════════════════════════════════════════════ -->
+  <article id="sample-1" class="sample-post active" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <!-- Post header -->
+    <header class="post-header">
+      <div class="post-header__inner">
+        <!-- CMS field: tags[0] -->
+        <span class="post-tag" itemprop="keywords">Engineering</span>
+
+        <!-- CMS field: title -->
+        <h1 class="post-title" itemprop="headline">
+          From 9 Months to 3 Weeks — How AI Factory Rewrites MES Customization
+        </h1>
+
+        <!-- CMS fields: date · author · readingTime -->
+        <div class="post-meta">
+          <time datetime="2026-06-10" itemprop="datePublished">10 Jun 2026</time>
+          <span class="sep" aria-hidden="true">·</span>
+          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Youssef A.</span>
+          </span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>8 min read</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post content -->
+    <div class="post-container">
+
+      <!-- CMS field: coverImage -->
+      <div class="post-cover-placeholder" role="img" aria-label="Cover image placeholder">cover image · 16:9</div>
+
+      <!-- CMS field: body -->
+      <div class="post-body" itemprop="articleBody">
+
+        <p>We spent three weeks embedded at a tier-1 automotive supplier running Delmia Apriso across two plants. The mandate: cut the average BPM customization cycle from a quarter to a sprint. Here's an honest account of what worked, what didn't, and what the AI co-pilot actually changed on the ground.</p>
+
+        <h2>The problem with MES customization cycles</h2>
+
+        <p>Nine months is not an exaggeration. That's the median we saw in our pre-sales discovery across twelve Apriso customers. The time breaks down roughly as: three months scoping the business rule, two months in vendor-DSL scripting, two months in QA, two months in change-management and sign-off. Only the scripting part is intrinsically hard — everything else is mechanical or organizational.</p>
+
+        <p>Virtus AI Factory targets the mechanical part. It reads the existing BPM topology, understands the schema, and writes the first draft of the customization with you. It doesn't replace the engineer; it removes the blank-page friction that turns a two-week job into a two-month one.</p>
+
+        <h2>What the co-pilot actually does</h2>
+
+        <h3>Reads your schema, not a generic one</h3>
+        <p>Most LLM-assisted coding tools have zero context about your MES. AI Factory ingests your Apriso schema, your existing BPM library, and your scripting conventions before it writes a single line. The output looks like your codebase — not a generic example from the internet.</p>
+
+        <h3>Generates and reviews in the same loop</h3>
+        <p>The engineer describes the rule in plain language. The model proposes a BPM step and its script. The engineer reviews, edits, or rejects. Every rejection trains the session context — by step five the suggestions are narrow enough that review takes thirty seconds, not thirty minutes.</p>
+
+        <blockquote>
+          <p>"It felt like pair programming with someone who had read every Apriso script we'd ever written — except it didn't complain about the 6 AM start time." — Lead MES engineer, pilot plant</p>
+        </blockquote>
+
+        <h3>Where the human is still essential</h3>
+        <p>Two areas remained firmly in human hands throughout the pilot: cross-plant data governance decisions, and anything touching safety-critical steps in the process order. The model flags these correctly — it surfaces them as "requires human review" rather than proposing an answer — which is exactly the right behaviour.</p>
+
+        <h2>The numbers</h2>
+
+        <ul>
+          <li><strong>Average scripting time per BPM step:</strong> dropped from 4.2 days to 0.9 days.</li>
+          <li><strong>Defect rate at first QA pass:</strong> down 34% vs. the six-month baseline.</li>
+          <li><strong>Engineer ramp time on an unfamiliar module:</strong> cut from three weeks to four days.</li>
+        </ul>
+
+        <p>The QA improvement surprised us most. It turns out that much of the defect budget in a manual customization cycle comes from copy-paste errors in boilerplate script — exactly the thing the model doesn't do.</p>
+
+        <h2>What's next</h2>
+        <p>We're rolling Opcenter support into the same engine. The schema is different, the DSL is different, the core loop is identical. If your plant runs either platform and you want to run a pilot, <a href="../contact.html">talk to us</a>.</p>
+
+      </div><!-- /post-body -->
+
+      <!-- Post navigation -->
+      <nav class="post-nav" aria-label="Article navigation">
+        <a class="post-nav__link post-nav__link--prev" href="../blog.html">
+          <span class="post-nav__label">← Previous</span>
+          <span class="post-nav__title">Three Days in a Freight Dispatch Room</span>
+        </a>
+        <a class="post-nav__link post-nav__link--next" href="../blog.html">
+          <span class="post-nav__label">Next →</span>
+          <span class="post-nav__title">Zero Paper Between Driver and Finance</span>
+        </a>
+      </nav>
+
+      <a class="back-btn" href="../blog.html">← Back to Blog</a>
+
+    </div><!-- /post-container -->
+  </article>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       SAMPLE 2 — Case study
+       CMS slug: fleet-dispatch-zero-paper
+       ════════════════════════════════════════════════════════ -->
+  <article id="sample-2" class="sample-post" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-header__inner">
+        <span class="post-tag" itemprop="keywords">Case studies</span>
+        <h1 class="post-title" itemprop="headline">
+          Zero Paper Between Driver and Finance — A Fleet Pilot Debrief
+        </h1>
+        <div class="post-meta">
+          <time datetime="2026-05-28" itemprop="datePublished">28 May 2026</time>
+          <span class="sep" aria-hidden="true">·</span>
+          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Rim B.</span>
+          </span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>6 min read</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-container">
+
+      <div class="post-cover-placeholder" role="img" aria-label="Cover image placeholder">cover image · 16:9</div>
+
+      <div class="post-body" itemprop="articleBody">
+
+        <p>A last-mile operator running 60 trucks out of Casablanca agreed to a full eight-week pilot of Virtus Fleet. No staged rollout, no parallel spreadsheet — they committed to the dispatch board on day one. Here's the debrief.</p>
+
+        <h2>Before: the spreadsheet that ran the operation</h2>
+
+        <p>Before Fleet, dispatch lived in a shared Excel workbook that had grown over six years into something no single person understood completely. It held route assignments, driver contact numbers, vehicle maintenance notes, and a manual fuel log, all in separate tabs linked by fragile formulas.</p>
+
+        <p>The finance team received paper delivery receipts from drivers at the end of each shift, manually keyed them into a billing spreadsheet, and invoiced customers weekly. The error rate on invoices was estimated at 11% — they knew because customers called about it regularly.</p>
+
+        <h2>Week 1–2: migration and training</h2>
+
+        <p>We imported the vehicle registry, driver list, and customer database in two days. The dispatch team spent the first week running both systems in parallel — Fleet on the left monitor, Excel on the right. By day eight they had stopped opening Excel.</p>
+
+        <ul>
+          <li>Driver app installed on 60 devices in one afternoon (Android, MDM-enrolled).</li>
+          <li>Proof-of-delivery capture live from day three.</li>
+          <li>Fuel log replaced by manual entry in the driver app — took four days to form the habit.</li>
+        </ul>
+
+        <h2>Week 3–8: what actually changed</h2>
+
+        <h3>Dispatch</h3>
+        <p>The dispatch board shows live position, estimated time of arrival, and remaining hours-of-service for every vehicle. Route reassignments that previously required a phone call and a spreadsheet edit now take two clicks. The dispatch manager's assessment after week six: <em>"I used to start every morning wondering where three trucks were. Now I already know."</em></p>
+
+        <h3>Finance</h3>
+        <p>POD capture in the driver app feeds directly into the invoicing module. The finance team runs invoice generation on Thursday morning; it takes twelve minutes instead of four hours. Invoice error rate: 1.4% in weeks 5–8, down from 11%.</p>
+
+        <blockquote>
+          <p>Invoice error rate dropped from 11% to 1.4% in five weeks. That's not a product claim — it's what the finance manager measured and told us at the week-eight review.</p>
+        </blockquote>
+
+        <h2>What didn't go as planned</h2>
+
+        <p>Maintenance scheduling was the roughest part. Three drivers hadn't logged a single maintenance event by week four — they were filing paper forms out of habit and handing them to the workshop manager. We ran a thirty-minute session, and compliance jumped to 85% in week five. The lesson: the app can't fight a paper habit alone; you need one person in the operation who owns the behaviour change.</p>
+
+        <h2>Results at eight weeks</h2>
+
+        <ul>
+          <li><strong>Invoice error rate:</strong> 11% → 1.4%</li>
+          <li><strong>Dispatch-to-billing cycle:</strong> 5 days → same day</li>
+          <li><strong>Time to onboard a new driver:</strong> 3 hours → 45 minutes</li>
+          <li><strong>Spreadsheet opens per week:</strong> ~200 → 0</li>
+        </ul>
+
+        <p>The operator renewed and is expanding to a second depot. <a href="../contact.html">Talk to us</a> if you're running a fleet on a spreadsheet stack and want to see the same thing happen.</p>
+
+      </div>
+
+      <nav class="post-nav" aria-label="Article navigation">
+        <a class="post-nav__link post-nav__link--prev" href="../blog.html">
+          <span class="post-nav__label">← Previous</span>
+          <span class="post-nav__title">How We Evaluate AI Email Drafts Without Sacrificing Voice</span>
+        </a>
+        <a class="post-nav__link post-nav__link--next" href="../blog.html">
+          <span class="post-nav__label">Next →</span>
+          <span class="post-nav__title">From 9 Months to 3 Weeks — MES Customization</span>
+        </a>
+      </nav>
+
+      <a class="back-btn" href="../blog.html">← Back to Blog</a>
+
+    </div>
+  </article>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       SAMPLE 3 — Field notes
+       CMS slug: field-notes-dispatch-room
+       ════════════════════════════════════════════════════════ -->
+  <article id="sample-3" class="sample-post" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-header__inner">
+        <span class="post-tag" itemprop="keywords">Field notes</span>
+        <h1 class="post-title" itemprop="headline">
+          Three Days in a Freight Dispatch Room
+        </h1>
+        <div class="post-meta">
+          <time datetime="2026-04-08" itemprop="datePublished">08 Apr 2026</time>
+          <span class="sep" aria-hidden="true">·</span>
+          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Rim B.</span>
+          </span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>5 min read</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-container">
+
+      <div class="post-cover-placeholder" role="img" aria-label="Cover image placeholder">cover image · 16:9</div>
+
+      <div class="post-body" itemprop="articleBody">
+
+        <p>Field notes are short. They're written the week we come back from a customer site, before the detail fades. This one is from three days in a freight operator's dispatch room — the kind of observation sprint we run before every pilot.</p>
+
+        <h2>Day 1 — The morning rush</h2>
+
+        <p>We arrived at 05:45. Dispatch starts at 06:00. The first thing that struck us: three dispatchers, one monitor showing a mapping tool, and one very large printed spreadsheet taped to the wall. The spreadsheet was updated by hand with a marker every morning. It showed which trucks were on which route and which drivers were scheduled.</p>
+
+        <p>At 06:17, two drivers called in sick. The dispatcher handling it didn't open any software. She looked at the wall, looked at her phone contacts, and called two backup drivers from memory. The reassignment took eleven minutes. She told us she could do it faster if she didn't have to update the wall sheet afterwards.</p>
+
+        <h2>Day 2 — The Excel file</h2>
+
+        <p>We asked to see "the system". There were two: a TMS the company pays a licence for (used primarily to generate the customer-facing invoice PDF), and a shared Excel file hosted on a NAS drive. The Excel file is the real system. It has seventeen tabs. Six of them have the word "OLD" in the name but are still referenced by formulas in the active tabs. Nobody wants to touch it.</p>
+
+        <blockquote>
+          <p>"We know it breaks sometimes. We just restart it and it works again. Nobody knows why." — Dispatcher, day two</p>
+        </blockquote>
+
+        <p>The fuel log tab is filled in manually every evening by a dispatcher pulling fuel receipts from a physical tray on the desk. The tray had receipts going back three weeks.</p>
+
+        <h2>Day 3 — The afternoon handover</h2>
+
+        <p>At 14:30, the day-shift dispatcher handed over to the evening crew. The handover was a ten-minute verbal briefing and a printed sheet of outstanding deliveries. No software state was transferred. If the evening dispatcher needed context on a delivery dispute, she called the day dispatcher on her personal mobile.</p>
+
+        <p>We counted seven such calls between 15:00 and 19:00 on day three.</p>
+
+        <h2>What we took away</h2>
+
+        <ul>
+          <li>The dispatchers were excellent operators working around bad tooling, not bad operators who needed to be replaced.</li>
+          <li>The wall spreadsheet existed because the digital tools didn't give a fast enough overview at a glance. Any replacement needs to nail the "wall view" first.</li>
+          <li>The Excel file is the real database. Migration needs to import it faithfully, not dismiss it.</li>
+          <li>The verbal handover is a symptom of missing shift-state persistence — a feature, not a nice-to-have.</li>
+        </ul>
+
+        <p>This site became a Fleet pilot four weeks later. The wall spreadsheet came down in week two.</p>
+
+      </div>
+
+      <nav class="post-nav" aria-label="Article navigation">
+        <a class="post-nav__link post-nav__link--prev" href="../blog.html">
+          <span class="post-nav__label">← Previous</span>
+          <span class="post-nav__title">Human-in-the-Loop Is Not a Fallback — It's a Feature</span>
+        </a>
+        <a class="post-nav__link post-nav__link--next" href="../blog.html">
+          <span class="post-nav__label">Next →</span>
+          <span class="post-nav__title">Zero Paper Between Driver and Finance</span>
+        </a>
+      </nav>
+
+      <a class="back-btn" href="../blog.html">← Back to Blog</a>
+
+    </div>
+  </article>
+
+</main><!-- /#main -->
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="brand-col">
+        <a href="../home.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+        </a>
+        <p>Software that codifies the way real operations get done. Built by operators for operators — across manufacturing, transport, and the back office.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Products</h4>
+        <a href="../products/virtus-lever.html">Virtus Lever</a>
+        <a href="../products/virtus-fleet.html">Virtus Fleet</a>
+        <a href="../products/virtus-ai-factory.html">Virtus AI Factory</a>
+        <a href="../products/virtus-agents.html">Virtus Agents</a>
+        <a href="../products/virtus-ged.html">Virtus GED</a>
+        <a href="../products/virtus-erp.html">Virtus ERP</a>
+      </div>
+      <div class="foot-col">
+        <h4>Industries</h4>
+        <a href="../industries/manufacturing.html">Manufacturing</a>
+        <a href="../industries/transport-logistics.html">Transport &amp; Logistics</a>
+        <a href="../industries/professional-services.html">Professional Services</a>
+        <a href="../industries/cross-industry.html">Cross-industry</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="../about.html">About</a>
+        <a href="../team.html">Team</a>
+        <a href="../careers.html">Careers</a>
+        <a href="../partners.html">Partners</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../security.html">Security</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="../terms.html">Terms</a>
+        <a href="../privacy.html">Privacy</a>
+        <a href="../cookies.html">Cookies</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Virtus Operandi · v0.3 preview</span>
+      <span><a href="../terms.html">Terms</a><a href="../privacy.html">Privacy</a><a href="../cookies.html">Cookies</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Nav scroll + hamburger */
+  const nav = document.getElementById('nav');
+  const ham = document.getElementById('ham');
+  const mob = document.getElementById('mobile-menu');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('menu-open');
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mob.setAttribute('aria-hidden', open ? 'false' : 'true');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  /* Sample-post tab switcher (Phase 1 static preview only) */
+  const tabs = document.querySelectorAll('.sample-tab');
+  const posts = document.querySelectorAll('.sample-post');
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+      posts.forEach(p => p.classList.remove('active'));
+      tab.setAttribute('aria-selected', 'true');
+      posts[i].classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
