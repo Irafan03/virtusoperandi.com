@@ -1,0 +1,23 @@
+# Claude Code per-user state
+.claude/
+
+# Node / Astro (for later)
+node_modules/
+dist/
+.astro/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Playwright artifacts
+test-results/
+playwright-report/
+tests/screenshots/
+
+# Local Netlify folder
+.netlify

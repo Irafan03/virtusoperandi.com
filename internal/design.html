@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Virtus Operandi — Design System v0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #202020;
+    --ink-2: #2A2A2A;
+    --ink-3: #3A3A3A;
+    --paper: #FFFFFF;
+    --paper-2: #F5F5F5;
+    --border-light: #E5E5E5;
+    --text: #202020;
+    --text-muted: #6B6B6B;
+    --blue: #0066FF;
+    --blue-hover: #0044A4;
+    --blue-deep: #002060;
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --r-sm: 8px;
+    --r: 12px;
+    --r-lg: 16px;
+    --r-xl: 24px;
+    --display: 'Open Sans', Helvetica, Arial, sans-serif;
+    --body: 'Open Sans', Helvetica, Arial, sans-serif;
+    --mono: 'JetBrains Mono', "Andale Mono", Courier, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--text); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3, h4, h5, h6 { font-family: var(--display); font-weight: 600; letter-spacing: 0; color: var(--text); }
+  h1 { font-size: clamp(36px, 5vw, 54px); line-height: 1.15; margin-bottom: 8px; }
+  h2 { font-size: clamp(26px, 3.2vw, 34px); line-height: 1.3; margin-bottom: 7px; }
+  h3 { font-size: 22px; line-height: 1.55; margin-bottom: 7px; }
+  h4 { font-size: 18px; line-height: 1.4; margin-bottom: 6px; }
+  .caption { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  section { padding: 96px 0; border-bottom: 1px solid var(--border-light); }
+  section.dark { background: var(--ink); color: var(--paper); border-bottom-color: var(--ink-3); }
+  section.dark .caption { color: rgba(255,255,255,0.55); }
+  section.dark h2, section.dark h3, section.dark h4 { color: var(--paper); }
+  .lede { font-size: 22px; color: var(--text-muted); max-width: 720px; }
+  section.dark .lede { color: rgba(255,255,255,0.7); }
+  .grid { display: grid; gap: 24px; }
+  .g-2 { grid-template-columns: repeat(2, 1fr); }
+  .g-3 { grid-template-columns: repeat(3, 1fr); }
+  .g-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 800px) { .g-2,.g-3,.g-4 { grid-template-columns: 1fr; } }
+
+  /* Nav */
+  .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(255,255,255,0.8); border-bottom: 1px solid var(--border-light); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; max-width: 1280px; margin: 0 auto; }
+  .brand { font-family: var(--display); font-weight: 700; font-size: 18px; letter-spacing: 0; }
+  .brand .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); margin-right: 8px; vertical-align: 1px; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; font-weight: 500; }
+  .nav-links a { color: var(--text); }
+
+  /* Hero */
+  .hero { padding: 120px 0 80px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border-light); border-radius: 999px; background: var(--paper-2); font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  .eyebrow .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(0,102,255,0.35); }
+  .hero h1 { margin: 24px 0 24px; max-width: 18ch; }
+  .hero h1 .accent { background: linear-gradient(90deg, var(--blue), #66A3FF); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* Color swatches */
+  .swatch { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border-light); cursor: pointer; transition: transform .2s ease; }
+  .swatch:hover { transform: translateY(-3px); }
+  .swatch-color { height: 140px; }
+  .swatch-meta { padding: 16px 18px; background: var(--paper); display: flex; justify-content: space-between; align-items: center; }
+  .swatch-meta .name { font-weight: 600; font-size: 15px; }
+  .swatch-meta .hex { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+  section.dark .swatch { border-color: var(--ink-3); }
+  section.dark .swatch-meta { background: var(--ink-2); color: var(--paper); }
+  section.dark .swatch-meta .hex { color: rgba(255,255,255,0.55); }
+
+  /* Type specimens */
+  .type-row { padding: 24px 0; border-bottom: 1px dashed var(--border-light); display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: baseline; }
+  .type-row:last-child { border-bottom: 0; }
+  .type-meta { color: var(--text-muted); font-family: var(--mono); font-size: 13px; }
+  .type-sample { font-family: var(--display); }
+  .type-sample.body { font-family: var(--body); }
+  .type-sample.mono { font-family: var(--mono); }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: var(--r); font-weight: 600; font-size: 15px; font-family: var(--body); cursor: pointer; border: 1.5px solid transparent; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; text-decoration: none; }
+  .btn:hover { transform: translateY(-2px); text-decoration: none; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-hover); box-shadow: 0 8px 28px rgba(0,102,255,0.35); }
+  .btn-primary:active { background: var(--blue-deep); }
+  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+  section.dark .btn-secondary { color: var(--paper); border-color: var(--paper); }
+  section.dark .btn-secondary:hover { background: var(--paper); color: var(--ink); }
+  .btn-ghost { background: transparent; color: var(--ink); padding: 14px 12px; }
+  .btn-ghost:hover { color: var(--blue); }
+  section.dark .btn-ghost { color: var(--paper); }
+  section.dark .btn-ghost:hover { color: var(--blue); }
+  .btn-outline-blue { background: transparent; color: var(--blue); border-color: var(--blue); }
+  .btn-outline-blue:hover { background: var(--blue); color: #fff; }
+
+  /* Cards */
+  .card { background: var(--paper); border: 1px solid var(--border-light); border-radius: var(--r-lg); padding: 32px; transition: border-color .2s ease, transform .2s ease; }
+  .card:hover { border-color: var(--ink); transform: translateY(-3px); }
+  .card .top-accent { width: 32px; height: 3px; background: var(--blue); border-radius: 2px; margin-bottom: 24px; }
+  section.dark .card { background: var(--ink-2); border-color: var(--ink-3); color: var(--paper); }
+  section.dark .card:hover { border-color: var(--blue); }
+  .card h4 { margin-bottom: 8px; }
+  .card p { color: var(--text-muted); font-size: 15px; }
+  section.dark .card p { color: rgba(255,255,255,0.65); }
+
+  /* Form */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .field input, .field textarea { font: inherit; padding: 12px 0; border: 0; border-bottom: 1.5px solid var(--border-light); background: transparent; outline: none; color: var(--text); transition: border-color .2s ease; }
+  .field input:focus, .field textarea:focus { border-bottom-color: var(--blue); }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: var(--mono); }
+  .badge-blue { background: var(--blue); color: #fff; }
+  .badge-blue-soft { background: rgba(0,102,255,0.12); color: var(--blue); }
+  .badge-success { background: rgba(34,197,94,0.12); color: var(--success); }
+  .badge-warning { background: rgba(245,158,11,0.14); color: var(--warning); }
+  .badge-error { background: rgba(239,68,68,0.12); color: var(--error); }
+
+  /* Spacing scale */
+  .spacing-row { display: flex; align-items: center; gap: 16px; padding: 8px 0; }
+  .spacing-bar { background: var(--blue); height: 12px; border-radius: 4px; }
+
+  /* Footer */
+  footer { padding: 48px 0; color: var(--text-muted); font-size: 14px; }
+
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  hr.sep { border: 0; border-top: 1px solid var(--border-light); margin: 48px 0; }
+  section.dark hr.sep { border-top-color: var(--ink-3); }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--paper); padding: 12px 20px; border-radius: 999px; font-size: 14px; opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 100; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>Virtus Operandi <span style="color:var(--text-muted); font-weight:500;">/ design system</span></div>
+    <div class="nav-links">
+      <a href="#colors">Colors</a>
+      <a href="#typography">Typography</a>
+      <a href="#components">Components</a>
+      <a href="sitemap.html">Sitemap →</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow"><span class="pulse"></span>Design system · v0.1 draft</span>
+    <h1>The <span class="accent">operating system</span> for our brand on the web.</h1>
+    <p class="lede">Modern, technical, confident. We build serious enterprise software but communicate like a 2026 startup — bold typography, generous whitespace, neon accents on a calm canvas.</p>
+    <div class="row" style="margin-top: 40px;">
+      <a class="btn btn-primary" href="sitemap.html">View the sitemap →</a>
+      <a class="btn btn-secondary" href="#components">Browse components</a>
+    </div>
+  </div>
+</section>
+
+<section id="brand">
+  <div class="container">
+    <span class="caption">01 — Brand</span>
+    <h2 style="margin: 16px 0 24px;">Personality</h2>
+    <div class="grid g-3">
+      <div class="card"><div class="top-accent"></div><h4>Confident, not corporate</h4><p>We talk like engineers who ship. No buzzword soup, no "synergize". Direct, technical, optimistic.</p></div>
+      <div class="card"><div class="top-accent" style="background:var(--blue)"></div><h4>Operandi = the way</h4><p>"The way things are done." We codify the right way of doing things into software for real industries.</p></div>
+      <div class="card"><div class="top-accent"></div><h4>Made for operators</h4><p>Factory floors, fleets, document rooms, inboxes. Software that meets people where the work actually happens.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="colors" class="dark">
+  <div class="container">
+    <span class="caption">02 — Color</span>
+    <h2 style="margin: 16px 0 16px;">Palette</h2>
+    <p class="lede" style="margin-bottom: 48px;">Sourced directly from cleveroad.com: tight 3-color palette — near-black ink, pure white paper, one signature blue. Click any swatch to copy the hex.</p>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Neutrals</h3>
+    <div class="grid g-4" style="margin-bottom: 56px;">
+      <div class="swatch" data-hex="#202020"><div class="swatch-color" style="background:#202020"></div><div class="swatch-meta"><span class="name">Virtus Ink</span><span class="hex">#202020</span></div></div>
+      <div class="swatch" data-hex="#2A2A2A"><div class="swatch-color" style="background:#2A2A2A"></div><div class="swatch-meta"><span class="name">Ink Elevated</span><span class="hex">#2A2A2A</span></div></div>
+      <div class="swatch" data-hex="#FFFFFF"><div class="swatch-color" style="background:#FFFFFF"></div><div class="swatch-meta"><span class="name">Virtus Paper</span><span class="hex">#FFFFFF</span></div></div>
+      <div class="swatch" data-hex="#6B6B6B"><div class="swatch-color" style="background:#6B6B6B"></div><div class="swatch-meta"><span class="name">Muted</span><span class="hex">#6B6B6B</span></div></div>
+    </div>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Brand blue (with interaction states)</h3>
+    <div class="grid g-3" style="margin-bottom: 56px;">
+      <div class="swatch" data-hex="#0066FF"><div class="swatch-color" style="background:#0066FF"></div><div class="swatch-meta"><span class="name">Virtus Blue — primary CTA</span><span class="hex">#0066FF</span></div></div>
+      <div class="swatch" data-hex="#0044A4"><div class="swatch-color" style="background:#0044A4"></div><div class="swatch-meta"><span class="name">Blue Hover</span><span class="hex">#0044A4</span></div></div>
+      <div class="swatch" data-hex="#002060"><div class="swatch-color" style="background:#002060"></div><div class="swatch-meta"><span class="name">Blue Pressed / deep</span><span class="hex">#002060</span></div></div>
+    </div>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Semantic</h3>
+    <div class="grid g-4">
+      <div class="swatch" data-hex="#22C55E"><div class="swatch-color" style="background:#22C55E"></div><div class="swatch-meta"><span class="name">Success</span><span class="hex">#22C55E</span></div></div>
+      <div class="swatch" data-hex="#F59E0B"><div class="swatch-color" style="background:#F59E0B"></div><div class="swatch-meta"><span class="name">Warning</span><span class="hex">#F59E0B</span></div></div>
+      <div class="swatch" data-hex="#EF4444"><div class="swatch-color" style="background:#EF4444"></div><div class="swatch-meta"><span class="name">Error</span><span class="hex">#EF4444</span></div></div>
+      <div class="swatch" data-hex="#0066FF"><div class="swatch-color" style="background:#0066FF"></div><div class="swatch-meta"><span class="name">Info</span><span class="hex">#0066FF</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="typography">
+  <div class="container">
+    <span class="caption">03 — Typography</span>
+    <h2 style="margin: 16px 0 16px;">Type scale</h2>
+    <p class="lede" style="margin-bottom: 48px;">Heading specs lifted directly from Harbor (Salient): <strong>weight 600 (SemiBold)</strong> across all levels, <strong>letter-spacing: 0</strong> (no tight tracking), generous line-height. Editorial, not aggressive. Verified against the Salient main stylesheet.</p>
+
+    <div class="type-row">
+      <div class="type-meta">H1 · Open Sans 600 · 54/62 · ls 0</div>
+      <div class="type-sample" style="font-size:54px; font-weight:600; letter-spacing:0; line-height:1.15;">Software the way it should be.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H1 (hero/dark) · Open Sans 600 · 44/54</div>
+      <div class="type-sample" style="font-size:44px; font-weight:600; letter-spacing:0; line-height:1.23;">Vision in focus.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H2 · Open Sans 600 · 34/44</div>
+      <div class="type-sample" style="font-size:34px; font-weight:600; letter-spacing:0; line-height:1.3;">Built for the way you actually operate.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H3 · Open Sans 600 · 22/34</div>
+      <div class="type-sample" style="font-size:22px; font-weight:600; letter-spacing:0; line-height:1.55;">From inbox to factory floor.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H4 · Open Sans 600 · 18/26</div>
+      <div class="type-sample" style="font-size:18px; font-weight:600;">A feature heading that does its job.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Body L · Open Sans 400 · 20/32</div>
+      <div class="type-sample body" style="font-size:20px;">Virtus Operandi builds software that codifies the right way of doing things — across manufacturing, transport, and the back office.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Body · Open Sans 400 · 18/29</div>
+      <div class="type-sample body" style="font-size:18px;">Each of our products solves a specific operational problem and connects to the others through a shared platform.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Body S · Open Sans 400 · 15/24</div>
+      <div class="type-sample body" style="font-size:15px;">Smaller copy for captions, metadata, supporting text and footer information.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Caption · Open Sans 600 · 12 · uppercase</div>
+      <div class="type-sample body caption" style="font-size:12px;">Use this for eyebrows and section labels</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Light · Open Sans 300 · 22</div>
+      <div class="type-sample" style="font-size:22px; font-weight:300;">For supporting body lines that need air around them.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Mono · JetBrains Mono 500</div>
+      <div class="type-sample mono" style="font-size:16px;">virtus.operandi → connect()</div>
+    </div>
+  </div>
+</section>
+
+<section id="components" class="dark">
+  <div class="container">
+    <span class="caption">04 — Components</span>
+    <h2 style="margin: 16px 0 16px;">Building blocks</h2>
+    <p class="lede" style="margin-bottom: 48px;">Buttons, cards, forms, badges, and surfaces. Same rules apply on light and dark.</p>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Buttons</h3>
+    <div class="row" style="margin-bottom: 48px;">
+      <button class="btn btn-primary">Book a demo →</button>
+      <button class="btn btn-outline-blue">Sign up</button>
+      <button class="btn btn-secondary">Learn more</button>
+      <button class="btn btn-ghost">Cancel</button>
+    </div>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Cards</h3>
+    <div class="grid g-3" style="margin-bottom: 48px;">
+      <div class="card"><div class="top-accent"></div><h4>Virtus Lever</h4><p>AI email productivity assistant. Drafts, triages, and acts on your inbox.</p></div>
+      <div class="card"><div class="top-accent" style="background:var(--blue)"></div><h4>Virtus Fleet</h4><p>ERP built specifically for transport and logistics operators.</p></div>
+      <div class="card"><div class="top-accent"></div><h4>Virtus AI Factory</h4><p>AI assistant for MES/MOM development and operations.</p></div>
+    </div>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Badges</h3>
+    <div class="row" style="margin-bottom: 48px;">
+      <span class="badge badge-blue">NEW</span>
+      <span class="badge badge-blue-soft">AI</span>
+      <span class="badge badge-success">v2.4 live</span>
+      <span class="badge badge-warning">beta</span>
+      <span class="badge badge-error">deprecated</span>
+    </div>
+
+    <h3 style="margin-bottom: 16px; font-size: 18px;">Form</h3>
+    <div style="background: var(--paper); color: var(--text); padding: 40px; border-radius: var(--r-lg); max-width: 520px;">
+      <div class="field"><label>Name</label><input type="text" placeholder="Your name" /></div>
+      <div class="field"><label>Company</label><input type="text" placeholder="Where you work" /></div>
+      <div class="field"><label>Message</label><textarea rows="3" placeholder="Tell us what you're trying to solve"></textarea></div>
+      <button class="btn btn-primary">Send →</button>
+    </div>
+  </div>
+</section>
+
+<section id="spacing">
+  <div class="container">
+    <span class="caption">05 — Spacing & layout</span>
+    <h2 style="margin: 16px 0 16px;">Spacing scale</h2>
+    <p class="lede" style="margin-bottom: 48px;">Powers of the 4-unit grid. Sections breathe at 96–120px vertical; mobile drops to 64px.</p>
+
+    <div class="stack" style="max-width: 720px;">
+      <div class="spacing-row"><span class="caption" style="width:60px">4</span><div class="spacing-bar" style="width:4px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">8</span><div class="spacing-bar" style="width:8px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">16</span><div class="spacing-bar" style="width:16px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">24</span><div class="spacing-bar" style="width:24px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">32</span><div class="spacing-bar" style="width:32px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">48</span><div class="spacing-bar" style="width:48px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">64</span><div class="spacing-bar" style="width:64px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">96</span><div class="spacing-bar" style="width:96px"></div></div>
+      <div class="spacing-row"><span class="caption" style="width:60px">128</span><div class="spacing-bar" style="width:128px"></div></div>
+    </div>
+
+    <hr class="sep" />
+
+    <h3 style="margin-bottom: 16px;">Grid</h3>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">12 columns · 1280px max content width · 32px gutters on desktop, 16px on mobile.</p>
+  </div>
+</section>
+
+<section id="motion" class="dark">
+  <div class="container">
+    <span class="caption">06 — Motion</span>
+    <h2 style="margin: 16px 0 16px;">Motion principles</h2>
+    <p class="lede" style="margin-bottom: 48px;">Subtle, purposeful, and accessible. Respect <code style="font-family:var(--mono); background:var(--ink-2); padding: 2px 8px; border-radius: 6px;">prefers-reduced-motion</code>.</p>
+    <div class="grid g-3">
+      <div class="card"><div class="top-accent"></div><h4>Page enter</h4><p>Fade + 8px translateY · 400ms ease-out · once per route.</p></div>
+      <div class="card"><div class="top-accent" style="background:var(--blue)"></div><h4>Scroll reveals</h4><p>Stagger children 80ms apart on intersection. Disable below 720px.</p></div>
+      <div class="card"><div class="top-accent"></div><h4>Hover lift</h4><p>2–4px translateY + shadow expansion · 200ms. Buttons, cards, nodes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="a11y">
+  <div class="container">
+    <span class="caption">07 — Accessibility</span>
+    <h2 style="margin: 16px 0 16px;">Non-negotiables</h2>
+    <ul style="font-size: 18px; max-width: 720px; line-height: 1.9; list-style: none; padding: 0;">
+      <li>✓ WCAG 2.2 AA across all pages</li>
+      <li>✓ Color contrast ≥ 4.5:1 body, 3:1 large text — verified on every section</li>
+      <li>✓ Focus rings: 2px blue, 2px offset — always visible, never <code>outline: none</code></li>
+      <li>✓ Skip-to-content link, semantic landmarks, descriptive alt text</li>
+      <li>✓ Keyboard reachable everywhere; visible focus order matches visual order</li>
+      <li>✓ Motion respects <code>prefers-reduced-motion</code></li>
+    </ul>
+  </div>
+</section>
+
+<section id="todo" class="dark">
+  <div class="container">
+    <span class="caption">08 — Open decisions</span>
+    <h2 style="margin: 16px 0 24px;">Needs your call</h2>
+    <div class="grid g-2">
+      <div class="card"><h4>Cleveroad palette — BLOCKED</h4><p>cleveroad.com is behind Cloudflare bot protection — I couldn't fetch its CSS (got a 403). Please send hex codes, a screenshot, or another reference so I can extract real colors. Current palette below is a placeholder.</p></div>
+      <div class="card"><h4>Logo</h4><p>No mark yet. I can draft a wordmark proposal, or you supply one.</p></div>
+      <div class="card"><h4>Languages</h4><p>English only? Add French / Arabic? Affects URL structure.</p></div>
+      <div class="card"><h4>Imagery direction</h4><p>3D abstract renders, real photography, or illustration-led?</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row" style="justify-content: space-between;">
+      <span>© 2026 Virtus Operandi · design system v0.1</span>
+      <span><a href="sitemap.html">Sitemap</a> · <a href="pages.html">Page previews</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  // Click swatch to copy hex
+  document.querySelectorAll('.swatch').forEach(el => {
+    el.addEventListener('click', async () => {
+      const hex = el.dataset.hex;
+      try {
+        await navigator.clipboard.writeText(hex);
+        showToast(`Copied ${hex}`);
+      } catch { showToast(hex); }
+    });
+  });
+  const toast = document.getElementById('toast');
+  let t;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(t);
+    t = setTimeout(() => toast.classList.remove('show'), 1400);
+  }
+</script>
+
+</body>
+</html>

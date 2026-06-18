@@ -1,0 +1,13 @@
+{
+  "name": "virtusoperandi-com",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Virtus Operandi company website",
+  "scripts": {
+    "test:visual": "playwright test --headed",
+    "test:visual:headless": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Virtus Operandi — Page previews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #202020;
+    --ink-2: #2A2A2A;
+    --ink-3: #353535;
+    --paper: #FFFFFF;
+    --paper-2: #F5F5F5;
+    --border: #E5E5E5;
+    --text: #202020;
+    --muted: #6B6B6B;
+    --blue: #0066FF;
+    --blue-hover: #0044A4;
+    --blue-deep: #002060;
+    --display: 'Open Sans', Helvetica, Arial, sans-serif;
+    --body: 'Open Sans', Helvetica, Arial, sans-serif;
+    --mono: 'JetBrains Mono', "Andale Mono", Courier, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  html, body { background: var(--paper); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: var(--blue); text-decoration: none; }
+  h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; letter-spacing: 0; line-height: 1.3; color: var(--text); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(255,255,255,0.85); border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; max-width: 1280px; margin: 0 auto; }
+  .brand { font-family: var(--display); font-weight: 700; font-size: 18px; letter-spacing: 0; }
+  .brand .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); margin-right: 8px; vertical-align: 1px; }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; }
+  .nav-links a { color: var(--text); }
+  .nav-links a:hover { color: var(--blue); }
+
+  .intro { padding: 80px 0 32px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--paper-2); font-size: 13px; font-weight: 500; color: var(--muted); }
+  .eyebrow .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+  h1 { font-size: clamp(36px, 5vw, 54px); font-weight: 600; letter-spacing: 0; line-height: 1.15; margin: 20px 0 16px; max-width: 22ch; }
+  .lede { color: var(--muted); font-size: 19px; max-width: 640px; }
+
+  .page-card {
+    border: 1px solid var(--border); border-radius: 18px; margin: 24px 0; overflow: hidden;
+    background: var(--paper); scroll-margin-top: 96px;
+  }
+  .page-head { padding: 24px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; background: var(--paper-2); }
+  .page-head h2 { font-size: 28px; font-weight: 600; letter-spacing: 0; }
+  .page-head .slug { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .page-body { padding: 32px; }
+  .page-body p { color: var(--muted); margin-bottom: 16px; }
+  .page-body p strong { color: var(--text); }
+  .page-body ul { list-style: none; padding: 0; margin: 16px 0; }
+  .page-body ul li { padding: 10px 0 10px 24px; border-bottom: 1px dashed var(--border); position: relative; font-size: 16px; }
+  .page-body ul li:last-child { border-bottom: 0; }
+  .page-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--blue); font-weight: 700; }
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 999px; background: var(--paper-2); color: var(--muted); border: 1px solid var(--border); }
+  .tag.product { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .tag.industry { background: rgba(0,102,255,0.10); color: var(--blue); border-color: rgba(0,102,255,0.25); }
+
+  .section-divider { display: flex; align-items: center; gap: 16px; margin: 80px 0 24px; }
+  .section-divider span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .section-divider hr { flex: 1; border: 0; border-top: 1px solid var(--border); }
+
+  .back { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--paper); padding: 12px 18px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none; box-shadow: 0 8px 28px rgba(0,0,0,0.2); z-index: 50; transition: transform .2s ease; }
+  .back:hover { transform: translateY(-2px); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .mini-card { background: var(--paper-2); border-radius: 12px; padding: 16px 18px; }
+  .mini-card .label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .mini-card .value { font-weight: 600; font-size: 15px; }
+
+  footer { padding: 64px 0; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>Virtus Operandi <span style="color:var(--muted); font-weight:500;">/ page previews</span></div>
+    <div class="nav-links">
+      <a href="sitemap.html">← Sitemap</a>
+      <a href="design.html">Design system</a>
+    </div>
+  </div>
+</nav>
+
+<section class="intro">
+  <div class="container">
+    <span class="eyebrow"><span class="pulse"></span>Content plan · v0.1</span>
+    <h1>What each page will actually contain.</h1>
+    <p class="lede">One scrollable preview, organized by route. Each block lists the page's purpose, structure, and primary CTA — so we can agree on scope before writing real content.</p>
+  </div>
+</section>
+
+<div class="container">
+
+<div class="section-divider"><span>00 — Entry</span><hr></div>
+
+<div class="page-card" id="home">
+  <div class="page-head"><div><h2>Home</h2><div class="tag-row"><span class="tag">primary entry</span></div></div><div class="slug">/</div></div>
+  <div class="page-body">
+    <p><strong>Purpose:</strong> Communicate who Virtus Operandi is, what we build, and who it's for — in under 10 seconds.</p>
+    <ul>
+      <li>Hero — bold headline, sub-headline, primary CTA "Book a demo"</li>
+      <li>Value prop strip — 3 short pillars (e.g. "Built by operators · AI-native · Open by design")</li>
+      <li>Products grid — 6 cards, each linking to the product page</li>
+      <li>Industries served — 4 industry tiles with imagery</li>
+      <li>Social proof — logos of partners / customers / tech stack</li>
+      <li>How we work — short process / methodology section</li>
+      <li>Insights teaser — 3 latest articles</li>
+      <li>Closing CTA — "Talk to us" with form preview</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>01 — Products</span><hr></div>
+
+<div class="page-card" id="products">
+  <div class="page-head"><div><h2>Products overview</h2><div class="tag-row"><span class="tag product">6 products</span></div></div><div class="slug">/products</div></div>
+  <div class="page-body">
+    <p><strong>Purpose:</strong> Single page that surfaces the full catalogue and lets visitors pick what's relevant.</p>
+    <ul>
+      <li>Header — "Our software catalogue"</li>
+      <li>Filter / category chips — AI · ERP · Document Mgmt · Manufacturing</li>
+      <li>Grid of 6 product cards (icon, name, one-liner, category tag)</li>
+      <li>"Not sure what you need? See by industry →" cross-link</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-lever">
+  <div class="page-head"><div><h2>Virtus Lever</h2><div class="tag-row"><span class="tag product">AI · Productivity</span></div></div><div class="slug">/products/virtus-lever</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> AI email productivity assistant — drafts, triages, and acts on your inbox.</p>
+    <ul>
+      <li>Hero — name · tagline · "Try it" / "Book demo" CTA · product UI screenshot</li>
+      <li>The problem — inbox overload, time wasted, missed follow-ups</li>
+      <li>Key features — smart drafting · triage rules · action extraction · calendar awareness · multi-account · privacy-first</li>
+      <li>Live demo / video</li>
+      <li>Use cases — sales · support · executive · consulting</li>
+      <li>Integrations — Gmail · Outlook · Calendars · CRM</li>
+      <li>Pricing teaser OR "Talk to us"</li>
+      <li>FAQ + related products (Agents, GED)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-fleet">
+  <div class="page-head"><div><h2>Virtus Fleet</h2><div class="tag-row"><span class="tag product">ERP · Vertical</span></div></div><div class="slug">/products/virtus-fleet</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> ERP built from the ground up for transport and logistics operators.</p>
+    <ul>
+      <li>Hero — name · tagline · "Book demo" CTA · dashboard mockup</li>
+      <li>The problem — fragmented tools, manual dispatch, no real-time visibility</li>
+      <li>Modules — Fleet · Drivers · Dispatch · Maintenance · Fuel · Invoicing · Compliance</li>
+      <li>Real-time tracking & telematics integration</li>
+      <li>Use cases — freight carriers · logistics SMBs · last-mile · cold chain</li>
+      <li>ROI calculator / metrics</li>
+      <li>Integrations — telematics providers · accounting · customs</li>
+      <li>"Book a demo" CTA + related: Virtus ERP, Virtus GED</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-ai-factory">
+  <div class="page-head"><div><h2>Virtus AI Factory</h2><div class="tag-row"><span class="tag product">AI · Manufacturing</span></div></div><div class="slug">/products/virtus-ai-factory</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> AI assistant that supercharges MES/MOM development and daily operations on Delmia Apriso, Siemens Opcenter, and other major MOM platforms.</p>
+    <ul>
+      <li>Hero — two-mode value: <em>"For developers"</em> + <em>"For shop-floor users"</em></li>
+      <li>Developer mode — code-aware assistant for Apriso/Opcenter customization, config, BPM, scripting</li>
+      <li>User mode — natural-language operator support, work-instruction Q&A, alarm triage</li>
+      <li>Supported platforms — Delmia Apriso · Siemens Opcenter · others (list)</li>
+      <li>How it integrates — connectors, on-prem option, data residency</li>
+      <li>Case study or scenario walkthrough</li>
+      <li>Security / IP protection statement (critical for manufacturing buyers)</li>
+      <li>"Talk to engineering" CTA + related: Virtus Agents, Virtus GED</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-agents">
+  <div class="page-head"><div><h2>Virtus Agents</h2><div class="tag-row"><span class="tag product">AI · Platform</span></div></div><div class="slug">/products/virtus-agents</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> Low-code platform to build, deploy, and operate AI agents that automate real business processes.</p>
+    <ul>
+      <li>Hero — builder UI screenshot + CTA</li>
+      <li>What you can build — examples: invoice processing, lead qualification, MES alert triage, document classification</li>
+      <li>Builder features — visual flows · tool library · model-agnostic · human-in-the-loop · evaluation suite</li>
+      <li>Deployment — cloud / on-prem / hybrid</li>
+      <li>Templates gallery</li>
+      <li>Pricing or "Get early access"</li>
+      <li>Related: AI Factory, Lever</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-ged">
+  <div class="page-head"><div><h2>Virtus GED</h2><div class="tag-row"><span class="tag product">EDM · Document Mgmt</span></div></div><div class="slug">/products/virtus-ged</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> Electronic Document Management (GED) that finally feels modern — fast search, smart classification, workflow approvals.</p>
+    <ul>
+      <li>Hero — search UI · CTA</li>
+      <li>Capabilities — capture · OCR · classification (AI) · versioning · workflows · retention · audit</li>
+      <li>Compliance — ISO · GDPR · industry-specific (HIPAA, etc. as relevant)</li>
+      <li>Industries — manufacturing QMS, transport compliance docs, ERP attachments, legal</li>
+      <li>Integrations — Office · email · ERP · MES</li>
+      <li>Migration from legacy GED systems</li>
+      <li>"Talk to us" CTA</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="virtus-erp">
+  <div class="page-head"><div><h2>Virtus ERP</h2><div class="tag-row"><span class="tag product">ERP · Horizontal</span></div></div><div class="slug">/products/virtus-erp</div></div>
+  <div class="page-body">
+    <p><strong>Pitch:</strong> General-purpose ERP for SMB and mid-market — modular, modern, and connectable.</p>
+    <ul>
+      <li>Hero — module overview · CTA</li>
+      <li>Modules — Finance · Sales · Purchase · Inventory · HR · Projects · CRM</li>
+      <li>Why us vs. legacy ERP — speed of deployment, modern UX, AI built in</li>
+      <li>Pricing tiers</li>
+      <li>Verticalizable — pairs with Fleet (transport) or AI Factory (manufacturing)</li>
+      <li>Implementation methodology</li>
+      <li>"Get a quote" CTA</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>02 — Industries</span><hr></div>
+
+<div class="page-card" id="industries">
+  <div class="page-head"><div><h2>Industries overview</h2><div class="tag-row"><span class="tag industry">4 industries</span></div></div><div class="slug">/industries</div></div>
+  <div class="page-body">
+    <p><strong>Purpose:</strong> Help visitors who think industry-first (not product-first) find the right stack.</p>
+    <ul>
+      <li>Industry tiles — Manufacturing · Transport & Logistics · Professional Services · Cross-industry</li>
+      <li>Each tile shows industry image + 2-line description + product chips</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="ind-manufacturing">
+  <div class="page-head"><div><h2>Manufacturing (MES/MOM)</h2><div class="tag-row"><span class="tag industry">industry</span></div></div><div class="slug">/industries/manufacturing</div></div>
+  <div class="page-body">
+    <p><strong>Audience:</strong> Operations leaders, MES program managers, plant IT.</p>
+    <ul>
+      <li>Hero — pain points: tribal knowledge, MOM customization cost, slow operator training</li>
+      <li>Recommended stack — Virtus AI Factory + Virtus Agents + Virtus GED + (Virtus ERP optional)</li>
+      <li>Outcome metrics — faster Apriso/Opcenter delivery, reduced operator errors</li>
+      <li>Scenario walkthrough</li>
+      <li>"Talk to manufacturing team" CTA</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="ind-transport">
+  <div class="page-head"><div><h2>Transport & Logistics</h2><div class="tag-row"><span class="tag industry">industry</span></div></div><div class="slug">/industries/transport-logistics</div></div>
+  <div class="page-body">
+    <p><strong>Audience:</strong> Fleet owners, logistics managers, operations directors.</p>
+    <ul>
+      <li>Hero — pain points: fragmented tools, visibility gaps, compliance overhead</li>
+      <li>Recommended stack — Virtus Fleet + Virtus ERP + Virtus GED</li>
+      <li>Use cases — freight, last-mile, fleet rental, cold chain</li>
+      <li>"Book a demo" CTA</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="ind-services">
+  <div class="page-head"><div><h2>Professional Services / Office</h2><div class="tag-row"><span class="tag industry">industry</span></div></div><div class="slug">/industries/professional-services</div></div>
+  <div class="page-body">
+    <p><strong>Audience:</strong> Knowledge-work teams, consulting firms, mid-office back-office.</p>
+    <ul>
+      <li>Hero — knowledge work is choking on email, docs, and manual ops</li>
+      <li>Recommended stack — Virtus Lever + Virtus Agents + Virtus GED + Virtus ERP (light)</li>
+      <li>Sample outcomes — hours saved per week, faster proposal cycles</li>
+      <li>CTA</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="ind-cross">
+  <div class="page-head"><div><h2>Cross-industry</h2><div class="tag-row"><span class="tag industry">industry</span></div></div><div class="slug">/industries/cross-industry</div></div>
+  <div class="page-body">
+    <p><strong>Audience:</strong> Companies whose needs don't fit a single vertical.</p>
+    <ul>
+      <li>Hero — "Pick the building blocks that match your operation"</li>
+      <li>Horizontal products — Virtus ERP, GED, Lever, Agents</li>
+      <li>Self-serve assessment / "which products fit me?" tool (future)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>03 — Solutions</span><hr></div>
+
+<div class="page-card" id="solutions">
+  <div class="page-head"><div><h2>Solutions (bundles)</h2></div><div class="slug">/solutions</div></div>
+  <div class="page-body">
+    <p><strong>Purpose:</strong> Pre-composed offerings combining multiple products around an outcome.</p>
+    <ul>
+      <li><strong>AI-Powered Smart Factory</strong> — AI Factory + Agents + GED</li>
+      <li><strong>Logistics Command Center</strong> — Fleet + ERP + Lever</li>
+      <li><strong>Office Automation Suite</strong> — Lever + Agents + GED</li>
+    </ul>
+    <p style="margin-top: 16px;"><em>Decision: keep as a dedicated page, or fold into Industries + Home? — open question.</em></p>
+  </div>
+</div>
+
+<div class="section-divider"><span>04 — Company</span><hr></div>
+
+<div class="page-card" id="company">
+  <div class="page-head"><div><h2>Company hub</h2></div><div class="slug">/company</div></div>
+  <div class="page-body">
+    <p>Lightweight landing that links to About, Team, Careers, Partners.</p>
+  </div>
+</div>
+
+<div class="page-card" id="about">
+  <div class="page-head"><div><h2>About</h2></div><div class="slug">/company/about</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Origin story</li>
+      <li>Mission — "codify the way things are done"</li>
+      <li>Why the name "Virtus Operandi"</li>
+      <li>Operating principles (4–6 short statements)</li>
+      <li>Where we are (offices, geographies)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="team">
+  <div class="page-head"><div><h2>Team</h2></div><div class="slug">/company/team</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Founders + key people (photo · role · short bio · LinkedIn)</li>
+      <li>"We're hiring" cross-link</li>
+    </ul>
+    <p style="margin-top: 16px;"><em>Open question: public team page yes/no?</em></p>
+  </div>
+</div>
+
+<div class="page-card" id="careers">
+  <div class="page-head"><div><h2>Careers</h2></div><div class="slug">/company/careers</div></div>
+  <div class="page-body">
+    <ul>
+      <li>How we work</li>
+      <li>Open roles (CMS-driven list)</li>
+      <li>Application instructions</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="partners">
+  <div class="page-head"><div><h2>Partners</h2></div><div class="slug">/company/partners</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Technology partners (logos)</li>
+      <li>System integrators / resellers</li>
+      <li>"Become a partner" form</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>05 — Insights</span><hr></div>
+
+<div class="page-card" id="insights">
+  <div class="page-head"><div><h2>Insights hub</h2></div><div class="slug">/insights</div></div>
+  <div class="page-body">
+    <p>This is where the headless CMS will plug in.</p>
+  </div>
+</div>
+
+<div class="page-card" id="insights-index">
+  <div class="page-head"><div><h2>Insights — index</h2></div><div class="slug">/insights</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Filterable list (tag chips: AI, Manufacturing, ERP, Transport, Engineering, Company)</li>
+      <li>Article cards (image · title · excerpt · author · date)</li>
+      <li>Pagination / load-more</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="insights-article">
+  <div class="page-head"><div><h2>Article detail</h2></div><div class="slug">/insights/&lt;slug&gt;</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Hero — title, author, date, tags, reading time</li>
+      <li>Body (long-form, MDX/rich content from CMS)</li>
+      <li>Related articles · share buttons</li>
+      <li>Inline CTA to a relevant product or demo</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-card" id="case-studies">
+  <div class="page-head"><div><h2>Case studies</h2></div><div class="slug">/insights/case-studies</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Customer story cards (logo · headline metric · short summary)</li>
+      <li>Detail page template — challenge · solution · results · quote</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>06 — Contact</span><hr></div>
+
+<div class="page-card" id="contact">
+  <div class="page-head"><div><h2>Contact</h2></div><div class="slug">/contact</div></div>
+  <div class="page-body">
+    <p><strong>Primary CTA destination across the entire site.</strong></p>
+    <ul>
+      <li>Form — name · company · email · product of interest (dropdown) · message</li>
+      <li>Direct emails — sales@ · support@ · careers@</li>
+      <li>Office address + map (if applicable)</li>
+      <li>"Book a demo" — calendar embed (Cal.com / Calendly) when available</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-divider"><span>07 — Utility & legal</span><hr></div>
+
+<div class="grid-2" style="margin: 24px 0;">
+  <div class="page-card" id="privacy"><div class="page-head"><div><h2>Privacy</h2></div><div class="slug">/privacy</div></div><div class="page-body"><p>Standard GDPR + applicable regional privacy policy.</p></div></div>
+  <div class="page-card" id="terms"><div class="page-head"><div><h2>Terms</h2></div><div class="slug">/terms</div></div><div class="page-body"><p>Terms of service for the site and downloadable trials.</p></div></div>
+  <div class="page-card" id="cookies"><div class="page-head"><div><h2>Cookies</h2></div><div class="slug">/cookies</div></div><div class="page-body"><p>Cookie policy + consent banner reference.</p></div></div>
+  <div class="page-card" id="security"><div class="page-head"><div><h2>Security</h2></div><div class="slug">/security</div></div><div class="page-body"><p>Security posture, certifications, vulnerability disclosure. Builds enterprise trust.</p></div></div>
+</div>
+
+<div class="page-card" id="not-found">
+  <div class="page-head"><div><h2>404 Not Found</h2></div><div class="slug">/404</div></div>
+  <div class="page-body">
+    <ul>
+      <li>Friendly headline ("That route doesn't exist — yet.")</li>
+      <li>Search box + links to top destinations (Products, Industries, Contact)</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <div class="container">© 2026 Virtus Operandi · page previews v0.1 · <a href="sitemap.html" style="color:var(--blue)">Sitemap</a> · <a href="design.html" style="color:var(--blue)">Design system</a></div>
+</footer>
+
+<a class="back" href="sitemap.html">← Back to sitemap</a>
+
+</body>
+</html>

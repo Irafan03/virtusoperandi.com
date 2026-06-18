@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Virtus Operandi — Sitemap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #202020;
+    --ink-2: #2A2A2A;
+    --ink-3: #353535;
+    --ink-4: #454545;
+    --paper: #FFFFFF;
+    --muted: #8A8A8A;
+    --blue: #0066FF;
+    --blue-hover: #0044A4;
+    --blue-deep: #002060;
+    --display: 'Open Sans', Helvetica, Arial, sans-serif;
+    --body: 'Open Sans', Helvetica, Arial, sans-serif;
+    --mono: 'JetBrains Mono', "Andale Mono", Courier, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--ink); color: var(--paper); font-family: var(--body); -webkit-font-smoothing: antialiased; min-height: 100vh; overflow-x: hidden; }
+  body { background: radial-gradient(ellipse at top, rgba(0,102,255,0.10), transparent 60%), radial-gradient(ellipse at bottom right, rgba(0,102,255,0.08), transparent 50%), var(--ink); }
+  a { color: inherit; text-decoration: none; }
+
+  /* Header */
+  .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(32,32,32,0.75); border-bottom: 1px solid var(--ink-3); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; max-width: 1440px; margin: 0 auto; }
+  .brand { font-family: var(--display); font-weight: 700; font-size: 18px; letter-spacing: 0; }
+  .brand .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); margin-right: 8px; vertical-align: 1px; box-shadow: 0 0 12px var(--blue); }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: var(--muted); }
+  .nav-links a:hover { color: var(--blue); }
+
+  /* Intro */
+  .intro { padding: 64px 32px 24px; max-width: 1440px; margin: 0 auto; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--ink-3); border-radius: 999px; background: var(--ink-2); font-size: 13px; font-weight: 500; color: var(--muted); }
+  .eyebrow .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(0,102,255,0.25); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  h1 { font-family: var(--display); font-weight: 600; letter-spacing: 0; font-size: clamp(36px, 5vw, 54px); line-height: 1.15; margin: 20px 0 16px; max-width: 22ch; }
+  h1 .accent { background: linear-gradient(90deg, var(--blue), #66A3FF); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { color: var(--muted); font-size: 18px; max-width: 640px; }
+  .legend { display: flex; gap: 16px; margin-top: 28px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Mind map canvas */
+  .map-wrap { padding: 32px; max-width: 1440px; margin: 0 auto; }
+  .map { position: relative; display: grid; grid-template-columns: 240px 280px 1fr; gap: 64px; min-height: 1600px; }
+
+  .column { position: relative; display: flex; flex-direction: column; gap: 18px; }
+  .column.center { justify-content: center; }
+  .column.l1 { padding-top: 0; }
+  .column.l2 { display: grid; grid-template-columns: 1fr; gap: 28px; }
+
+  /* Node */
+  .node {
+    position: relative; z-index: 2;
+    display: block; padding: 18px 20px;
+    background: var(--ink-2); border: 1px solid var(--ink-3);
+    border-radius: 14px;
+    color: var(--paper);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    cursor: pointer;
+  }
+  .node:hover { transform: translateX(4px); border-color: var(--blue); box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,102,255,0.2); }
+  .node .slug { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .node .name { font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: 0; }
+  .node .desc { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .node .tag { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 999px; background: rgba(0,102,255,0.15); color: var(--blue); margin-top: 8px; }
+
+  /* Center node (Home) */
+  .node.home {
+    background: linear-gradient(135deg, var(--blue), #0044A4);
+    color: #fff; border: 0;
+    padding: 28px 24px;
+    box-shadow: 0 12px 40px rgba(0,102,255,0.25), 0 0 0 6px rgba(0,102,255,0.1);
+  }
+  .node.home:hover { transform: scale(1.03); }
+  .node.home .name { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 0; }
+  .node.home .slug { color: rgba(255,255,255,0.7); font-size: 12px; }
+  .node.home .desc { color: rgba(255,255,255,0.85); }
+
+  /* Section header node */
+  .node.section {
+    border-color: var(--ink-4);
+    background: var(--ink-3);
+  }
+  .node.section .name { font-size: 18px; }
+  .node.section .count { font-family: var(--mono); font-size: 11px; color: var(--blue); margin-left: 6px; }
+
+  /* Group wrapper */
+  .group {
+    background: rgba(30,37,56,0.4);
+    border: 1px dashed var(--ink-4);
+    border-radius: 18px;
+    padding: 20px;
+    position: relative;
+  }
+  .group-label {
+    position: absolute; top: -10px; left: 16px;
+    background: var(--ink); padding: 0 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .group .node { background: var(--ink-2); }
+  .group .node + .node { margin-top: 14px; }
+
+  /* Products group accent */
+  .group.products .group-label { color: var(--blue); }
+  .group.products .node:hover { border-color: var(--blue); }
+  .group.products .node .tag { background: rgba(0,102,255,0.15); color: var(--blue); }
+
+  /* Industries group accent */
+  .group.industries .group-label { color: var(--blue); }
+  .group.industries .node:hover { border-color: var(--blue); box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,102,255,0.25); }
+
+  /* SVG connectors */
+  .connectors { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  .connectors path { fill: none; stroke: var(--ink-4); stroke-width: 1.5; transition: stroke .2s ease, stroke-width .2s ease; }
+  .connectors path.from-home { stroke: rgba(0,102,255,0.35); stroke-width: 2; }
+  .connectors path.products { stroke: rgba(0,102,255,0.25); }
+  .connectors path.industries { stroke: rgba(0,102,255,0.3); }
+  .connectors path.highlight { stroke: var(--blue); stroke-width: 2.5; }
+
+  /* Utility nodes (legal) at bottom */
+  .utility {
+    margin-top: 48px; padding: 32px;
+    background: var(--ink-2); border: 1px solid var(--ink-3); border-radius: 18px;
+    max-width: 1440px;
+    margin-left: auto; margin-right: auto;
+  }
+  .utility h3 { font-family: var(--display); font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+  .utility-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .utility-node {
+    padding: 14px 16px; background: var(--ink-3); border-radius: 10px; font-size: 14px;
+    border: 1px solid transparent;
+    transition: border-color .2s ease, transform .2s ease;
+    cursor: pointer;
+  }
+  .utility-node:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .utility-node .slug { font-family: var(--mono); font-size: 10px; color: var(--muted); display: block; margin-top: 2px; }
+
+  footer { padding: 48px 32px; color: var(--muted); font-size: 14px; max-width: 1440px; margin: 0 auto; }
+  footer a { color: var(--blue); }
+
+  @media (max-width: 980px) {
+    .map { grid-template-columns: 1fr; gap: 32px; }
+    .connectors { display: none; }
+    .node.home { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>Virtus Operandi <span style="color:var(--muted); font-weight:500;">/ sitemap</span></div>
+    <div class="nav-links">
+      <a href="design.html">Design system</a>
+      <a href="pages.html">Page previews</a>
+    </div>
+  </div>
+</nav>
+
+<section class="intro">
+  <span class="eyebrow"><span class="pulse"></span>Information architecture · v0.1</span>
+  <h1>Every page, <span class="accent">at a glance.</span></h1>
+  <p class="lede">Click any node to preview what that page will contain. Lime nodes are products. Indigo nodes are industries. Everything else is structural.</p>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:var(--blue)"></span>Product</span>
+    <span class="legend-item"><span class="legend-dot" style="background:rgba(0,102,255,0.25); border:1px solid var(--blue)"></span>Industry</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--ink-3); border:1px solid var(--ink-4)"></span>Structural / company / content</span>
+  </div>
+</section>
+
+<div class="map-wrap">
+  <div class="map" id="map">
+
+    <!-- Column 0: Home -->
+    <div class="column center">
+      <a class="node home" id="n-home" href="pages.html#home">
+        <div class="slug">/</div>
+        <div class="name">Home</div>
+        <div class="desc">Hero · products · industries · proof · CTA</div>
+      </a>
+    </div>
+
+    <!-- Column 1: Top-level sections -->
+    <div class="column l1">
+      <a class="node section" id="n-products" data-parent="n-home" href="pages.html#products">
+        <div class="slug">/products</div>
+        <div class="name">Products <span class="count">× 6</span></div>
+      </a>
+      <a class="node section" id="n-industries" data-parent="n-home" href="pages.html#industries">
+        <div class="slug">/industries</div>
+        <div class="name">Industries <span class="count">× 4</span></div>
+      </a>
+      <a class="node section" id="n-solutions" data-parent="n-home" href="pages.html#solutions">
+        <div class="slug">/solutions</div>
+        <div class="name">Solutions</div>
+        <div class="desc">Bundled offerings</div>
+      </a>
+      <a class="node section" id="n-company" data-parent="n-home" href="pages.html#company">
+        <div class="slug">/company</div>
+        <div class="name">Company <span class="count">× 4</span></div>
+      </a>
+      <a class="node section" id="n-insights" data-parent="n-home" href="pages.html#insights">
+        <div class="slug">/insights</div>
+        <div class="name">Insights</div>
+        <div class="desc">Blog + case studies (CMS)</div>
+      </a>
+      <a class="node section" id="n-contact" data-parent="n-home" href="pages.html#contact">
+        <div class="slug">/contact</div>
+        <div class="name">Contact</div>
+        <div class="desc">Primary CTA destination</div>
+      </a>
+    </div>
+
+    <!-- Column 2: Sub-pages, grouped -->
+    <div class="column l2">
+
+      <div class="group products">
+        <span class="group-label">Products</span>
+        <a class="node" id="n-lever" data-parent="n-products" href="pages.html#virtus-lever">
+          <div class="slug">/products/virtus-lever</div>
+          <div class="name">Virtus Lever</div>
+          <div class="desc">AI email productivity assistant</div>
+          <span class="tag">AI · Productivity</span>
+        </a>
+        <a class="node" id="n-fleet" data-parent="n-products" href="pages.html#virtus-fleet">
+          <div class="slug">/products/virtus-fleet</div>
+          <div class="name">Virtus Fleet</div>
+          <div class="desc">ERP for transport & logistics operators</div>
+          <span class="tag">ERP · Vertical</span>
+        </a>
+        <a class="node" id="n-factory" data-parent="n-products" href="pages.html#virtus-ai-factory">
+          <div class="slug">/products/virtus-ai-factory</div>
+          <div class="name">Virtus AI Factory</div>
+          <div class="desc">AI assistant for MES/MOM dev & ops (Delmia Apriso, Siemens Opcenter, ...)</div>
+          <span class="tag">AI · Manufacturing</span>
+        </a>
+        <a class="node" id="n-agents" data-parent="n-products" href="pages.html#virtus-agents">
+          <div class="slug">/products/virtus-agents</div>
+          <div class="name">Virtus Agents</div>
+          <div class="desc">Low-code AI agent & automation builder</div>
+          <span class="tag">AI · Platform</span>
+        </a>
+        <a class="node" id="n-ged" data-parent="n-products" href="pages.html#virtus-ged">
+          <div class="slug">/products/virtus-ged</div>
+          <div class="name">Virtus GED</div>
+          <div class="desc">Electronic Document Management</div>
+          <span class="tag">EDM / GED</span>
+        </a>
+        <a class="node" id="n-erp" data-parent="n-products" href="pages.html#virtus-erp">
+          <div class="slug">/products/virtus-erp</div>
+          <div class="name">Virtus ERP</div>
+          <div class="desc">General-purpose ERP for SMB & mid-market</div>
+          <span class="tag">ERP · Horizontal</span>
+        </a>
+      </div>
+
+      <div class="group industries">
+        <span class="group-label">Industries</span>
+        <a class="node" data-parent="n-industries" href="pages.html#ind-manufacturing">
+          <div class="slug">/industries/manufacturing</div>
+          <div class="name">Manufacturing (MES/MOM)</div>
+          <div class="desc">AI Factory · ERP · GED · Agents</div>
+        </a>
+        <a class="node" data-parent="n-industries" href="pages.html#ind-transport">
+          <div class="slug">/industries/transport-logistics</div>
+          <div class="name">Transport & Logistics</div>
+          <div class="desc">Fleet · ERP · GED</div>
+        </a>
+        <a class="node" data-parent="n-industries" href="pages.html#ind-services">
+          <div class="slug">/industries/professional-services</div>
+          <div class="name">Professional Services / Office</div>
+          <div class="desc">Lever · Agents · GED · ERP</div>
+        </a>
+        <a class="node" data-parent="n-industries" href="pages.html#ind-cross">
+          <div class="slug">/industries/cross-industry</div>
+          <div class="name">Cross-industry</div>
+          <div class="desc">ERP · GED · Lever · Agents</div>
+        </a>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Company</span>
+        <a class="node" data-parent="n-company" href="pages.html#about">
+          <div class="slug">/company/about</div>
+          <div class="name">About</div>
+          <div class="desc">Story · mission · why "Virtus Operandi"</div>
+        </a>
+        <a class="node" data-parent="n-company" href="pages.html#team">
+          <div class="slug">/company/team</div>
+          <div class="name">Team</div>
+          <div class="desc">Founders + key people</div>
+        </a>
+        <a class="node" data-parent="n-company" href="pages.html#careers">
+          <div class="slug">/company/careers</div>
+          <div class="name">Careers</div>
+          <div class="desc">Open roles</div>
+        </a>
+        <a class="node" data-parent="n-company" href="pages.html#partners">
+          <div class="slug">/company/partners</div>
+          <div class="name">Partners</div>
+          <div class="desc">Integrators · tech partners</div>
+        </a>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Insights</span>
+        <a class="node" data-parent="n-insights" href="pages.html#insights-index">
+          <div class="slug">/insights</div>
+          <div class="name">Index (filterable)</div>
+        </a>
+        <a class="node" data-parent="n-insights" href="pages.html#insights-article">
+          <div class="slug">/insights/&lt;slug&gt;</div>
+          <div class="name">Article detail</div>
+        </a>
+        <a class="node" data-parent="n-insights" href="pages.html#case-studies">
+          <div class="slug">/insights/case-studies</div>
+          <div class="name">Case studies</div>
+        </a>
+      </div>
+
+    </div>
+
+    <svg class="connectors" id="connectors" preserveAspectRatio="none"></svg>
+  </div>
+</div>
+
+<div class="utility">
+  <h3>Utility & legal</h3>
+  <div class="utility-grid">
+    <a class="utility-node" href="pages.html#privacy">Privacy<span class="slug">/privacy</span></a>
+    <a class="utility-node" href="pages.html#terms">Terms<span class="slug">/terms</span></a>
+    <a class="utility-node" href="pages.html#cookies">Cookies<span class="slug">/cookies</span></a>
+    <a class="utility-node" href="pages.html#security">Security<span class="slug">/security</span></a>
+    <a class="utility-node" href="#">Sitemap XML<span class="slug">/sitemap.xml</span></a>
+    <a class="utility-node" href="#">Robots<span class="slug">/robots.txt</span></a>
+    <a class="utility-node" href="pages.html#not-found">404<span class="slug">/404</span></a>
+  </div>
+</div>
+
+<footer>
+  © 2026 Virtus Operandi · sitemap v0.1 · <a href="design.html">design system</a> · <a href="pages.html">page previews</a>
+</footer>
+
+<script>
+  // Draw curved connectors between parent and child nodes
+  function drawConnectors() {
+    const svg = document.getElementById('connectors');
+    const map = document.getElementById('map');
+    const mapRect = map.getBoundingClientRect();
+    svg.setAttribute('width', mapRect.width);
+    svg.setAttribute('height', mapRect.height);
+    svg.setAttribute('viewBox', `0 0 ${mapRect.width} ${mapRect.height}`);
+    svg.innerHTML = '';
+
+    const nodes = document.querySelectorAll('[data-parent]');
+    nodes.forEach(child => {
+      const parentId = child.dataset.parent;
+      const parent = document.getElementById(parentId);
+      if (!parent) return;
+
+      const pRect = parent.getBoundingClientRect();
+      const cRect = child.getBoundingClientRect();
+
+      const x1 = pRect.right - mapRect.left;
+      const y1 = pRect.top + pRect.height / 2 - mapRect.top;
+      const x2 = cRect.left - mapRect.left;
+      const y2 = cRect.top + cRect.height / 2 - mapRect.top;
+
+      const midX = x1 + (x2 - x1) * 0.5;
+      const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      // color hints
+      if (parentId === 'n-home') path.classList.add('from-home');
+      if (parentId === 'n-products') path.classList.add('products');
+      if (parentId === 'n-industries') path.classList.add('industries');
+      path.dataset.from = parentId;
+      path.dataset.to = child.id || '';
+      svg.appendChild(path);
+    });
+  }
+
+  // Highlight connector on node hover
+  function bindHover() {
+    document.querySelectorAll('.node, [data-parent]').forEach(n => {
+      n.addEventListener('mouseenter', () => {
+        const id = n.id;
+        document.querySelectorAll('#connectors path').forEach(p => {
+          if (p.dataset.from === id || p.dataset.to === id) p.classList.add('highlight');
+        });
+      });
+      n.addEventListener('mouseleave', () => {
+        document.querySelectorAll('#connectors path.highlight').forEach(p => p.classList.remove('highlight'));
+      });
+    });
+  }
+
+  window.addEventListener('load', () => { drawConnectors(); bindHover(); });
+  window.addEventListener('resize', drawConnectors);
+  // Recompute after fonts load (positions shift slightly)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(drawConnectors);
+  }
+</script>
+
+</body>
+</html>

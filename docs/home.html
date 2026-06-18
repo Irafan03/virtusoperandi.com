@@ -1,0 +1,1572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Virtus Operandi — An operating layer for real work</title>
+<meta name="description" content="Six software products for the people who actually run manufacturing, transport, and back-office operations. One catalogue. One way of working." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #202020;
+    --ink-2: #2A2A2A;
+    --ink-3: #3A3A3A;
+    --paper: #FFFFFF;
+    --paper-2: #F7F7F7;
+    --page-bg: #F5F5FC;
+    --border: #ECECEC;
+    --border-soft: #F1F1F1;
+    --text: #202020;
+    --muted: #6B6B6B;
+    --muted-2: #9A9A9A;
+    --blue: #0066FF;
+    --blue-hover: #0044A4;
+    --blue-deep: #002060;
+
+    --display: 'Montserrat', 'Open Sans', Helvetica, Arial, sans-serif;
+    --body:    'Open Sans', Helvetica, Arial, sans-serif;
+    --mono:    'JetBrains Mono', "Andale Mono", Courier, "Courier New", monospace;
+
+    --nav-h: 76px;
+    --max: 1280px;
+    --gutter: clamp(20px, 4vw, 40px);
+    --r-card: 36px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  /* Heading specs lifted from cleveroad.com (verified computed CSS):
+       Hero / display text: Montserrat 600, -2px tracking
+       Section H2:           Montserrat 700, -2px tracking
+       Card title H3:        Montserrat 600, -0.5px tracking
+     Letter-spacing is absolute px (not em) to match cleveroad exactly. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--display);
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+  }
+
+  .skip { position: absolute; left: -9999px; top: 8px; background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 4px; font-size: 14px; z-index: 1000; }
+  .skip:focus { left: 16px; }
+
+  .container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* ═══════════════════════════════════════════════════════════
+     META STRIP (dark thin)
+     ═══════════════════════════════════════════════════════════ */
+  .meta {
+    background: var(--ink);
+    color: rgba(255,255,255,0.7);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .meta-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 9px var(--gutter);
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  }
+  .meta-left { display: inline-flex; align-items: center; gap: 10px; }
+  .meta-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,102,255,0.20);
+    animation: dotpulse 2.6s ease-in-out infinite;
+  }
+  @keyframes dotpulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(0,102,255,0.20); }
+    50%      { box-shadow: 0 0 0 6px rgba(0,102,255,0.08); }
+  }
+  .meta-right { display: flex; gap: 18px; }
+  .meta a { color: inherit; transition: color .15s ease; }
+  .meta a:hover { color: #fff; }
+  @media (max-width: 720px) { .meta-right { display: none; } }
+
+  /* ═══════════════════════════════════════════════════════════
+     MAIN NAV
+     ═══════════════════════════════════════════════════════════ */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .25s ease, background .25s ease;
+  }
+  .nav.scrolled { border-bottom-color: var(--border); background: rgba(255,255,255,0.94); }
+  .nav-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: var(--nav-h);
+    display: flex; align-items: center; gap: 28px;
+  }
+
+  .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+  .brand-mark {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--blue);
+    transition: transform .35s cubic-bezier(.3,1,.3,1);
+  }
+  .brand:hover .brand-mark { transform: rotate(135deg) scale(1.15); }
+  .brand-word .lo { font-weight: 400; color: var(--muted); }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-left: 6px;
+    padding: 3px 8px 3px 7px;
+    background: var(--blue); color: #fff;
+    font-family: var(--mono); font-weight: 500; font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border-radius: 4px;
+    transform: translateY(-1px);
+  }
+  .brand-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #fff; opacity: 0.95; }
+
+  .nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+  .nav-link {
+    padding: 10px 14px;
+    font-size: 14.5px; font-weight: 500;
+    color: var(--ink); border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .15s ease, background .15s ease;
+  }
+  .nav-link:hover { background: var(--paper-2); color: var(--blue); }
+  .nav-link .chev {
+    width: 8px; height: 8px;
+    border-right: 1.4px solid currentColor;
+    border-bottom: 1.4px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform .25s ease;
+    opacity: 0.55;
+  }
+  .has-menu { position: relative; }
+  .has-menu[aria-expanded="true"] > .nav-link { color: var(--blue); background: var(--paper-2); }
+  .has-menu[aria-expanded="true"] .chev { transform: rotate(-135deg) translate(-1px, -1px); }
+
+  .nav-cta {
+    margin-left: 10px;
+    padding: 12px 22px;
+    background: var(--blue); color: #fff !important;
+    font-size: 14.5px; font-weight: 600;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .nav-cta:hover { background: var(--blue-hover); transform: translateY(-1px); box-shadow: 0 10px 22px -8px rgba(0,102,255,0.45); }
+  .nav-cta:active { background: var(--blue-deep); transform: translateY(0); }
+
+  /* dropdown */
+  .menu-panel {
+    position: absolute; top: calc(100% + 8px); left: 0;
+    min-width: 460px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px -16px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.06);
+    padding: 12px;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  .has-menu[aria-expanded="true"] .menu-panel { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+  .menu-panel::before {
+    content: ""; position: absolute; top: -6px; left: 24px;
+    width: 10px; height: 10px; background: #fff;
+    border-left: 1px solid var(--border); border-top: 1px solid var(--border);
+    transform: rotate(45deg);
+  }
+  .menu-head {
+    padding: 8px 12px 10px; margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .menu-head b { color: var(--ink); font-weight: 600; }
+  .menu-row {
+    display: grid; grid-template-columns: 1.4fr 2fr;
+    gap: 14px; padding: 12px 14px; border-radius: 10px;
+    transition: background .15s ease; align-items: center;
+  }
+  .menu-row:hover { background: var(--paper-2); }
+  .menu-row:hover .menu-name { color: var(--blue); }
+  .menu-name { font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; transition: color .15s ease; }
+  .menu-name .tag {
+    font-family: var(--mono); font-size: 9.5px; padding: 2px 6px;
+    border-radius: 4px; background: var(--paper-2); color: var(--muted);
+    border: 1px solid var(--border); font-weight: 500; letter-spacing: 0.04em;
+  }
+  .menu-desc { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+  /* hamburger */
+  .hamburger { display: none; width: 40px; height: 40px; margin-left: auto; align-items: center; justify-content: center; border-radius: 8px; transition: background .15s ease; }
+  .hamburger:hover { background: var(--paper-2); }
+  .hamburger .bars { width: 18px; height: 12px; position: relative; }
+  .hamburger .bars::before, .hamburger .bars::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 1.6px; background: var(--ink); border-radius: 2px;
+    transition: transform .25s ease, top .25s ease;
+  }
+  .hamburger .bars::before { top: 1px; }
+  .hamburger .bars::after  { top: 10px; }
+  .nav.menu-open .hamburger .bars::before { top: 5.5px; transform: rotate(45deg); }
+  .nav.menu-open .hamburger .bars::after  { top: 5.5px; transform: rotate(-45deg); }
+
+  .mobile-menu {
+    position: fixed; inset: calc(var(--nav-h) + 36px) 0 0 0;
+    background: #fff; z-index: 90;
+    transform: translateY(-100%);
+    transition: transform .35s cubic-bezier(.76,0,.24,1);
+    overflow-y: auto;
+    padding: 24px var(--gutter) 80px;
+    visibility: hidden;
+  }
+  .nav.menu-open + .mobile-menu { transform: translateY(0); visibility: visible; }
+  .m-sec { padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .m-sec:last-of-type { border-bottom: 0; }
+  .m-sec > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 19px; }
+  .m-sec > summary::-webkit-details-marker { display: none; }
+  .m-sec .plus { width: 14px; height: 14px; position: relative; transition: transform .3s ease; }
+  .m-sec .plus::before, .m-sec .plus::after { content: ""; position: absolute; background: var(--ink); }
+  .m-sec .plus::before { left: 0; right: 0; top: 6px; height: 1.5px; }
+  .m-sec .plus::after { top: 0; bottom: 0; left: 6px; width: 1.5px; transition: transform .3s ease; }
+  .m-sec[open] .plus::after { transform: scaleY(0); }
+  .m-sec .items { display: flex; flex-direction: column; margin-top: 18px; }
+  .m-sec .items a { display: block; padding: 12px 0; color: var(--muted); font-size: 16px; border-top: 1px dashed var(--border); }
+  .m-sec .items a:first-child { border-top: 0; }
+  .m-sec .items a b { display: block; color: var(--text); font-weight: 600; font-size: 16px; margin-bottom: 2px; }
+  .m-cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px; padding: 14px 22px; background: var(--blue); color: #fff !important; font-weight: 600; border-radius: 999px; width: 100%; }
+
+  @media (max-width: 1020px) {
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: inline-flex; }
+  }
+  @media (min-width: 1021px) { .mobile-menu { display: none; } }
+
+  /* ═══════════════════════════════════════════════════════════
+     HERO — cleveroad atmospheric bg scoped here, not page-wide
+     ═══════════════════════════════════════════════════════════ */
+  .hero {
+    position: relative;
+    padding: clamp(48px, 8vw, 120px) var(--gutter) clamp(64px, 9vw, 140px);
+    overflow: hidden;
+    background:
+      radial-gradient(75.99% 262.53% at 95.73% 108.2%, rgba(0, 102, 255, 0.2) 0px, rgba(0, 102, 255, 0) 100%),
+      radial-gradient(30.61% 75.99% at 3.39% 9.41%, rgb(230, 244, 237) 0px, rgba(255, 255, 255, 0) 100%),
+      var(--page-bg);
+  }
+  /* sandy white grain overlay scoped to hero */
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+    opacity: 0.55;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 320px 320px;
+  }
+  .hero-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  @media (max-width: 1020px) { .hero-inner { grid-template-columns: 1fr; gap: 64px; } }
+
+  .edge-mark {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: left top;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted-2);
+    white-space: nowrap; pointer-events: none;
+    z-index: 3;
+  }
+  @media (max-width: 1240px) { .edge-mark { display: none; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 13px 6px 10px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.95);
+    border-radius: 999px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+    backdrop-filter: blur(6px);
+  }
+  .eyebrow .live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,102,255,0.20);
+    animation: dotpulse 2.6s ease-in-out infinite;
+  }
+  .eyebrow b { color: var(--ink); font-weight: 600; }
+
+  /* Hero headline — Montserrat 600, 58/66 desktop, -2px tracking (cleveroad spec) */
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(36px, 4.8vw, 58px);
+    line-height: 1.14;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    max-width: 16ch;
+    color: var(--ink);
+  }
+  .hero h1 .accent { color: var(--blue); }
+  @media (max-width: 560px) {
+    .hero h1 { letter-spacing: -1px; }
+  }
+
+  .lede {
+    font-size: clamp(17px, 1.4vw, 19px);
+    color: var(--muted);
+    max-width: 48ch;
+    line-height: 1.55;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .btn-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 17px 30px;
+    background: var(--blue); color: #fff;
+    font-weight: 600; font-size: 16px;
+    border-radius: 999px;
+    box-shadow: 0 12px 26px -10px rgba(0,102,255,0.45);
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-pill:hover { background: var(--blue-hover); transform: translateY(-2px); box-shadow: 0 18px 36px -10px rgba(0,102,255,0.5); }
+  .btn-pill:active { background: var(--blue-deep); transform: translateY(0); }
+  .btn-pill .arr { display: inline-block; transition: transform .25s cubic-bezier(.76,0,.24,1); }
+  .btn-pill:hover .arr { transform: translateX(4px); }
+
+  .cta-foot {
+    display: block; margin-top: 18px;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .cta-foot a {
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .cta-foot a:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ═══════════════════════════════════════════════════════════
+     HERO WIDGET (glass card with toggleable product rows)
+     ═══════════════════════════════════════════════════════════ */
+  .visual { position: relative; display: flex; justify-content: center; }
+  .visual::before {
+    content: "";
+    position: absolute; inset: 5% 8%;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(0,102,255,0.22), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgba(0,102,255,0.12), transparent 55%);
+    filter: blur(50px);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  .widget {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 440px;
+    background: rgba(255,255,255,0.74);
+    backdrop-filter: saturate(180%) blur(22px);
+    -webkit-backdrop-filter: saturate(180%) blur(22px);
+    border: 1px solid rgba(255,255,255,0.95);
+    border-radius: var(--r-card);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.85) inset,
+      0 34px 70px -22px rgba(32,32,32,0.22),
+      0 14px 28px -14px rgba(32,32,32,0.09),
+      0 0 0 1px rgba(0,102,255,0.05);
+    padding: 18px 18px 20px;
+    transform: rotateY(-1.5deg) rotateX(1deg);
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.3,1,.3,1);
+  }
+  .widget:hover { transform: rotateY(0) rotateX(0) translateY(-4px); }
+
+  .w-head {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 4px 4px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 10px;
+  }
+  .w-time {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    color: var(--muted); padding: 4px 9px;
+    background: rgba(247,247,247,0.85);
+    border: 1px solid var(--border); border-radius: 6px;
+  }
+  .w-title {
+    font-weight: 600; font-size: 15px;
+    display: inline-flex; align-items: center; gap: 9px;
+    color: var(--ink);
+  }
+  .w-title::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue); box-shadow: 0 0 0 3px rgba(0,102,255,0.15);
+  }
+  .w-cog {
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 7px; color: var(--muted);
+    transition: color .15s ease, background .15s ease;
+  }
+  .w-cog:hover { background: var(--paper-2); color: var(--ink); }
+  .w-cog svg { width: 15px; height: 15px; stroke-width: 1.5; }
+
+  .w-row {
+    display: grid; grid-template-columns: 34px 1fr 44px;
+    gap: 12px; align-items: center;
+    padding: 11px 10px; border-radius: 12px;
+    cursor: pointer; transition: background .15s ease;
+  }
+  .w-row:hover { background: rgba(0,102,255,0.04); }
+  .w-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--paper-2); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted); transition: all .2s ease;
+  }
+  .w-icon svg { width: 15px; height: 15px; stroke-width: 1.6; }
+  .w-row.on .w-icon { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  .w-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .w-name { font-weight: 600; font-size: 13.5px; color: var(--ink); line-height: 1.2; }
+  .w-desc { font-size: 11.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .w-toggle {
+    width: 38px; height: 22px; border-radius: 999px;
+    background: #D5D5D5; position: relative;
+    transition: background .25s ease; flex-shrink: 0;
+  }
+  .w-toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform .25s cubic-bezier(.76,0,.24,1);
+  }
+  .w-row.on .w-toggle { background: var(--blue); }
+  .w-row.on .w-toggle::after { transform: translateX(16px); }
+
+  .w-foot {
+    margin-top: 10px;
+    padding: 13px 4px 4px;
+    border-top: 1px solid var(--border-soft);
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .w-foot .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+  .w-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500; color: var(--ink);
+    transition: all .15s ease;
+  }
+  .w-pill .lg {
+    width: 14px; height: 14px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .w-pill .lg img, .w-pill .lg svg { width: 100%; height: 100%; object-fit: contain; }
+  .w-pill:hover { border-color: var(--blue); color: var(--blue); }
+
+  .chip {
+    position: absolute; z-index: 3;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 13px 7px 11px;
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink);
+    box-shadow: 0 12px 28px -12px rgba(32,32,32,0.20);
+    display: inline-flex; align-items: center; gap: 9px;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .chip::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,102,255,0.18);
+  }
+  .chip.chip-tr { top: -12px; right: 4%; animation-delay: -2s; }
+  .chip.chip-bl { bottom: -16px; left: 0%; animation-delay: -4s; }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-7px); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     TRUSTED-BY STRIP
+     ═══════════════════════════════════════════════════════════ */
+  .trust {
+    background: var(--paper);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px var(--gutter);
+  }
+  .trust-inner {
+    max-width: var(--max); margin: 0 auto;
+    display: flex; align-items: center; gap: 40px;
+    flex-wrap: wrap;
+  }
+  .trust-label {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .trust-label::after { content: ""; width: 32px; height: 1px; background: var(--border); }
+  .trust-row {
+    display: flex; flex-wrap: wrap; gap: 12px 24px;
+    flex: 1; align-items: center;
+  }
+  .trust-logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--ink); font-weight: 600; font-size: 14.5px;
+    opacity: 0.55; transition: opacity .2s ease;
+  }
+  .trust-logo:hover { opacity: 1; }
+  .trust-logo .logo {
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .trust-logo .logo img,
+  .trust-logo .logo svg { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ═══════════════════════════════════════════════════════════
+     SHARED SECTION SCAFFOLDING
+     ═══════════════════════════════════════════════════════════ */
+  section.s { padding: clamp(72px, 9vw, 130px) var(--gutter); }
+  .s-head { max-width: var(--max); margin: 0 auto clamp(40px, 5vw, 64px); }
+  .s-head .label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 18px;
+  }
+  .s-head .label::before { content: ""; width: 18px; height: 1.5px; background: var(--blue); }
+  /* Section H2 — Montserrat 700, 48/58 desktop, -2px tracking (cleveroad spec) */
+  .s-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.21;
+    letter-spacing: -2px;
+    max-width: 18ch;
+    margin-bottom: 18px;
+  }
+  .s-head h2 .accent { color: var(--blue); }
+  @media (max-width: 560px) {
+    .s-head h2 { letter-spacing: -1px; }
+  }
+  .s-head .sub {
+    font-size: 18px; color: var(--muted);
+    max-width: 60ch; line-height: 1.55;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     PRODUCTS GRID
+     ═══════════════════════════════════════════════════════════ */
+  .products .grid {
+    max-width: var(--max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 980px) { .products .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .products .grid { grid-template-columns: 1fr; } }
+
+  .pcard {
+    --c: #0066FF;
+    --c-bg-from: #E6F0FF;
+    --c-bg-to: #F5F8FF;
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .pcard:hover {
+    border-color: var(--c);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px -22px rgba(32,32,32,0.18);
+  }
+  .pcard .illus {
+    aspect-ratio: 16/10;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--c-bg-from), var(--c-bg-to));
+  }
+  .pcard .illus .bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pcard .illus .bg path,
+  .pcard .illus .bg circle,
+  .pcard .illus .bg rect,
+  .pcard .illus .bg line { color: var(--c); }
+  .pcard .logo {
+    position: absolute;
+    bottom: 16px; left: 18px;
+    width: 56px; height: 56px;
+    background: var(--c);
+    border-radius: 14px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    box-shadow: 0 12px 28px -10px rgba(0,0,0,0.30), 0 0 0 4px rgba(255,255,255,0.6);
+    transition: transform .35s cubic-bezier(.3,1,.3,1);
+  }
+  .pcard:hover .logo { transform: rotate(-6deg) scale(1.05); }
+  .pcard .logo svg { width: 30px; height: 30px; }
+
+  .pcard .body {
+    padding: 24px 28px 26px;
+    display: flex; flex-direction: column;
+    gap: 12px; flex: 1;
+  }
+  .pcard .cat {
+    align-self: flex-start;
+    font-family: var(--mono); font-size: 10px;
+    padding: 3px 9px; border-radius: 999px;
+    background: var(--paper-2); color: var(--c);
+    border: 1px solid var(--border);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+  }
+  .pcard h3 { font-family: var(--display); font-size: 22px; font-weight: 600; line-height: 1.27; letter-spacing: -0.5px; }
+  .pcard p { color: var(--muted); font-size: 14.5px; line-height: 1.55; flex: 1; }
+  .pcard .more {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--ink); font-weight: 600; font-size: 14px;
+    padding-top: 4px;
+    transition: color .15s ease, gap .2s ease;
+  }
+  .pcard:hover .more { color: var(--c); gap: 12px; }
+  .pcard .more .arr { transition: transform .2s ease; }
+  .pcard:hover .more .arr { transform: translateX(3px); }
+
+  /* per-product accent — bg uses faint tint (matches prior thumbnail style) */
+  .pcard.p-lever   { --c: #0066FF; --c-bg-from: rgba(0,102,255,0.10);  --c-bg-to: rgba(0,102,255,0.02); }
+  .pcard.p-fleet   { --c: #00BFA5; --c-bg-from: rgba(0,191,165,0.10);  --c-bg-to: rgba(0,191,165,0.02); }
+  .pcard.p-factory { --c: #FF6B35; --c-bg-from: rgba(255,107,53,0.10); --c-bg-to: rgba(255,107,53,0.02); }
+  .pcard.p-agents  { --c: #8B5CF6; --c-bg-from: rgba(139,92,246,0.10); --c-bg-to: rgba(139,92,246,0.02); }
+  .pcard.p-ged     { --c: #F59E0B; --c-bg-from: rgba(245,158,11,0.10); --c-bg-to: rgba(245,158,11,0.02); }
+  .pcard.p-erp     { --c: #1E3A8A; --c-bg-from: rgba(30,58,138,0.10);  --c-bg-to: rgba(30,58,138,0.02); }
+  .pcard .illus    { background: linear-gradient(135deg, var(--c-bg-from), var(--c-bg-to)), var(--paper-2); }
+
+  /* ═══════════════════════════════════════════════════════════
+     INDUSTRIES — dark band
+     ═══════════════════════════════════════════════════════════ */
+  .industries {
+    background: var(--ink);
+    color: rgba(255,255,255,0.85);
+  }
+  .industries .s-head h2 { color: #fff; }
+  .industries .s-head .label { color: #66A3FF; }
+  .industries .s-head .label::before { background: #66A3FF; }
+  .industries .s-head .sub { color: rgba(255,255,255,0.65); }
+
+  .industries .grid {
+    max-width: var(--max); margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 980px) { .industries .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .industries .grid { grid-template-columns: 1fr; } }
+
+  .icard {
+    position: relative;
+    background: var(--ink-2);
+    border: 1px solid var(--ink-3);
+    border-radius: 22px;
+    display: flex; flex-direction: column;
+    color: #fff;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease;
+    overflow: hidden;
+  }
+  .icard:hover { border-color: var(--blue); transform: translateY(-4px); }
+  .icard .pic {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #1a1a1a;
+  }
+  .icard .pic img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+    filter: saturate(0.85) contrast(1.05);
+    transition: transform .6s cubic-bezier(.3,1,.3,1), filter .35s ease;
+  }
+  .icard:hover .pic img { transform: scale(1.04); filter: saturate(1) contrast(1.05); }
+  .icard .pic::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none;
+  }
+  .icard .body {
+    padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+  .icard .ind-no {
+    font-family: var(--mono); font-size: 10.5px;
+    color: rgba(255,255,255,0.4); letter-spacing: 0.10em;
+  }
+  .icard h3 { font-family: var(--display); color: #fff; font-size: 22px; font-weight: 600; line-height: 1.27; letter-spacing: -0.5px; }
+  .icard p { color: rgba(255,255,255,0.6); font-size: 13.5px; line-height: 1.55; flex: 1; }
+  .icard .stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .icard .stack span {
+    font-family: var(--mono); font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 999px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.04em;
+  }
+  .icard .arr-corner {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,0.30);
+    background: rgba(32,32,32,0.55);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    transition: all .2s ease;
+    z-index: 2;
+  }
+  .icard:hover .arr-corner { background: var(--blue); border-color: var(--blue); transform: rotate(-45deg); }
+
+  /* ═══════════════════════════════════════════════════════════
+     HOW WE OPERATE — 3 pillars
+     ═══════════════════════════════════════════════════════════ */
+  .how .grid {
+    max-width: var(--max); margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 880px) { .how .grid { grid-template-columns: 1fr; } }
+
+  .pillar {
+    padding: 32px 28px;
+    border-top: 1px solid var(--ink);
+    position: relative;
+  }
+  .pillar .num {
+    font-family: var(--mono); font-size: 13px;
+    color: var(--blue); font-weight: 600;
+    margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 10px;
+    letter-spacing: 0.08em;
+  }
+  .pillar .num::before { content: ""; width: 8px; height: 8px; background: var(--blue); }
+  .pillar h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin-bottom: 12px; line-height: 1.2; letter-spacing: -1px; }
+  .pillar h3 em { font-style: normal; color: var(--blue); }
+  .pillar p { color: var(--muted); font-size: 15.5px; line-height: 1.6; }
+
+  /* ═══════════════════════════════════════════════════════════
+     CLOSING CTA
+     ═══════════════════════════════════════════════════════════ */
+  .closing { padding: var(--gutter); padding-bottom: 0; }
+  .closing-card {
+    max-width: var(--max);
+    margin: 0 auto;
+    background: var(--ink);
+    color: #fff;
+    border-radius: var(--r-card);
+    padding: clamp(56px, 8vw, 100px) clamp(28px, 5vw, 80px);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 880px) { .closing-card { grid-template-columns: 1fr; gap: 32px; } }
+
+  .closing-card::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(60% 80% at 80% 50%, rgba(0,102,255,0.30), transparent 65%),
+      radial-gradient(40% 60% at 10% 90%, rgba(0,102,255,0.15), transparent 65%);
+    pointer-events: none;
+  }
+  .closing-card > * { position: relative; z-index: 1; }
+
+  .closing-card h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    color: #fff;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.21;
+    letter-spacing: -2px;
+    max-width: 16ch;
+    margin-bottom: 18px;
+  }
+  .closing-card h2 .accent { color: #66A3FF; }
+  @media (max-width: 560px) { .closing-card h2 { letter-spacing: -1px; } }
+  .closing-card .lede { color: rgba(255,255,255,0.7); margin-bottom: 0; max-width: 50ch; }
+  .closing-card .actions {
+    display: flex; flex-direction: column; gap: 16px;
+    align-items: flex-start; justify-self: end;
+  }
+  @media (max-width: 880px) { .closing-card .actions { justify-self: start; } }
+  .closing-card .actions .btn-pill { background: #fff; color: var(--ink); }
+  .closing-card .actions .btn-pill:hover { background: var(--blue); color: #fff; }
+  .closing-card .actions .sec-link {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px; font-family: var(--mono);
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+    padding-bottom: 2px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .closing-card .actions .sec-link:hover { color: #fff; border-color: #fff; }
+
+  /* ═══════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════ */
+  footer {
+    background: var(--paper);
+    padding: clamp(48px, 6vw, 80px) var(--gutter) 32px;
+  }
+  .foot-inner {
+    max-width: var(--max); margin: 0 auto;
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(4, 1fr);
+    gap: 40px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 880px) {
+    .foot-top { grid-template-columns: 1fr 1fr; }
+    .foot-top .brand-col { grid-column: 1 / -1; }
+  }
+
+  .brand-col p { color: var(--muted); margin-top: 14px; max-width: 38ch; font-size: 14.5px; line-height: 1.6; }
+  .foot-col h4 {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 18px; font-weight: 600;
+  }
+  .foot-col a {
+    display: block; padding: 5px 0;
+    color: var(--ink); font-size: 14.5px;
+    transition: color .15s ease;
+  }
+  .foot-col a:hover { color: var(--blue); }
+  .foot-bottom {
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 12.5px; color: var(--muted);
+    font-family: var(--mono); letter-spacing: 0.06em;
+  }
+  .foot-bottom a { color: var(--muted); transition: color .15s ease; margin-right: 16px; }
+  .foot-bottom a:hover { color: var(--ink); }
+
+  /* ═══════════════════════════════════════════════════════════
+     REVEAL ANIMATIONS
+     ═══════════════════════════════════════════════════════════ */
+  .reveal { opacity: 0; transform: translateY(14px); }
+  .reveal.in {
+    opacity: 1; transform: translateY(0);
+    transition: opacity .8s cubic-bezier(.3,1,.3,1), transform .8s cubic-bezier(.3,1,.3,1);
+  }
+  .d1 { transition-delay: .05s; }
+  .d2 { transition-delay: .18s; }
+  .d3 { transition-delay: .32s; }
+  .d4 { transition-delay: .46s; }
+  .d5 { transition-delay: .58s; }
+
+  .w-row.reveal { opacity: 0; transform: translateX(10px); }
+  .w-row.reveal.in { opacity: 1; transform: translateX(0); transition: opacity .5s ease, transform .5s ease; }
+  .r1 { transition-delay: .50s; }
+  .r2 { transition-delay: .60s; }
+  .r3 { transition-delay: .70s; }
+  .r4 { transition-delay: .80s; }
+  .r5 { transition-delay: .90s; }
+  .r6 { transition-delay: 1.00s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0ms !important; transition-duration: .001ms !important; }
+    .reveal, .w-row.reveal { opacity: 1; transform: none; }
+  }
+
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ═══ META STRIP ═══════════════════════════════════════════ -->
+<div class="meta" role="region" aria-label="Status">
+  <div class="meta-inner">
+    <span class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Catalogue · 2026 · v0.3 preview</span>
+  </div>
+</div>
+
+<!-- ═══ NAV ═════════════════════════════════════════════════ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="home.html" class="brand" aria-label="Virtus Operandi home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <div class="has-menu" aria-expanded="false">
+        <button class="nav-link has-menu-trigger" aria-haspopup="true" aria-expanded="false">
+          Products<span class="chev" aria-hidden="true"></span>
+        </button>
+        <div class="menu-panel" role="menu">
+          <div class="menu-head"><b>Catalogue</b><span>6 products</span></div>
+          <a class="menu-row" href="products/virtus-lever.html"><span class="menu-name">Virtus Lever <span class="tag">AI</span></span><span class="menu-desc">AI assistant that drafts, triages, and acts on your inbox.</span></a>
+          <a class="menu-row" href="products/virtus-fleet.html"><span class="menu-name">Virtus Fleet <span class="tag">ERP</span></span><span class="menu-desc">ERP built for transport and logistics operators.</span></a>
+          <a class="menu-row" href="products/virtus-ai-factory.html"><span class="menu-name">Virtus AI Factory <span class="tag">MES/MOM</span></span><span class="menu-desc">AI co-pilot for Delmia Apriso, Siemens Opcenter, and other MES.</span></a>
+          <a class="menu-row" href="products/virtus-agents.html"><span class="menu-name">Virtus Agents <span class="tag">PLATFORM</span></span><span class="menu-desc">Low-code builder for AI agents that automate workflows.</span></a>
+          <a class="menu-row" href="products/virtus-ged.html"><span class="menu-name">Virtus GED <span class="tag">EDM</span></span><span class="menu-desc">Electronic document management — fast search, smart classification.</span></a>
+          <a class="menu-row" href="products/virtus-erp.html"><span class="menu-name">Virtus ERP <span class="tag">ERP</span></span><span class="menu-desc">General-purpose ERP for SMB and mid-market companies.</span></a>
+        </div>
+      </div>
+
+      <div class="has-menu" aria-expanded="false">
+        <button class="nav-link has-menu-trigger" aria-haspopup="true" aria-expanded="false">
+          Industries <span class="chev" aria-hidden="true"></span>
+        </button>
+        <div class="menu-panel" role="menu">
+          <div class="menu-head"><b>By sector</b><span>4 industries</span></div>
+          <a class="menu-row" href="industries/manufacturing.html"><span class="menu-name">Manufacturing</span><span class="menu-desc">MES/MOM operations, shop-floor AI, factory document control.</span></a>
+          <a class="menu-row" href="industries/transport-logistics.html"><span class="menu-name">Transport &amp; Logistics</span><span class="menu-desc">Fleet dispatch, compliance, freight operations.</span></a>
+          <a class="menu-row" href="industries/professional-services.html"><span class="menu-name">Professional Services</span><span class="menu-desc">Knowledge work, back-office automation, proposal flow.</span></a>
+          <a class="menu-row" href="industries/cross-industry.html"><span class="menu-name">Cross-industry</span><span class="menu-desc">Horizontal stack — ERP, GED, AI productivity for any sector.</span></a>
+        </div>
+      </div>
+
+      <a class="nav-link" href="solutions.html">Solutions</a>
+      <a class="nav-link" href="about.html">Company</a>
+      <a class="nav-link" href="insights.html">Insights</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+
+      <a class="nav-cta" href="contact.html">Book a demo</a>
+    </nav>
+
+    <button class="hamburger" aria-label="Open menu" aria-expanded="false" id="ham">
+      <span class="bars" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ MOBILE MENU ═════════════════════════════════════════ -->
+<aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <details class="m-sec" open>
+    <summary>Products <span class="plus" aria-hidden="true"></span></summary>
+    <div class="items">
+      <a href="products/virtus-lever.html"><b>Virtus Lever</b>AI email assistant</a>
+      <a href="products/virtus-fleet.html"><b>Virtus Fleet</b>Transport ERP</a>
+      <a href="products/virtus-ai-factory.html"><b>Virtus AI Factory</b>MES/MOM AI co-pilot</a>
+      <a href="products/virtus-agents.html"><b>Virtus Agents</b>AI agent builder</a>
+      <a href="products/virtus-ged.html"><b>Virtus GED</b>Document management</a>
+      <a href="products/virtus-erp.html"><b>Virtus ERP</b>General ERP</a>
+    </div>
+  </details>
+  <details class="m-sec">
+    <summary>Industries <span class="plus" aria-hidden="true"></span></summary>
+    <div class="items">
+      <a href="industries/manufacturing.html"><b>Manufacturing</b>MES/MOM operations</a>
+      <a href="industries/transport-logistics.html"><b>Transport &amp; Logistics</b>Fleet operations</a>
+      <a href="industries/professional-services.html"><b>Professional Services</b>Back-office automation</a>
+      <a href="industries/cross-industry.html"><b>Cross-industry</b>Horizontal stack</a>
+    </div>
+  </details>
+  <details class="m-sec">
+    <summary>More <span class="plus" aria-hidden="true"></span></summary>
+    <div class="items">
+      <a href="solutions.html"><b>Solutions</b>Bundled offerings</a>
+      <a href="about.html"><b>Company</b>About, team, careers</a>
+      <a href="insights.html"><b>Insights</b>Articles &amp; case studies</a>
+      <a href="contact.html"><b>Contact</b>Get in touch</a>
+    </div>
+  </details>
+  <a class="m-cta" href="contact.html">Book a demo <span aria-hidden="true">→</span></a>
+</aside>
+
+<!-- ═══ HERO ════════════════════════════════════════════════ -->
+<main id="main">
+<section class="hero" aria-labelledby="hero-h1">
+  <span class="edge-mark" aria-hidden="true">VIRTUS OPERANDI · OPERATIONS LAYER · 2026</span>
+
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow reveal d1">
+        <span class="live" aria-hidden="true"></span>
+        <b>Live</b> · Software for operators
+      </span>
+
+      <h1 id="hero-h1" class="reveal d2">
+        An <span class="accent">operating layer</span> for the work that runs your business.
+      </h1>
+
+      <p class="lede reveal d3">
+        Six software products for the people on the factory floor, in the dispatch room, and in the back office. <strong>One catalogue. One way of working.</strong>
+      </p>
+
+      <div class="reveal d4">
+        <a class="btn-pill" href="contact.html">
+          Book a demo <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <span class="cta-foot reveal d5">
+        15-minute call · <a href="home.html#products">or explore products →</a>
+      </span>
+    </div>
+
+    <!-- RIGHT — glass widget -->
+    <div class="visual reveal d3">
+      <span class="chip chip-tr">Online</span>
+
+      <div class="widget" role="img" aria-label="Catalogue widget showing six Virtus Operandi products with toggleable states">
+        <div class="w-head">
+          <span class="w-time" id="w-clock">11:42</span>
+          <span class="w-title">Catalogue</span>
+          <button class="w-cog" aria-label="Settings" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="w-row on reveal r1">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus Lever</span><span class="w-desc">AI email productivity</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+        <div class="w-row on reveal r2">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus Fleet</span><span class="w-desc">ERP for transport &amp; logistics</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+        <div class="w-row on reveal r3">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l5 3V10l5 3V10l5 3v8z"/><path d="M7 17h2M11 17h2M15 17h2"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus AI Factory</span><span class="w-desc">MES/MOM AI co-pilot</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+        <div class="w-row on reveal r4">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h8M8 18h8M6 8v8M18 8v8"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus Agents</span><span class="w-desc">AI agent &amp; automation builder</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+        <div class="w-row reveal r5">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h7M9 17h7"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus GED</span><span class="w-desc">Electronic document management</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+        <div class="w-row reveal r6">
+          <span class="w-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M3 13l9 4 9-4"/><path d="M3 18l9 4 9-4"/></svg></span>
+          <span class="w-info"><span class="w-name">Virtus ERP</span><span class="w-desc">General-purpose ERP</span></span>
+          <span class="w-toggle" aria-hidden="true"></span>
+        </div>
+
+        <div class="w-foot">
+          <span class="lbl">Connects</span>
+          <span class="w-pill"><span class="lg"><img src="https://cdn.simpleicons.org/dassaultsystemes/202020" alt="" loading="lazy" /></span>Apriso</span>
+          <span class="w-pill"><span class="lg"><img src="https://cdn.simpleicons.org/siemens/202020" alt="" loading="lazy" /></span>Opcenter</span>
+          <span class="w-pill"><span class="lg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#202020" d="M2 2h9.5v9.5H2zM12.5 2H22v9.5h-9.5zM2 12.5h9.5V22H2zM12.5 12.5H22V22h-9.5z"/></svg></span>M365</span>
+        </div>
+      </div>
+
+      <span class="chip chip-bl">4 / 6 active</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUSTED-BY STRIP ════════════════════════════════════ -->
+<section class="trust" aria-label="Integrations">
+  <div class="trust-inner">
+    <span class="trust-label">Connects to systems your team already uses</span>
+    <div class="trust-row">
+      <span class="trust-logo">
+        <span class="logo"><img src="https://cdn.simpleicons.org/dassaultsystemes/202020" alt="" loading="lazy" /></span>
+        Delmia Apriso
+      </span>
+      <span class="trust-logo">
+        <span class="logo"><img src="https://cdn.simpleicons.org/siemens/202020" alt="" loading="lazy" /></span>
+        Siemens Opcenter
+      </span>
+      <span class="trust-logo">
+        <span class="logo"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#202020" d="M2 2h9.5v9.5H2zM12.5 2H22v9.5h-9.5zM2 12.5h9.5V22H2zM12.5 12.5H22V22h-9.5z"/></svg></span>
+        Microsoft 365
+      </span>
+      <span class="trust-logo">
+        <span class="logo"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#202020" d="M14.5 5.5c1-1 2.4-1.7 4-1.7 2.2 0 4.1 1.2 5.1 3-.9-.4-1.8-.6-2.8-.6-3.6 0-6.5 2.9-6.5 6.5 0 .5.1 1 .2 1.5-.6-.3-1.3-.5-2-.5-2.5 0-4.5 2-4.5 4.5 0 .2 0 .5.1.7C5.2 18 3 15.5 3 12.5 3 9 5.8 6.2 9.3 6.2c1 0 1.9.2 2.7.6.6-1.6 2.1-2.8 3.9-2.8.2 0 .4 0 .6.1z"/></svg></span>
+        Salesforce
+      </span>
+      <span class="trust-logo">
+        <span class="logo"><img src="https://cdn.simpleicons.org/gmail/202020" alt="" loading="lazy" /></span>
+        Gmail
+      </span>
+      <span class="trust-logo">
+        <span class="logo"><img src="https://cdn.simpleicons.org/sap/202020" alt="" loading="lazy" /></span>
+        SAP
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRODUCTS GRID ═══════════════════════════════════════ -->
+<section id="products" class="s products" aria-labelledby="prod-h">
+  <div class="s-head">
+    <span class="label">The catalogue</span>
+    <h2 id="prod-h">Six tools, <span class="accent">one operating layer.</span></h2>
+    <p class="sub">Each product solves a specific operational pain. Use one. Use them all. Every product connects to every other through a shared platform.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ─── LEVER · blue · rising leverage bars ─── -->
+    <a class="pcard p-lever" href="products/virtus-lever.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g stroke="currentColor" stroke-opacity="0.10" stroke-width="1">
+            <line x1="0" y1="60"  x2="400" y2="60"/>
+            <line x1="0" y1="110" x2="400" y2="110"/>
+            <line x1="0" y1="160" x2="400" y2="160"/>
+            <line x1="0" y1="210" x2="400" y2="210"/>
+          </g>
+          <g fill="currentColor" fill-opacity="0.15">
+            <rect x="240" y="170" width="20" height="50"/>
+            <rect x="272" y="140" width="20" height="80"/>
+            <rect x="304" y="100" width="20" height="120"/>
+            <rect x="336" y="60"  width="20" height="160"/>
+          </g>
+          <path d="M210 200 L250 175 L282 140 L314 100 L346 65" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="346" cy="65" r="5" fill="currentColor"/>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 18 L12 6 L19 18 Z" fill="white" stroke-width="0"/><line x1="3" y1="20" x2="21" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">AI · Productivity</span>
+        <h3>Virtus Lever</h3>
+        <p>AI assistant that drafts, triages, and acts on your inbox. Stops the email firehose without making people feel managed.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- ─── FLEET · teal · motion waypoints ─── -->
+    <a class="pcard p-fleet" href="products/virtus-fleet.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-opacity="0.40" stroke-width="1.3">
+            <circle cx="320" cy="200" r="30"/>
+            <circle cx="320" cy="200" r="65"/>
+            <circle cx="320" cy="200" r="105"/>
+            <circle cx="320" cy="200" r="155"/>
+          </g>
+          <circle cx="320" cy="200" r="6" fill="currentColor"/>
+          <g stroke="currentColor" stroke-opacity="0.20" stroke-width="1">
+            <line x1="0" y1="50" x2="220" y2="50"/>
+            <line x1="0" y1="70" x2="180" y2="70"/>
+            <line x1="0" y1="90" x2="140" y2="90"/>
+          </g>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M9 12 L15 12 M13 9 L16 12 L13 15"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">ERP · Vertical</span>
+        <h3>Virtus Fleet</h3>
+        <p>ERP built from the ground up for transport and logistics operators — dispatch, drivers, maintenance, compliance, invoicing.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- ─── AI FACTORY · orange · gears + factory ─── -->
+    <a class="pcard p-factory" href="products/virtus-ai-factory.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="g-fac" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+              <rect x="0.5" y="0.5" width="27" height="27" fill="none" stroke="currentColor" stroke-opacity="0.10" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="250" fill="url(#g-fac)"/>
+          <g fill="currentColor" fill-opacity="0.16">
+            <rect x="56" y="56" width="28" height="28"/>
+            <rect x="140" y="84" width="28" height="28"/>
+            <rect x="224" y="56" width="28" height="28"/>
+            <rect x="280" y="140" width="28" height="28"/>
+            <rect x="336" y="112" width="28" height="28"/>
+          </g>
+          <rect x="196" y="112" width="28" height="28" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="1" stroke-opacity="0.45" fill="none">
+            <path d="M210 126 L252 70 M210 126 L154 98 M210 126 L294 154 M210 126 L350 126"/>
+          </g>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L3 11 L8 14 L8 11 L13 14 L13 11 L18 14 L18 11 L21 13 L21 20 Z" fill="white" stroke="none"/><circle cx="12" cy="6" r="2" fill="white"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">AI · Manufacturing</span>
+        <h3>Virtus AI Factory</h3>
+        <p>AI co-pilot for MES/MOM development and operations. Delmia Apriso, Siemens Opcenter, others — code-aware for engineers, natural-language for operators.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- ─── AGENTS · purple · connected nodes ─── -->
+    <a class="pcard p-agents" href="products/virtus-agents.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g stroke="currentColor" stroke-opacity="0.30" stroke-width="1.2" fill="none">
+            <path d="M80 60 L200 130 L320 60 M80 60 L80 200 M200 130 L200 210 M320 60 L320 200 M80 200 L200 210 L320 200 M200 130 L80 200 M200 130 L320 200"/>
+          </g>
+          <g fill="white" stroke="currentColor" stroke-width="1.5">
+            <circle cx="80" cy="60" r="10"/>
+            <circle cx="200" cy="130" r="14"/>
+            <circle cx="320" cy="60" r="10"/>
+            <circle cx="80" cy="200" r="8"/>
+            <circle cx="200" cy="210" r="8"/>
+            <circle cx="320" cy="200" r="8"/>
+          </g>
+          <circle cx="200" cy="130" r="5" fill="currentColor"/>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="white"><circle cx="5" cy="5" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="19" r="2.4"/><g stroke="white" stroke-width="1.6" fill="none"><line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="19" x2="19" y2="19"/><line x1="5" y1="5" x2="5" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/></g><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">AI · Platform</span>
+        <h3>Virtus Agents</h3>
+        <p>Low-code platform to build, deploy, and operate AI agents that automate real business processes. Model-agnostic, human-in-the-loop, eval-ready.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- ─── GED · amber · stacked documents ─── -->
+    <a class="pcard p-ged" href="products/virtus-ged.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="currentColor">
+            <rect x="220" y="40"  width="140" height="170" rx="4" fill-opacity="0.10"/>
+            <rect x="200" y="60"  width="140" height="170" rx="4" fill-opacity="0.15"/>
+            <rect x="180" y="80"  width="140" height="170" rx="4" fill-opacity="0.22"/>
+          </g>
+          <g stroke="currentColor" stroke-opacity="0.50" stroke-width="1.3" stroke-linecap="round">
+            <line x1="200" y1="110" x2="290" y2="110"/>
+            <line x1="200" y1="128" x2="260" y2="128"/>
+            <line x1="200" y1="146" x2="270" y2="146"/>
+          </g>
+          <circle cx="296" cy="106" r="5" fill="currentColor"/>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"><path d="M7 3 L15 3 L19 7 L19 21 L7 21 Z" fill="white" stroke="none"/><path d="M15 3 L15 7 L19 7" stroke="#F59E0B" stroke-width="1.5"/><line x1="10" y1="13" x2="16" y2="13" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="17" x2="16" y2="17" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">EDM · Documents</span>
+        <h3>Virtus GED</h3>
+        <p>Electronic document management that finally feels modern — fast search, smart classification, workflow approvals, retention.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- ─── ERP · navy · isometric cubes ─── -->
+    <a class="pcard p-erp" href="products/virtus-erp.html">
+      <div class="illus">
+        <svg class="bg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="g-erp" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+              <rect x="0.5" y="0.5" width="39" height="39" fill="none" stroke="currentColor" stroke-opacity="0.10" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="250" fill="url(#g-erp)"/>
+          <g fill="currentColor">
+            <rect x="80"  y="120" width="32" height="32" fill-opacity="0.18"/>
+            <rect x="120" y="80"  width="32" height="32" fill-opacity="0.28"/>
+            <rect x="160" y="120" width="32" height="32" fill-opacity="0.18"/>
+            <rect x="200" y="80"  width="32" height="32" fill-opacity="0.40"/>
+            <rect x="240" y="120" width="32" height="32" fill-opacity="0.28"/>
+            <rect x="280" y="80"  width="32" height="32" fill-opacity="0.18"/>
+            <rect x="160" y="160" width="32" height="32" fill-opacity="0.28"/>
+            <rect x="200" y="200" width="32" height="32" fill-opacity="0.40"/>
+          </g>
+          <rect x="200" y="120" width="32" height="32" fill="currentColor"/>
+        </svg>
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0.6" stroke-linejoin="round"><polygon points="12,3 19,7 19,15 12,19 5,15 5,7" fill-opacity="0.8"/><polygon points="12,3 19,7 12,11 5,7"/><polygon points="12,11 19,7 19,15 12,19" fill-opacity="0.6"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <span class="cat">ERP · Horizontal</span>
+        <h3>Virtus ERP</h3>
+        <p>General-purpose ERP for SMB and mid-market. Finance, sales, purchase, inventory, HR, projects. Modular, modern, connectable.</p>
+        <span class="more">Explore product <span class="arr">→</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ INDUSTRIES ══════════════════════════════════════════ -->
+<section id="industries" class="s industries" aria-labelledby="ind-h">
+  <div class="s-head">
+    <span class="label">Where it runs</span>
+    <h2 id="ind-h">Built for industries that <span class="accent">don't tolerate downtime.</span></h2>
+    <p class="sub">Each industry gets the right stack — not a generic suite. Pick what fits, add the rest when you're ready.</p>
+  </div>
+
+  <div class="grid">
+    <a class="icard" href="industries/manufacturing.html">
+      <span class="arr-corner" aria-hidden="true">→</span>
+      <div class="pic">
+        <img src="https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=900&q=80" alt="Engineer working with industrial manufacturing equipment on a shop floor" loading="lazy" />
+      </div>
+      <div class="body">
+        <span class="ind-no">01 / Industry</span>
+        <h3>Manufacturing</h3>
+        <p>MES/MOM operations, shop-floor AI, factory document control. Built for Apriso, Opcenter, and the operators who run them.</p>
+        <span class="stack"><span>AI Factory</span><span>Agents</span><span>GED</span><span>ERP</span></span>
+      </div>
+    </a>
+    <a class="icard" href="industries/transport-logistics.html">
+      <span class="arr-corner" aria-hidden="true">→</span>
+      <div class="pic">
+        <img src="https://images.unsplash.com/photo-1591768793355-74d04bb6608f?w=900&q=80" alt="Long-haul truck and driver on the road" loading="lazy" />
+      </div>
+      <div class="body">
+        <span class="ind-no">02 / Industry</span>
+        <h3>Transport &amp; Logistics</h3>
+        <p>Fleet dispatch, compliance, freight, last-mile, cold chain. The full operations stack — one place, no spreadsheet middleware.</p>
+        <span class="stack"><span>Fleet</span><span>ERP</span><span>GED</span></span>
+      </div>
+    </a>
+    <a class="icard" href="industries/professional-services.html">
+      <span class="arr-corner" aria-hidden="true">→</span>
+      <div class="pic">
+        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=900&q=80" alt="Team in a conference room around laptops during a working session" loading="lazy" />
+      </div>
+      <div class="body">
+        <span class="ind-no">03 / Industry</span>
+        <h3>Professional Services</h3>
+        <p>Knowledge work, back-office automation, proposal flow. Hours back per week without forcing your team into a new platform.</p>
+        <span class="stack"><span>Lever</span><span>Agents</span><span>GED</span><span>ERP</span></span>
+      </div>
+    </a>
+    <a class="icard" href="industries/cross-industry.html">
+      <span class="arr-corner" aria-hidden="true">→</span>
+      <div class="pic">
+        <img src="https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=900&q=80" alt="Open office with people working at desks" loading="lazy" />
+      </div>
+      <div class="body">
+        <span class="ind-no">04 / Industry</span>
+        <h3>Cross-industry</h3>
+        <p>Horizontal stack for organizations whose needs don't fit one vertical. Compose what you need from the catalogue.</p>
+        <span class="stack"><span>ERP</span><span>GED</span><span>Lever</span><span>Agents</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+
+<!-- ═══ HOW WE OPERATE ══════════════════════════════════════ -->
+<section class="s how" aria-labelledby="how-h">
+  <div class="s-head">
+    <span class="label">How we operate</span>
+    <h2 id="how-h">Operandi. <span class="accent">The way of operating.</span></h2>
+    <p class="sub">We codify what already works in great operations into software — instead of forcing your team to change how they work.</p>
+  </div>
+
+  <div class="grid">
+    <div class="pillar">
+      <span class="num">01 / Method</span>
+      <h3>Configure, <em>don't customize.</em></h3>
+      <p>Every product ships with sensible defaults and config-level levers. No bespoke forks, no consultant lock-in, no six-month customizations that age out in a year.</p>
+    </div>
+    <div class="pillar">
+      <span class="num">02 / Method</span>
+      <h3>Connect, <em>don't replace.</em></h3>
+      <p>Apriso, Opcenter, Microsoft 365, Salesforce, Gmail — we integrate with the systems your team already runs on. Adopt one product at a time, keep what works.</p>
+    </div>
+    <div class="pillar">
+      <span class="num">03 / Method</span>
+      <h3>Compose, <em>don't fork.</em></h3>
+      <p>Six products, one platform. Pick the modules you need now, add the rest when the business asks for them. Every product speaks the same data model.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ CLOSING CTA ═════════════════════════════════════════ -->
+<section class="closing" aria-labelledby="closing-h">
+  <div class="closing-card">
+    <div>
+      <h2 id="closing-h">Ready to put it <span class="accent">to work?</span></h2>
+      <p class="lede">Fifteen minutes. A real engineer on the call. We'll walk through your operation and show you exactly which products fit — and which don't.</p>
+    </div>
+    <div class="actions">
+      <a class="btn-pill" href="contact.html">
+        Book a demo <span class="arr" aria-hidden="true">→</span>
+      </a>
+      <a class="sec-link" href="home.html#products">Or browse the catalogue first →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════ -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="brand-col">
+        <a href="home.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+        </a>
+        <p>Software that codifies the way real operations get done. Built by operators for operators — across manufacturing, transport, and the back office.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Products</h4>
+        <a href="products/virtus-lever.html">Virtus Lever</a>
+        <a href="products/virtus-fleet.html">Virtus Fleet</a>
+        <a href="products/virtus-ai-factory.html">Virtus AI Factory</a>
+        <a href="products/virtus-agents.html">Virtus Agents</a>
+        <a href="products/virtus-ged.html">Virtus GED</a>
+        <a href="products/virtus-erp.html">Virtus ERP</a>
+      </div>
+      <div class="foot-col">
+        <h4>Industries</h4>
+        <a href="industries/manufacturing.html">Manufacturing</a>
+        <a href="industries/transport-logistics.html">Transport &amp; Logistics</a>
+        <a href="industries/professional-services.html">Professional Services</a>
+        <a href="industries/cross-industry.html">Cross-industry</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="team.html">Team</a>
+        <a href="careers.html">Careers</a>
+        <a href="partners.html">Partners</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <a href="insights.html">Insights</a>
+        <a href="insights/case-studies.html">Case studies</a>
+        <a href="security.html">Security</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Virtus Operandi · Catalogue v0.3 preview</span>
+      <span>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="cookies.html">Cookies</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Dropdowns
+  const isTouch = matchMedia('(hover: none)').matches;
+  document.querySelectorAll('.has-menu').forEach(menu => {
+    const trigger = menu.querySelector('.has-menu-trigger');
+    const open = () => { closeAll(menu); menu.setAttribute('aria-expanded','true'); trigger.setAttribute('aria-expanded','true'); };
+    const close = () => { menu.setAttribute('aria-expanded','false'); trigger.setAttribute('aria-expanded','false'); };
+    if (!isTouch) {
+      menu.addEventListener('mouseenter', open);
+      menu.addEventListener('mouseleave', close);
+    }
+    trigger.addEventListener('click', e => {
+      e.preventDefault();
+      menu.getAttribute('aria-expanded') === 'true' ? close() : open();
+    });
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { close(); trigger.blur(); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); trigger.click(); }
+    });
+  });
+  function closeAll(except) {
+    document.querySelectorAll('.has-menu').forEach(m => {
+      if (m !== except) {
+        m.setAttribute('aria-expanded','false');
+        m.querySelector('.has-menu-trigger').setAttribute('aria-expanded','false');
+      }
+    });
+  }
+  document.addEventListener('click', e => { if (!e.target.closest('.has-menu')) closeAll(); });
+
+  // Mobile
+  const ham = document.getElementById('ham');
+  const mobile = document.getElementById('mobile-menu');
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('menu-open');
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mobile.setAttribute('aria-hidden', open ? 'false' : 'true');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  // Reveal on load
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  });
+
+  // Widget toggle interaction
+  document.querySelectorAll('.w-row').forEach(row => {
+    row.addEventListener('click', () => row.classList.toggle('on'));
+  });
+
+  // Live clock
+  const clock = document.getElementById('w-clock');
+  const tick = () => {
+    const d = new Date();
+    clock.textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  };
+  tick(); setInterval(tick, 30000);
+</script>
+</body>
+</html>

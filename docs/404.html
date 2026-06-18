@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Page not found — Virtus Operandi</title>
+<meta name="description" content="That page doesn't exist (yet). Here's where to go instead." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/site.css" />
+<style>
+  .fourohfour {
+    min-height: calc(100vh - var(--nav-h) - 36px);
+    display: flex; align-items: center;
+    padding: clamp(48px, 8vw, 96px) var(--gutter);
+    background:
+      radial-gradient(60% 50% at 80% 30%, rgba(0,102,255,0.06), transparent 70%),
+      radial-gradient(50% 60% at 20% 90%, rgba(0,102,255,0.03), transparent 70%),
+      var(--paper);
+  }
+  .fourohfour .container { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 720px; }
+  .fourohfour .code {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); font-weight: 600;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .fourohfour .code::before {
+    content: ""; width: 18px; height: 1.5px; background: var(--blue);
+  }
+  .fourohfour h1 { font-size: clamp(42px, 6vw, 72px); letter-spacing: -2.5px; line-height: 1.08; }
+  .fourohfour h1 em { font-style: normal; color: var(--blue); }
+  .fourohfour p { font-size: 18px; color: var(--muted); max-width: 56ch; }
+  .fourohfour .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+  .fourohfour .quick {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 24px; width: 100%;
+  }
+  @media (max-width: 720px) { .fourohfour .quick { grid-template-columns: 1fr; } }
+  .fourohfour .quick a {
+    padding: 16px 18px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex; flex-direction: column; gap: 4px;
+    color: var(--ink);
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .fourohfour .quick a:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .fourohfour .quick a .lbl {
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--blue); font-weight: 600;
+  }
+  .fourohfour .quick a .ttl { font-weight: 600; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="meta">
+  <div class="meta-inner">
+    <span class="meta-left"><span class="meta-dot" aria-hidden="true"></span>404 · page not found</span>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="home.html" class="brand" aria-label="Virtus Operandi home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="nav-link" href="home.html#products">Products</a>
+      <a class="nav-link" href="home.html#industries">Industries</a>
+      <a class="nav-link" href="about.html">Company</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <a class="nav-cta" href="contact.html">Book a demo</a>
+    </nav>
+    <button class="hamburger" id="ham" aria-label="Open menu" aria-expanded="false"><span class="bars" aria-hidden="true"></span></button>
+  </div>
+</header>
+
+<aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="home.html#products">Products</a>
+  <a href="home.html#industries">Industries</a>
+  <a href="about.html">Company</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="mob-cta">Book a demo</a>
+</aside>
+
+<main id="main">
+  <section class="fourohfour">
+    <div class="container">
+      <span class="code">Error 404</span>
+      <h1>That route <em>doesn't exist</em> — yet.</h1>
+      <p>The page you're looking for either moved, never existed, or hasn't been built. The map below covers the things that <em>do</em> exist.</p>
+      <div class="actions">
+        <a class="btn-pill" href="home.html">Back to home <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn-outline" href="contact.html">Talk to us</a>
+      </div>
+      <div class="quick" aria-label="Quick links">
+        <a href="home.html#products">
+          <span class="lbl">Catalogue</span>
+          <span class="ttl">Six products →</span>
+        </a>
+        <a href="home.html#industries">
+          <span class="lbl">By industry</span>
+          <span class="ttl">Where it runs →</span>
+        </a>
+        <a href="contact.html">
+          <span class="lbl">Get in touch</span>
+          <span class="ttl">Talk to us →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="brand-col">
+        <a href="home.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-word">Virtus <span class="lo">Operandi</span></span>
+        </a>
+        <p>Software that codifies the way real operations get done. Built by operators for operators — across manufacturing, transport, and the back office.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Products</h4>
+        <a href="home.html#products">Catalogue</a>
+        <a href="home.html#products">Virtus Lever</a>
+        <a href="home.html#products">Virtus Fleet</a>
+        <a href="home.html#products">Virtus AI Factory</a>
+        <a href="home.html#products">Virtus Agents</a>
+        <a href="home.html#products">Virtus GED</a>
+        <a href="home.html#products">Virtus ERP</a>
+      </div>
+      <div class="foot-col">
+        <h4>Industries</h4>
+        <a href="home.html#industries">Manufacturing</a>
+        <a href="home.html#industries">Transport &amp; Logistics</a>
+        <a href="home.html#industries">Professional Services</a>
+        <a href="home.html#industries">Cross-industry</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="security.html">Security</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="cookies.html">Cookies</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Virtus Operandi · v0.3 preview</span>
+      <span><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  const ham = document.getElementById('ham');
+  const mob = document.getElementById('mobile-menu');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('menu-open');
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mob.setAttribute('aria-hidden', open ? 'false' : 'true');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+</script>
+</body>
+</html>
