@@ -1,0 +1,40 @@
+---
+import type { Post } from '@lib/sanity';
+import { urlFor } from '@lib/sanity';
+import PostMeta from './PostMeta.astro';
+
+interface Props { post: Post }
+const { post } = Astro.props;
+const href = `/blog/${post.slug}`;
+const tag  = post.tags?.[0] ?? '';
+---
+
+<li data-tag={tag} itemscope itemtype="https://schema.org/BlogPosting">
+  <a href={href} class="post-card" aria-label={`Read: ${post.title}`}>
+    {post.coverImage
+      ? <img
+          class="post-card__cover"
+          src={urlFor(post.coverImage.asset).width(640).height(360).url()}
+          alt={post.coverImage.alt}
+          width="640" height="360"
+          loading="lazy"
+        />
+      : <div class="post-card__cover-placeholder" aria-hidden="true">cover · 16:9</div>
+    }
+    <div class="post-card__body">
+      <span class="post-card__tag" itemprop="articleSection">{tag}</span>
+      <h2 class="post-card__title" itemprop="headline">{post.title}</h2>
+      <p class="post-card__excerpt" itemprop="description">{post.excerpt}</p>
+      <PostMeta date={post.date} author={post.author} />
+    </div>
+  </a>
+</li>
+
+<style>
+.post-card__cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+</style>

@@ -1,0 +1,27 @@
+---
+interface Props {
+  date:         string;   // ISO date, e.g. '2026-06-10'
+  author:       string;
+  readingTime?: number;
+}
+
+const { date, author, readingTime } = Astro.props;
+
+const formatted = new Date(date).toLocaleDateString('en-GB', {
+  day: '2-digit', month: 'short', year: 'numeric',
+});
+---
+
+<footer class="post-card__meta">
+  <time datetime={date} itemprop="datePublished">{formatted}</time>
+  <span class="sep" aria-hidden="true">·</span>
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+    <span itemprop="name">{author}</span>
+  </span>
+  {readingTime && (
+    <>
+      <span class="sep" aria-hidden="true">·</span>
+      <span>{readingTime} min read</span>
+    </>
+  )}
+</footer>
