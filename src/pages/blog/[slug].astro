@@ -1,6 +1,6 @@
 ---
 import BlogLayout  from '@layouts/BlogLayout.astro';
-import { getAllPosts, getPostBySlug, coverUrl, primaryTag, formatDate } from '@lib/wordpress';
+import { getAllPosts, getPostBySlug, coverUrl, primaryTag, authorName, formatDate } from '@lib/wordpress';
 import type { WpPost } from '@lib/wordpress';
 
 export async function getStaticPaths() {
@@ -96,6 +96,14 @@ const jsonLd = {
           <h1 class="post-title" itemprop="headline" set:html={post.title.rendered} />
           <div class="post-meta">
             <time datetime={dateIso} itemprop="datePublished">{formatDate(post.date)}</time>
+            {authorName(post) && (
+              <>
+                <span class="sep" aria-hidden="true">·</span>
+                <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                  <span itemprop="name">{authorName(post)}</span>
+                </span>
+              </>
+            )}
           </div>
         </div>
       </header>

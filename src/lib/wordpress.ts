@@ -12,7 +12,8 @@ export interface WpPost {
   tags:     number[];        // tag IDs — resolve via _embedded if needed
   _embedded?: {
     'wp:featuredmedia'?: [{ source_url: string; alt_text: string }];
-    'wp:term'?:          [{ name: string }[]][];
+    'wp:term'?:          [{ name: string; slug: string }[]][];
+    author?:             [{ name: string }];
   };
 }
 
@@ -25,6 +26,16 @@ export function coverUrl(post: WpPost): string | undefined {
 /** First taxonomy term treated as the post category/tag label */
 export function primaryTag(post: WpPost): string {
   return post._embedded?.['wp:term']?.[0]?.[0]?.name ?? '';
+}
+
+/** Slug of the first taxonomy term — used for filter matching */
+export function categorySlug(post: WpPost): string {
+  return post._embedded?.['wp:term']?.[0]?.[0]?.slug ?? '';
+}
+
+/** Author display name from embedded author */
+export function authorName(post: WpPost): string {
+  return post._embedded?.author?.[0]?.name ?? '';
 }
 
 export function formatDate(iso: string): string {

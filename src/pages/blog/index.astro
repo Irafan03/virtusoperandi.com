@@ -1,10 +1,10 @@
 ---
 import BlogLayout   from '@layouts/BlogLayout.astro';
-import { getAllPosts, coverUrl, primaryTag, formatDate, stripHtml } from '@lib/wordpress';
+import { getAllPosts, coverUrl, primaryTag, categorySlug, authorName, formatDate, stripHtml } from '@lib/wordpress';
 
-const posts   = await getAllPosts();
-const allTags = ['All', ...Array.from(new Set(posts.map(primaryTag).filter(Boolean)))];
-const canonical = 'https://virtusoperandi.com/blog';
+const posts      = await getAllPosts();
+const allSlugs   = ['all', ...Array.from(new Set(posts.map(categorySlug).filter(Boolean)))];
+const canonical  = 'https://virtusoperandi.com/blog';
 ---
 
 <BlogLayout
@@ -24,22 +24,24 @@ const canonical = 'https://virtusoperandi.com/blog';
     <div class="container" style="max-width: var(--max);">
 
       <nav aria-label="Filter by category" class="blog-filters">
-        {allTags.map(tag => (
+        {allSlugs.map(slug => (
           <button
             class="filter-btn"
-            aria-pressed={tag === 'All' ? 'true' : 'false'}
-            data-filter={tag}
-          >{tag}</button>
+            aria-pressed={slug === 'all' ? 'true' : 'false'}
+            data-filter={slug}
+          >{slug === 'all' ? 'All' : slug}</button>
         ))}
       </nav>
 
       <ul class="post-grid" role="list">
         {posts.map(post => {
           const tag   = primaryTag(post);
+          const slug  = categorySlug(post);
           const cover = coverUrl(post);
+          const author = authorName(post);
           const alt   = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
           return (
-            <li data-tag={tag} itemscope itemtype="https://schema.org/BlogPosting">
+            <li data-tag={slug} itemscope itemtype="https://schema.org/BlogPosting">
               <a href={`/blog/${post.slug}`} class="post-card" aria-label={`Read: ${post.title.rendered}`}>
                 {cover
                   ? <img class="post-card__cover" src={cover} alt={alt} width="640" height="360" loading="lazy" />
@@ -51,6 +53,14 @@ const canonical = 'https://virtusoperandi.com/blog';
                   <p class="post-card__excerpt" itemprop="description">{stripHtml(post.excerpt.rendered)}</p>
                   <footer class="post-card__meta">
                     <time datetime={post.date} itemprop="datePublished">{formatDate(post.date)}</time>
+                    {author && (
+                      <>
+                        <span class="sep" aria-hidden="true">·</span>
+                        <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                          <span itemprop="name">{author}</span>
+                        </span>
+                      </>
+                    )}
                   </footer>
                 </div>
               </a>
@@ -213,7 +223,7 @@ const canonical = 'https://virtusoperandi.com/blog';
       btn.setAttribute('aria-pressed', 'true');
       const filter = (btn as HTMLElement).dataset.filter;
       document.querySelectorAll<HTMLElement>('.post-grid > li').forEach(li => {
-        li.hidden = filter !== 'All' && li.dataset.tag !== filter;
+        li.hidden = filter !== 'all' && li.dataset.tag !== filter;
       });
     });
   });
