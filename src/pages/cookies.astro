@@ -1,0 +1,67 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+<BaseLayout title="Cookie Policy — Virtus Operandi" description="The cookies and similar technologies Virtus Operandi uses and how to manage them." canonical="https://virtusoperandi.com/cookies">
+  <style slot="head">
+  table.ck { width: 100%; border-collapse: collapse; margin: 16px 0 8px; font-size: 14px; }
+  table.ck th, table.ck td { padding: 12px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  table.ck th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--paper-2); }
+  table.ck td:first-child { font-weight: 600; }
+  table.ck td.cat { font-family: var(--mono); font-size: 11px; color: var(--blue); letter-spacing: 0.04em; }
+  @media (max-width: 640px) {
+    table.ck, table.ck tbody, table.ck tr, table.ck td { display: block; }
+    table.ck thead { display: none; }
+    table.ck tr { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    table.ck td { padding: 4px 0; border: 0; }
+  }
+  </style>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Legal · last updated 2026-06-08</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Legal</span>
+      <h1>Cookie Policy.</h1>
+      <p class="lede">Cookies and similar technologies we use on virtusoperandi.com, what they do, and how to control them. Last reviewed 2026-06-08.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <h2>What are cookies?</h2>
+        <p>Cookies are small text files placed on your device when you visit a website. They are widely used to make websites work and to provide information to the owners of the site.</p>
+      </section>
+      <section>
+        <h2>Cookies we use</h2>
+        <table class="ck">
+          <thead><tr><th>Cookie</th><th>Purpose</th><th>Category</th><th>Lifetime</th></tr></thead>
+          <tbody>
+            <tr><td>vo_session</td><td>Keeps you signed in across pages.</td><td class="cat">Essential</td><td>Session</td></tr>
+            <tr><td>vo_csrf</td><td>Protects forms from cross-site request forgery.</td><td class="cat">Essential</td><td>Session</td></tr>
+            <tr><td>vo_consent</td><td>Remembers your cookie consent choice.</td><td class="cat">Essential</td><td>12 months</td></tr>
+            <tr><td>vo_pref</td><td>Remembers UI preferences (theme, language).</td><td class="cat">Functional</td><td>12 months</td></tr>
+            <tr><td>_plausible_id*</td><td>Anonymous usage analytics (no cross-site tracking).</td><td class="cat">Analytics</td><td>24 hours</td></tr>
+          </tbody>
+        </table>
+        <p>Essential cookies are required for the site to function and cannot be disabled.</p>
+      </section>
+      <section>
+        <h2>Managing your preferences</h2>
+        <p>You can change your cookie preferences at any time via the consent banner or by configuring your browser. Note that blocking essential cookies will break parts of the site.</p>
+      </section>
+      <section>
+        <h2>Third-party services</h2>
+        <ul>
+          <li><strong>Plausible Analytics</strong> — privacy-friendly, cookieless by default.</li>
+          <li><strong>Cloudflare</strong> — bot mitigation and CDN; sets essential cookies for security.</li>
+        </ul>
+        <p>We do not use cookies for cross-site advertising or behavioral profiling.</p>
+      </section>
+      <section>
+        <h2>Contact</h2>
+        <p>Questions? Email <a href="mailto:privacy@virtusoperandi.com">privacy@virtusoperandi.com</a>.</p>
+      </section>
+      <p class="note">Draft. The cookie list reflects intended behaviour for the v1 production site — not all cookies above are currently set on this preview build.</p>
+    </div>
+  </main>
+</BaseLayout>

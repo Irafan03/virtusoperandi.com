@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+<BaseLayout title="Page not found — Virtus Operandi" description="That page doesn't exist (yet). Here's where to go instead." canonical="https://virtusoperandi.com/404">
+  <style slot="head">
+  .fourohfour { min-height: calc(100vh - 200px); display: flex; align-items: center; padding: clamp(48px, 8vw, 96px) var(--gutter); }
+  .fourohfour .container { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 720px; }
+  .fourohfour .code { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); font-weight: 600; display: inline-flex; align-items: center; gap: 10px; }
+  .fourohfour .code::before { content: ""; width: 18px; height: 1.5px; background: var(--blue); }
+  .fourohfour h1 { font-size: clamp(42px, 6vw, 72px); letter-spacing: -2.5px; line-height: 1.08; }
+  .fourohfour p { font-size: 18px; color: var(--muted); max-width: 56ch; }
+  .fourohfour .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+  .fourohfour .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; width: 100%; }
+  @media (max-width: 720px) { .fourohfour .quick { grid-template-columns: 1fr; } }
+  .fourohfour .quick a { padding: 16px 18px; background: #fff; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; gap: 4px; color: var(--ink); transition: border-color .15s ease, transform .15s ease; text-decoration: none; }
+  .fourohfour .quick a:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .fourohfour .quick a .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--blue); font-weight: 600; }
+  .fourohfour .quick a strong { font-size: 15px; }
+  .btn-pill { display: inline-flex; align-items: center; gap: 8px; padding: 15px 28px; background: var(--blue); color: #fff; font-weight: 600; font-size: 15.5px; border-radius: 999px; transition: background .2s, transform .2s; text-decoration: none; }
+  .btn-pill:hover { background: var(--blue-hover); transform: translateY(-2px); }
+  </style>
+
+  <main id="main">
+    <div class="fourohfour">
+      <div class="container">
+        <span class="code">404</span>
+        <h1>Not here.</h1>
+        <p>That page doesn't exist — or hasn't been built yet. The site is in active development.</p>
+        <div class="actions">
+          <a class="btn-pill" href="/">Go home →</a>
+          <a class="btn-pill" href="/contact" style="background: transparent; border: 1.5px solid var(--border); color: var(--ink);">Contact us</a>
+        </div>
+        <div class="quick">
+          <a href="/products/virtus-lever"><span class="lbl">Product</span><strong>Virtus Lever</strong></a>
+          <a href="/products/virtus-fleet"><span class="lbl">Product</span><strong>Virtus Fleet</strong></a>
+          <a href="/products/virtus-ai-factory"><span class="lbl">Product</span><strong>Virtus AI Factory</strong></a>
+          <a href="/about"><span class="lbl">Company</span><strong>About us</strong></a>
+          <a href="/pricing"><span class="lbl">Pricing</span><strong>See plans</strong></a>
+          <a href="/blog"><span class="lbl">Blog</span><strong>Latest posts</strong></a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

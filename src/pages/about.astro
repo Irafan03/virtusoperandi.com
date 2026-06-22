@@ -1,0 +1,60 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+<BaseLayout title="About — Virtus Operandi" description="Software for the way work actually gets done." canonical="https://virtusoperandi.com/about">
+  <style slot="head">
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 24px 0 8px; }
+  @media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
+  .principle { padding: 24px 22px; background: var(--paper-2); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .principle .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; color: var(--blue); font-weight: 600; }
+  .principle h3 { font-size: 18px; }
+  .principle p { font-size: 14.5px; color: var(--muted); margin: 0; }
+  </style>
+
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>About · v0.3 preview</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>About</span>
+      <h1>Software for the way work actually gets done.</h1>
+      <p class="lede">Virtus Operandi is a small software company building a catalogue of products for operators — on the factory floor, in the dispatch room, and in the back office.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <h2>What "Operandi" means.</h2>
+        <p><em>Operandi</em> is Latin for "of operating" — the way things get done. We named the company after it because that's the work: codifying what already works in great operations into software, instead of forcing teams to change how they work to fit a tool.</p>
+        <p>Most enterprise software does the opposite. It ships with someone else's process baked in, and the next eighteen months are spent bending it back to yours. We build modular products that adopt your shape, not the other way around.</p>
+      </section>
+      <section>
+        <h2>How we operate.</h2>
+        <div class="principles">
+          <div class="principle"><span class="n">01 / Method</span><h3>Configure, don't customize.</h3><p>Every product ships with sensible defaults and config-level levers. No bespoke forks, no consultant lock-in.</p></div>
+          <div class="principle"><span class="n">02 / Method</span><h3>Connect, don't replace.</h3><p>We integrate with the systems your team already runs on. Adopt one product at a time, keep what works.</p></div>
+          <div class="principle"><span class="n">03 / Method</span><h3>Compose, don't fork.</h3><p>Six products, one platform. Pick the modules you need now, add the rest when the business asks.</p></div>
+        </div>
+      </section>
+      <section>
+        <h2>The catalogue.</h2>
+        <p>Six products, all interoperable, all on the same data model:</p>
+        <ul>
+          <li><strong>Virtus Lever</strong> — AI assistant for email triage and drafting</li>
+          <li><strong>Virtus Fleet</strong> — ERP built for transport and logistics operators</li>
+          <li><strong>Virtus AI Factory</strong> — AI co-pilot for MES/MOM (Delmia Apriso, Siemens Opcenter, others)</li>
+          <li><strong>Virtus Agents</strong> — Low-code AI agent &amp; automation builder</li>
+          <li><strong>Virtus GED</strong> — Electronic document management</li>
+          <li><strong>Virtus ERP</strong> — General-purpose ERP for SMB and mid-market</li>
+        </ul>
+        <p><a href="/#products">Browse the full catalogue →</a></p>
+      </section>
+      <section>
+        <h2>Where we are.</h2>
+        <p>Headquartered in Casablanca, Morocco. Currently rolling out to launch partners across North Africa and Europe.</p>
+        <p>Want to be one of the first ten plants on the platform? <a href="/contact">Talk to us.</a></p>
+      </section>
+      <p class="note">This page is a preview — the team, careers, and partners sub-pages will fill in over Q3 2026 as the launch cohort comes online.</p>
+    </div>
+  </main>
+</BaseLayout>

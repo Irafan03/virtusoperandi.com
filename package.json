@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/copy-docs.mjs",
     "preview": "astro preview",
     "test:visual": "playwright test"
   },
