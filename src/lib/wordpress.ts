@@ -20,7 +20,10 @@ export interface WpPost {
 // ── Helpers ──────────────────────────────────────────────────
 
 export function coverUrl(post: WpPost): string | undefined {
-  return post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+  const featured = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+  if (featured) return featured;
+  const match = post.content.rendered.match(/<img[^>]+src="([^"]+)"/);
+  return match?.[1];
 }
 
 /** First taxonomy term treated as the post category/tag label */
