@@ -20,8 +20,13 @@ const { post, prev, next } = Astro.props;
 
 const siteUrl   = 'https://virtusoperandi.com';
 const canonical = `${siteUrl}/blog/${post.slug}`;
+const hasFeatured = !!post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 const cover     = coverUrl(post);
 const coverAlt  = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
+// Remove the first <img> from the body only when it was promoted to cover
+const bodyHtml  = hasFeatured
+  ? post.content.rendered
+  : post.content.rendered.replace(/<img[^>]+>/, '');
 const tag       = primaryTag(post);
 const dateIso   = post.date.slice(0, 10); // YYYY-MM-DD for <time datetime>
 
@@ -115,7 +120,7 @@ const jsonLd = {
           : <div class="post-cover-placeholder" role="img" aria-label="Cover image placeholder">cover image · 16:9</div>
         }
 
-        <div class="post-body entry-content" itemprop="articleBody" set:html={post.content.rendered} />
+        <div class="post-body entry-content" itemprop="articleBody" set:html={bodyHtml} />
 
         <nav class="post-nav" aria-label="Article navigation">
           {prev
