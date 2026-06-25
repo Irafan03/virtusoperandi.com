@@ -42,7 +42,7 @@ const canonical  = 'https://virtusoperandi.com/blog';
           const alt   = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
           return (
             <li data-tag={slug} itemscope itemtype="https://schema.org/BlogPosting">
-              <a href={`/blog/${post.slug}`} class="post-card" aria-label={`Read: ${post.title.rendered}`}>
+              <a href={`/blog/${decodeURIComponent(post.slug)}`} class="post-card" aria-label={`Read: ${post.title.rendered}`}>
                 {cover
                   ? <img class="post-card__cover" src={cover} alt={alt} width="640" height="360" loading="lazy" />
                   : <div class="post-card__cover-placeholder" aria-hidden="true">cover · 16:9</div>

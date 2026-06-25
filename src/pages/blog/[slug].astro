@@ -6,7 +6,7 @@ import type { WpPost } from '@lib/wordpress';
 export async function getStaticPaths() {
   const posts = await getAllPosts();
   return posts.map((post, i) => ({
-    params: { slug: post.slug },
+    params: { slug: decodeURIComponent(post.slug) },
     props:  {
       post,
       prev: posts[i + 1] ?? null,   // older post
@@ -19,7 +19,7 @@ interface Props { post: WpPost; prev: WpPost | null; next: WpPost | null }
 const { post, prev, next } = Astro.props;
 
 const siteUrl   = 'https://virtusoperandi.com';
-const canonical = `${siteUrl}/blog/${post.slug}`;
+const canonical = `${siteUrl}/blog/${decodeURIComponent(post.slug)}`;
 const hasFeatured = !!post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 const cover     = coverUrl(post);
 const coverAlt  = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
@@ -124,14 +124,14 @@ const jsonLd = {
 
         <nav class="post-nav" aria-label="Article navigation">
           {prev
-            ? <a class="post-nav__link post-nav__link--prev" href={`/blog/${prev.slug}`}>
+            ? <a class="post-nav__link post-nav__link--prev" href={`/blog/${decodeURIComponent(prev.slug)}`}>
                 <span class="post-nav__label">← Previous</span>
                 <span class="post-nav__title" set:html={prev.title.rendered} />
               </a>
             : <span class="post-nav__link post-nav__link--empty" aria-hidden="true"></span>
           }
           {next
-            ? <a class="post-nav__link post-nav__link--next" href={`/blog/${next.slug}`}>
+            ? <a class="post-nav__link post-nav__link--next" href={`/blog/${decodeURIComponent(next.slug)}`}>
                 <span class="post-nav__label">Next →</span>
                 <span class="post-nav__title" set:html={next.title.rendered} />
               </a>
