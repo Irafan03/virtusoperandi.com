@@ -11,7 +11,8 @@ export interface WpPost {
   title:    { rendered: string };
   excerpt:  { rendered: string };
   content:  { rendered: string };
-  tags:     number[];        // tag IDs — resolve via _embedded if needed
+  tags:     number[];
+  translations?: Record<string, number>; // Polylang: { fr: 123, en: 456, ar: 789 }
   _embedded?: {
     'wp:featuredmedia'?: [{ source_url: string; alt_text: string }];
     'wp:term'?:          [{ name: string; slug: string }[]][];
@@ -96,4 +97,15 @@ export async function getPostBySlugAndLang(slug: string, lang: Lang): Promise<Wp
   if (!res.ok) throw new Error(`WP API error ${res.status}: getPostBySlugAndLang(${slug}, ${lang})`);
   const posts: WpPost[] = await res.json();
   return posts[0] ?? null;
+}
+
+/** Get translated slug for a post ID in a target language (via Polylang translations map) */
+export async function getSlugForLang(postId: number, lang: Lang): Promise<string | null> {
+  const res = await fetch(
+    `${BASE}/posts/${postId}?_fields=slug`,
+    { headers: { Accept: 'application/json' } }
+  );
+  if (!res.ok) return null;
+  const data: { slug: string } = await res.json();
+  return decodeURIComponent(data.slug);
 }

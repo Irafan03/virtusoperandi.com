@@ -9,9 +9,10 @@ export interface Props {
   description: string;
   canonical:   string;
   lang?:       Lang;
+  langUrls?:   Partial<Record<Lang, string>>;
 }
 
-const { title, description, canonical, lang = 'fr' } = Astro.props;
+const { title, description, canonical, lang = 'fr', langUrls } = Astro.props;
 const { dir } = LANG_META[lang];
 const t = useTranslations(lang);
 const currentPath = new URL(canonical).pathname;
@@ -62,7 +63,7 @@ const currentPath = new URL(canonical).pathname;
       <a class="nav-link" href={langPath(lang, '/blog')}>{t.nav.blog}</a>
       <a class="nav-link" href={langPath(lang, '/contact')}>{t.nav.contact}</a>
       <a class="nav-cta"  href={langPath(lang, '/contact')}>{t.nav.cta}</a>
-      <LanguageSwitcher currentLang={lang} currentPath={currentPath} />
+      <LanguageSwitcher currentLang={lang} currentPath={currentPath} langUrls={langUrls} />
     </nav>
     <button class="hamburger" id="ham" aria-label="Open menu" aria-expanded="false">
       <span class="bars" aria-hidden="true"></span>
@@ -80,7 +81,7 @@ const currentPath = new URL(canonical).pathname;
   <a href={langPath(lang, '/blog')}>{t.nav.blog}</a>
   <a href={langPath(lang, '/contact')}>{t.nav.contact}</a>
   <a href={langPath(lang, '/contact')} class="mob-cta">{t.nav.cta}</a>
-  <LanguageSwitcher currentLang={lang} currentPath={currentPath} />
+  <LanguageSwitcher currentLang={lang} currentPath={currentPath} langUrls={langUrls} />
 </nav>
 
 <slot />

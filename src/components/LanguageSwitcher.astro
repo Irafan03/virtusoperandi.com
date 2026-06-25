@@ -5,15 +5,16 @@ import type { Lang } from '@i18n/config';
 interface Props {
   currentLang: Lang;
   currentPath: string;
+  langUrls?: Partial<Record<Lang, string>>; // override URLs per lang (e.g. translated post slugs)
 }
 
-const { currentLang, currentPath } = Astro.props;
+const { currentLang, currentPath, langUrls } = Astro.props;
 ---
 
 <div class="lang-switcher" role="navigation" aria-label="Language">
   {LANGS.map((lang) => (
     <a
-      href={swapLang(currentPath, lang)}
+      href={langUrls?.[lang] ?? swapLang(currentPath, lang)}
       class:list={['lang-btn', { active: lang === currentLang }]}
       lang={lang}
       aria-current={lang === currentLang ? 'true' : undefined}
