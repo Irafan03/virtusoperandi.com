@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '../../i18n/config';
-import { useTranslations } from '../../i18n/translations';
+import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '@i18n/config';
+import { useTranslations } from '@i18n/translations';
 
 export async function getStaticPaths() {
   return LANGS.map((lang) => ({ params: { lang } }));

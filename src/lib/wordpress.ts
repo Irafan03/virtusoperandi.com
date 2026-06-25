@@ -1,4 +1,4 @@
-import type { Lang } from '../i18n/config';
+import type { Lang } from '@i18n/config';
 
 const BASE = 'https://cms.virtusoperandi.com/wp-json/wp/v2';
 

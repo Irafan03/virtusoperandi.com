@@ -1,7 +1,7 @@
 ---
 import BlogLayout from '@layouts/BlogLayout.astro';
-import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '../../../i18n/config';
-import { useTranslations } from '../../../i18n/translations';
+import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '@i18n/config';
+import { useTranslations } from '@i18n/translations';
 import { getPostsByLang, coverUrl, primaryTag, authorName, formatDate } from '@lib/wordpress';
 import type { WpPost } from '@lib/wordpress';
 
