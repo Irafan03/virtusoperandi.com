@@ -1,0 +1,71 @@
+---
+import BlogLayout from '@layouts/BlogLayout.astro';
+import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '../../i18n/config';
+import { useTranslations } from '../../i18n/translations';
+import { getPostsByLang, coverUrl, primaryTag, formatDate, stripHtml } from '@lib/wordpress';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const t    = useTranslations(lang);
+const posts = await getPostsByLang(lang);
+const pageCanonical = makeCanonical(lang, '/blog');
+---
+
+<BlogLayout
+  title={`Blog · Virtus Operandi`}
+  description={t.blog.metaLabel}
+  canonical={pageCanonical}
+  lang={lang}
+>
+  <style slot="head">
+    .blog-header { padding: clamp(40px,6vw,72px) var(--gutter) clamp(24px,4vw,40px); border-bottom: 1px solid var(--border); }
+    .blog-header__inner { max-width: 960px; margin: 0 auto; }
+    .blog-header h1 { font-size: clamp(28px,4vw,40px); font-weight: 700; letter-spacing: -1px; }
+    .post-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 28px; max-width: 960px; margin: clamp(32px,5vw,56px) auto; padding: 0 var(--gutter); }
+    .post-item a { display: grid; grid-template-columns: 280px 1fr; gap: 24px; padding: 20px; border: 1px solid var(--border); border-radius: 14px; text-decoration: none; color: inherit; transition: border-color .15s ease, transform .15s ease; }
+    .post-item a:hover { border-color: var(--blue); transform: translateY(-2px); }
+    @media (max-width: 700px) { .post-item a { grid-template-columns: 1fr; } }
+    .post-item__cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; display: block; }
+    .post-item__placeholder { width: 100%; aspect-ratio: 16/9; background: var(--paper-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .post-item__tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 8px; display: block; }
+    .post-item__title { font-size: 18px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 8px; color: var(--ink); line-height: 1.3; }
+    .post-item__excerpt { font-size: 14px; color: var(--muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .post-item__date { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 12px; }
+  </style>
+
+  <main id="main">
+    <header class="blog-header">
+      <div class="blog-header__inner">
+        <h1>{t.nav.blog}</h1>
+      </div>
+    </header>
+
+    <ul class="post-list" role="list">
+      {posts.map((post) => {
+        const cover = coverUrl(post);
+        const tag   = primaryTag(post);
+        return (
+          <li class="post-item" itemscope itemtype="https://schema.org/BlogPosting">
+            <a href={langPath(lang, `/blog/${post.slug}`)} aria-label={post.title.rendered}>
+              {cover
+                ? <img class="post-item__cover" src={cover} alt={post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? ''} width="280" height="158" loading="lazy" />
+                : <div class="post-item__placeholder" aria-hidden="true">16:9</div>
+              }
+              <div class="post-item__body">
+                {tag && <span class="post-item__tag" itemprop="articleSection">{tag}</span>}
+                <h2 class="post-item__title" itemprop="headline" set:html={post.title.rendered} />
+                <p class="post-item__excerpt" itemprop="description">{stripHtml(post.excerpt.rendered)}</p>
+                <time class="post-item__date" datetime={post.date.slice(0,10)} itemprop="datePublished">
+                  {formatDate(post.date)}
+                </time>
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </main>
+</BlogLayout>

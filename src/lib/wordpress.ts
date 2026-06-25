@@ -1,3 +1,5 @@
+import type { Lang } from '../i18n/config';
+
 const BASE = 'https://cms.virtusoperandi.com/wp-json/wp/v2';
 
 // ── Types ────────────────────────────────────────────────────
@@ -64,6 +66,16 @@ export async function getAllPosts(): Promise<WpPost[]> {
   return res.json();
 }
 
+/** All published posts filtered by Polylang language */
+export async function getPostsByLang(lang: Lang): Promise<WpPost[]> {
+  const res = await fetch(
+    `${BASE}/posts?_embed&status=publish&per_page=100&orderby=date&order=desc&lang=${lang}`,
+    { headers: { Accept: 'application/json' } }
+  );
+  if (!res.ok) throw new Error(`WP API error ${res.status}: getPostsByLang(${lang})`);
+  return res.json();
+}
+
 /** Single post by slug */
 export async function getPostBySlug(slug: string): Promise<WpPost | null> {
   const res = await fetch(
@@ -71,6 +83,17 @@ export async function getPostBySlug(slug: string): Promise<WpPost | null> {
     { headers: { Accept: 'application/json' } }
   );
   if (!res.ok) throw new Error(`WP API error ${res.status}: getPostBySlug(${slug})`);
+  const posts: WpPost[] = await res.json();
+  return posts[0] ?? null;
+}
+
+/** Single post by slug, filtered by Polylang language */
+export async function getPostBySlugAndLang(slug: string, lang: Lang): Promise<WpPost | null> {
+  const res = await fetch(
+    `${BASE}/posts?_embed&status=publish&slug=${encodeURIComponent(slug)}&lang=${lang}`,
+    { headers: { Accept: 'application/json' } }
+  );
+  if (!res.ok) throw new Error(`WP API error ${res.status}: getPostBySlugAndLang(${slug}, ${lang})`);
   const posts: WpPost[] = await res.json();
   return posts[0] ?? null;
 }

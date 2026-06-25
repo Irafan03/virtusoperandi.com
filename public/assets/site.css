@@ -318,3 +318,42 @@ footer {
 }
 .foot-bottom a { color: var(--muted); transition: color .15s ease; margin-right: 16px; }
 .foot-bottom a:hover { color: var(--ink); }
+
+
+/* ─── RTL (Arabic) ────────────────────────────────────────── */
+[dir="rtl"] {
+  font-family: 'Open Sans', 'Segoe UI', Tahoma, Arial, sans-serif;
+  text-align: right;
+}
+
+/* Flip nav and brand */
+[dir="rtl"] .nav-inner      { flex-direction: row-reverse; }
+[dir="rtl"] .nav-links      { flex-direction: row-reverse; }
+[dir="rtl"] .mobile-menu    { text-align: right; }
+
+/* Flip footer grid */
+[dir="rtl"] .foot-top       { direction: rtl; }
+[dir="rtl"] .foot-bottom    { flex-direction: row-reverse; }
+[dir="rtl"] .foot-bottom a  { margin-right: 0; margin-left: 16px; }
+
+/* Flip blockquote border side */
+[dir="rtl"] .post-body blockquote {
+  border-left: none;
+  border-right: 3px solid var(--blue);
+  border-radius: 8px 0 0 8px;
+}
+
+/* Flip list padding */
+[dir="rtl"] .post-body ul,
+[dir="rtl"] .post-body ol { padding-left: 0; padding-right: 24px; }
+
+/* Flip post-nav alignment */
+[dir="rtl"] .post-nav__link--next { text-align: left; }
+[dir="rtl"] .post-nav__link--prev { text-align: right; }
+
+/* Flip hamburger position */
+[dir="rtl"] .hamburger { margin-right: auto; margin-left: 0; }
+
+/* Page hero text */
+[dir="rtl"] .home-hero      { direction: rtl; }
+[dir="rtl"] .page-hero      { direction: rtl; }

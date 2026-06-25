@@ -4,5 +4,16 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://virtusoperandi.com',
   outDir: './dist',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'fr',
+        locales: {
+          fr: 'fr-FR',
+          en: 'en-US',
+          ar: 'ar',
+        },
+      },
+    }),
+  ],
 });

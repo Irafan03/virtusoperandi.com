@@ -1,0 +1,52 @@
+---
+import { LANGS, LANG_META, swapLang } from '../i18n/config';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  currentLang: Lang;
+  currentPath: string;
+}
+
+const { currentLang, currentPath } = Astro.props;
+---
+
+<div class="lang-switcher" role="navigation" aria-label="Language">
+  {LANGS.map((lang) => (
+    <a
+      href={swapLang(currentPath, lang)}
+      class:list={['lang-btn', { active: lang === currentLang }]}
+      lang={lang}
+      aria-current={lang === currentLang ? 'true' : undefined}
+      hreflang={lang}
+    >
+      {LANG_META[lang].label}
+    </a>
+  ))}
+</div>
+
+<style>
+  .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .lang-btn {
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color .15s ease, background .15s ease;
+  }
+  .lang-btn:hover {
+    color: var(--ink);
+    background: var(--paper-2);
+  }
+  .lang-btn.active {
+    color: var(--blue);
+    background: rgba(0,102,255,0.07);
+  }
+</style>
