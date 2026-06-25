@@ -10,8 +10,9 @@ export async function getStaticPaths() {
   for (const lang of LANGS) {
     const posts = await getPostsByLang(lang);
     for (let i = 0; i < posts.length; i++) {
+      const slug = decodeURIComponent(posts[i].slug);
       paths.push({
-        params: { lang, slug: posts[i].slug },
+        params: { lang, slug },
         props:  { post: posts[i], prev: posts[i + 1] ?? null, next: posts[i - 1] ?? null },
       });
     }
@@ -24,7 +25,7 @@ const { post, prev, next } = Astro.props;
 const lang = resolveLang(Astro.params.lang);
 const t    = useTranslations(lang);
 
-const pageCanonical = makeCanonical(lang, `/blog/${post.slug}`);
+const pageCanonical = makeCanonical(lang, `/blog/${decodeURIComponent(post.slug)}`);
 const hasFeatured   = !!post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 const cover         = coverUrl(post);
 const coverAlt      = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
@@ -122,14 +123,14 @@ const jsonLd = {
 
         <nav class="post-nav" aria-label="Article navigation">
           {prev
-            ? <a class="post-nav__link post-nav__link--prev" href={langPath(lang, `/blog/${prev.slug}`)}>
+            ? <a class="post-nav__link post-nav__link--prev" href={langPath(lang, `/blog/${decodeURIComponent(prev.slug)}`)}>
                 <span class="post-nav__label">{t.blog.prev}</span>
                 <span class="post-nav__title" set:html={prev.title.rendered} />
               </a>
             : <span class="post-nav__link post-nav__link--empty" aria-hidden="true"></span>
           }
           {next
-            ? <a class="post-nav__link post-nav__link--next" href={langPath(lang, `/blog/${next.slug}`)}>
+            ? <a class="post-nav__link post-nav__link--next" href={langPath(lang, `/blog/${decodeURIComponent(next.slug)}`)}>
                 <span class="post-nav__label">{t.blog.next}</span>
                 <span class="post-nav__title" set:html={next.title.rendered} />
               </a>

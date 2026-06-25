@@ -49,7 +49,7 @@ const pageCanonical = makeCanonical(lang, '/blog');
         const tag   = primaryTag(post);
         return (
           <li class="post-item" itemscope itemtype="https://schema.org/BlogPosting">
-            <a href={langPath(lang, `/blog/${post.slug}`)} aria-label={post.title.rendered}>
+            <a href={langPath(lang, `/blog/${decodeURIComponent(post.slug)}`)} aria-label={post.title.rendered}>
               {cover
                 ? <img class="post-item__cover" src={cover} alt={post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? ''} width="280" height="158" loading="lazy" />
                 : <div class="post-item__placeholder" aria-hidden="true">16:9</div>
