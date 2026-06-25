@@ -53,7 +53,7 @@ const t = {
     // Industries
     industries: {
       manufacturing:         'Industrie',
-      manufacturingSub:      'De l'atelier à la direction',
+      manufacturingSub:      "De l'atelier à la direction",
       transport:             'Transport & Logistique',
       transportSub:          'Flotte, dispatch, dernier kilomètre',
       professional:          'Services professionnels',
