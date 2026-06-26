@@ -357,3 +357,99 @@ footer {
 /* Page hero text */
 [dir="rtl"] .home-hero      { direction: rtl; }
 [dir="rtl"] .page-hero      { direction: rtl; }
+
+
+/* ─── Newsletter ──────────────────────────────────────────── */
+.newsletter { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.newsletter__input {
+  flex: 1 1 220px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--body);
+  font-size: 14.5px;
+  color: var(--ink);
+  background: var(--paper);
+  transition: border-color .15s ease;
+  outline: none;
+}
+.newsletter__input:focus { border-color: var(--blue); }
+.newsletter__btn {
+  height: 44px;
+  padding: 0 22px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 8px;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background .15s ease, opacity .15s ease;
+  white-space: nowrap;
+}
+.newsletter__btn:hover:not(:disabled) { background: var(--blue-hover); }
+.newsletter__btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.newsletter__feedback {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  min-height: 1em;
+}
+
+/* inline — end of blog post */
+.newsletter--inline {
+  margin-top: clamp(40px, 5vw, 60px);
+  padding: 32px 28px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: var(--paper-2);
+  flex-direction: column;
+  align-items: flex-start;
+}
+.newsletter--inline::before {
+  content: "Stay in the loop";
+  display: block;
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.newsletter--inline .newsletter__input,
+.newsletter--inline .newsletter__btn { flex: none; width: 100%; }
+
+/* banner — bottom of blog index */
+.newsletter--banner {
+  margin: clamp(48px, 6vw, 72px) auto;
+  max-width: 680px;
+  padding: 40px 36px;
+  background: radial-gradient(80% 60% at 80% 40%, rgba(0,102,255,0.07), transparent 70%), var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.newsletter--banner::before {
+  content: "Get the field notes";
+  display: block;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+.newsletter--banner .newsletter__input { max-width: 320px; }
+
+/* footer strip */
+.newsletter--footer {
+  flex-direction: row;
+  gap: 8px;
+}
+.newsletter--footer .newsletter__input { flex: 1 1 180px; height: 38px; font-size: 13.5px; }
+.newsletter--footer .newsletter__btn   { height: 38px; padding: 0 16px; font-size: 13px; }
+.newsletter--footer .newsletter__feedback { font-size: 11px; }

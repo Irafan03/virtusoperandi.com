@@ -3,6 +3,7 @@ import BlogLayout from '@layouts/BlogLayout.astro';
 import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
 import { getPostsByLang, coverUrl, primaryTag, authorName, formatDate, getSlugForLang } from '@lib/wordpress';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 import type { WpPost } from '@lib/wordpress';
 
 export async function getStaticPaths() {
@@ -155,6 +156,7 @@ const jsonLd = {
         </nav>
 
         <a class="back-btn" href={langPath(lang, '/blog')}>{t.blog.back}</a>
+        <NewsletterSignup variant="inline" />
       </div>
     </article>
   </main>

@@ -3,6 +3,7 @@ import BlogLayout from '@layouts/BlogLayout.astro';
 import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
 import { getPostsByLang, coverUrl, primaryTag, formatDate, stripHtml } from '@lib/wordpress';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 
 export async function getStaticPaths() {
   return LANGS.map((lang) => ({ params: { lang } }));
@@ -67,5 +68,6 @@ const pageCanonical = makeCanonical(lang, '/blog');
         );
       })}
     </ul>
+    <NewsletterSignup variant="banner" />
   </main>
 </BlogLayout>
