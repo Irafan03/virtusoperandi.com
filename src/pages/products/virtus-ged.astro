@@ -1,0 +1,66 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+<BaseLayout title="Virtus GED — Virtus Operandi" description="Electronic document management that finally feels modern. Smart classification, semantic search, retention rules." canonical="https://virtusoperandi.com/products/virtus-ged">
+  <style slot="head">
+  .pcat { display: inline-block; font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 999px; background: var(--paper-2); border: 1px solid var(--border); color: var(--c, var(--blue)); letter-spacing: 0.10em; text-transform: uppercase; font-weight: 600; margin-bottom: 14px; }
+  .feats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 28px 0 8px; }
+  @media (max-width: 720px) { .feats { grid-template-columns: 1fr; } }
+  .feat { padding: 18px 18px 16px; background: var(--paper-2); border: 1px solid var(--border); border-radius: 12px; }
+  .feat h3 { font-size: 16px; margin-bottom: 6px; }
+  .feat p { font-size: 14px; color: var(--muted); margin: 0; }
+  .rel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 18px 0 0; }
+  @media (max-width: 720px) { .rel { grid-template-columns: 1fr; } }
+  .rel a { padding: 16px 18px; background: #fff; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; gap: 4px; color: var(--ink); transition: border-color .15s ease, transform .15s ease; text-decoration: none; }
+  .rel a:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .rel a .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--blue); font-weight: 600; }
+  .rel a .ttl { font-weight: 600; font-size: 15px; }
+  .cta-block { margin-top: 36px; padding: 32px 28px; background: var(--ink); color: #fff; border-radius: 18px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: center; }
+  @media (max-width: 700px) { .cta-block { grid-template-columns: 1fr; } }
+  .cta-block h3 { color: #fff; font-size: 24px; margin-bottom: 8px; letter-spacing: -0.8px; }
+  .cta-block p { color: rgba(255,255,255,0.7); margin: 0; font-size: 15px; }
+  .btn-pill { display: inline-flex; align-items: center; gap: 8px; padding: 15px 28px; background: #fff; color: var(--ink); font-weight: 600; font-size: 15.5px; border-radius: 999px; transition: background .2s, transform .2s; text-decoration: none; }
+  .btn-pill:hover { background: var(--blue); color: #fff; transform: translateY(-2px); }
+  </style>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Catalogue · EDM · Documents</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="pcat" style="--c: #F59E0B">EDM · Documents</span>
+      <h1>Virtus GED — Find the file in two seconds.</h1>
+      <p class="lede">Electronic document management that finally feels modern. Smart classification, semantic search, retention rules — built for compliance teams who hate compliance software.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <p>Most GED platforms make filing easy and finding hard. Virtus GED inverts that — classifies on upload, indexes content semantically, and lets you search the way you actually think.</p>
+        <p>Workflow approvals, retention rules, and signature flows live in the same product. Integrations with Office, email, your ERP, and your MES mean the documents are already where they need to be.</p>
+        <p>Compliance-grade by design — audit trail per file, retention policies enforced, ISO/QMS-ready out of the box.</p>
+      </section>
+      <section>
+        <h2>What you get.</h2>
+        <div class="feats">
+          <div class="feat"><h3>AI classification</h3><p>Tagged on upload — no manual taxonomy work.</p></div>
+          <div class="feat"><h3>Semantic search</h3><p>Finds what you mean, not just keywords. Across PDFs, scans, emails.</p></div>
+          <div class="feat"><h3>Workflows</h3><p>Approvals, signatures, and retention in one engine.</p></div>
+          <div class="feat"><h3>Audit-grade</h3><p>Per-file audit trail. Compliance teams approve at the demo.</p></div>
+          <div class="feat"><h3>Integrations</h3><p>Office, Gmail, ERP, MES — documents arrive where they're used.</p></div>
+          <div class="feat"><h3>Migration</h3><p>Imports from legacy GED systems without losing tags or history.</p></div>
+        </div>
+      </section>
+      <section>
+        <h2>Plays well with.</h2>
+        <div class="rel">
+          <a href="/products/virtus-erp"><span class="lbl">Catalogue</span><span class="ttl">Virtus ERP — General-purpose ERP</span></a>
+          <a href="/products/virtus-ai-factory"><span class="lbl">Catalogue</span><span class="ttl">Virtus AI Factory — MES/MOM AI co-pilot</span></a>
+        </div>
+      </section>
+      <div class="cta-block">
+        <div><h3>See Virtus GED on your operation.</h3><p>15-minute demo. A real engineer on the call.</p></div>
+        <a class="btn-pill" href="/contact">Book a demo →</a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

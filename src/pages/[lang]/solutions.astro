@@ -1,0 +1,46 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const pageCanonical = makeCanonical(lang, '/solutions');
+---
+<BaseLayout title="Solutions — Virtus Operandi" description="Bundled outcomes that combine multiple products around a real operational goal." canonical={pageCanonical} lang={lang}>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Bundled outcomes</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Bundled outcomes</span>
+      <h1>Solutions, not modules.</h1>
+      <p class="lede">When you know the outcome but not the stack: three pre-composed solutions that bundle products around a goal you can name.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <h2>AI-Powered Smart Factory</h2>
+        <p>For tier-1 and tier-2 manufacturers running Delmia Apriso, Siemens Opcenter, or another MOM platform. Cut customization time from quarters to weeks, automate the workflows your MES doesn't cover, and make QMS documents findable.</p>
+        <p><strong>Includes:</strong> Virtus AI Factory + Virtus Agents + Virtus GED.</p>
+        <p><strong>Typical outcome:</strong> 9-month customization → 3 weeks. Operator adoption stops being a battle.</p>
+      </section>
+      <section>
+        <h2>Logistics Command Center</h2>
+        <p>For freight carriers, last-mile operators, and fleet-rental businesses. Replace the spreadsheets-and-WhatsApp stack with a real dispatch board, a driver app, and back-office automation that closes the paper-to-finance loop.</p>
+        <p><strong>Includes:</strong> Virtus Fleet + Virtus ERP + Virtus Lever.</p>
+        <p><strong>Typical outcome:</strong> Zero paper between driver and finance. Dispatchers stop opening spreadsheets within three weeks.</p>
+      </section>
+      <section>
+        <h2>Office Automation Suite</h2>
+        <p>For consulting, professional services, and back-office teams. Hours back per knowledge worker, faster proposal cycles, fewer dropped follow-ups — without forcing anyone onto a new platform.</p>
+        <p><strong>Includes:</strong> Virtus Lever + Virtus Agents + Virtus GED.</p>
+        <p><strong>Typical outcome:</strong> 6 hours/week back per knowledge worker. Proposal cycles 40% shorter.</p>
+      </section>
+      <p class="note">Solutions are starting points, not lock-ins. Drop a module, add another, scale up — the catalogue composes to the shape you need.</p>
+    </div>
+  </main>
+</BaseLayout>

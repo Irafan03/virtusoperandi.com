@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const pageCanonical = makeCanonical(lang, '/security');
+---
+<BaseLayout title="Security — Virtus Operandi" description="How Virtus Operandi secures customer data." canonical={pageCanonical} lang={lang}>
+  <style slot="head">
+  .sec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 24px 0; }
+  @media (max-width: 720px) { .sec-grid { grid-template-columns: 1fr; } }
+  .sec-card { padding: 22px 22px 20px; background: var(--paper-2); border: 1px solid var(--border); border-radius: 14px; }
+  .sec-card h3 { font-size: 17px; margin-bottom: 8px; }
+  .sec-card p { font-size: 14.5px; color: var(--muted); margin: 0; }
+  .sec-card .lbl { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
+  </style>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Trust · last updated 2026-06-08</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Security &amp; trust</span>
+      <h1>How we protect your data.</h1>
+      <p class="lede">Security is a precondition for shipping into real operations. Here's how we approach it across infrastructure, code, and process.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <h2>The short version.</h2>
+        <p>All data in transit and at rest is encrypted. Customer data is segregated by tenant. Access is least-privilege, audited, and requires hardware-backed MFA for engineers. We run on hardened cloud infrastructure with continuous vulnerability scanning. We disclose incidents promptly per contractual SLAs.</p>
+      </section>
+      <section>
+        <h2>What we do — by area.</h2>
+        <div class="sec-grid">
+          <div class="sec-card"><span class="lbl">Encryption</span><h3>In transit &amp; at rest.</h3><p>TLS 1.3 for all network traffic. AES-256 for data at rest. Keys managed via cloud KMS with rotation.</p></div>
+          <div class="sec-card"><span class="lbl">Access control</span><h3>Least privilege, MFA, audited.</h3><p>Role-based access, hardware-backed MFA for all engineers, just-in-time elevation, full audit log.</p></div>
+          <div class="sec-card"><span class="lbl">Tenant isolation</span><h3>Logical &amp; physical separation.</h3><p>Customer data is logically segregated by tenant. Enterprise tier supports dedicated infrastructure on request.</p></div>
+          <div class="sec-card"><span class="lbl">Vulnerability mgmt</span><h3>Continuous scanning + patches.</h3><p>SAST/DAST in CI, weekly dependency scans, container vulnerability checks, quarterly third-party pen tests.</p></div>
+          <div class="sec-card"><span class="lbl">Monitoring</span><h3>24/7 SIEM + alerting.</h3><p>Real-time security event monitoring with on-call rotation. Anomaly detection on auth and admin actions.</p></div>
+          <div class="sec-card"><span class="lbl">Resilience</span><h3>Backups + DR.</h3><p>Daily encrypted backups with point-in-time recovery. Disaster recovery plan tested quarterly.</p></div>
+        </div>
+      </section>
+      <section>
+        <h2>Compliance &amp; certifications.</h2>
+        <ul>
+          <li><strong>SOC 2 Type II</strong> — audit underway, completion target Q4 2026.</li>
+          <li><strong>ISO/IEC 27001</strong> — certification path planned for 2027.</li>
+          <li><strong>GDPR</strong> — compliant; Data Processing Addendum available on request.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Responsible disclosure.</h2>
+        <p>Found a vulnerability? Please report it to <a href="mailto:security@virtusoperandi.com">security@virtusoperandi.com</a>. We acknowledge within 2 business days and provide a remediation timeline within 10.</p>
+      </section>
+      <p class="note">Preview state. Compliance certifications are pursued targets, not yet awarded.</p>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const pageCanonical = makeCanonical(lang, '/terms');
+---
+<BaseLayout title="Terms of Service — Virtus Operandi" description="Terms governing your use of virtusoperandi.com and the Virtus Operandi product catalogue." canonical={pageCanonical} lang={lang}>
+  <style slot="head">
+  .toc { background: var(--paper-2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
+  .toc h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+  .toc a { color: var(--blue); }
+  </style>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Legal · last updated 2026-06-08</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Legal</span>
+      <h1>Terms of Service.</h1>
+      <p class="lede">These terms govern your use of the Virtus Operandi website and any products in the catalogue. Last reviewed 2026-06-08.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <div class="toc">
+        <h4>On this page</h4>
+        <ol>
+          <li><a href="#acceptance">Acceptance</a></li>
+          <li><a href="#use">Use of the service</a></li>
+          <li><a href="#account">Your account</a></li>
+          <li><a href="#ip">Intellectual property</a></li>
+          <li><a href="#fees">Fees &amp; billing</a></li>
+          <li><a href="#data">Customer data</a></li>
+          <li><a href="#termination">Termination</a></li>
+          <li><a href="#disclaimer">Disclaimer of warranties</a></li>
+          <li><a href="#liability">Limitation of liability</a></li>
+          <li><a href="#governing">Governing law</a></li>
+          <li><a href="#changes">Changes to these terms</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ol>
+      </div>
+      <section id="acceptance"><h2>1. Acceptance</h2><p>By accessing virtusoperandi.com or using any product in the Virtus Operandi catalogue (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Service.</p></section>
+      <section id="use"><h2>2. Use of the service</h2><p>You may use the Service for lawful business purposes consistent with these Terms. You agree not to reverse-engineer, decompile, use the Service to build a competing product, interfere with the Service's integrity or security, or use the Service to process data you are not authorized to process.</p></section>
+      <section id="account"><h2>3. Your account</h2><p>You are responsible for safeguarding your account credentials and for all activity that occurs under your account. Notify us promptly at <a href="mailto:security@virtusoperandi.com">security@virtusoperandi.com</a> of any unauthorized use.</p></section>
+      <section id="ip"><h2>4. Intellectual property</h2><p>The Service is owned by Virtus Operandi or its licensors. We grant you a limited, non-exclusive, non-transferable license to use the Service. You retain all rights to data you submit to the Service.</p></section>
+      <section id="fees"><h2>5. Fees &amp; billing</h2><p>Paid subscriptions are billed according to the plan you select. Fees are non-refundable except as required by law. We may change pricing with at least thirty (30) days' prior notice.</p></section>
+      <section id="data"><h2>6. Customer data</h2><p>We process Customer Data in accordance with our <a href={`/${lang}/privacy`}>Privacy Policy</a> and any Data Processing Addendum entered into with you.</p></section>
+      <section id="termination"><h2>7. Termination</h2><p>You may stop using the Service at any time. We may suspend or terminate your access if you materially breach these Terms.</p></section>
+      <section id="disclaimer"><h2>8. Disclaimer of warranties</h2><p>The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, except as required by applicable law.</p></section>
+      <section id="liability"><h2>9. Limitation of liability</h2><p>To the maximum extent permitted by law, Virtus Operandi will not be liable for any indirect, incidental, special, consequential, or punitive damages. Our aggregate liability will not exceed the amounts you paid to us in the twelve (12) months preceding the event.</p></section>
+      <section id="governing"><h2>10. Governing law</h2><p>These Terms are governed by the laws of Morocco. Any dispute will be brought exclusively in the courts of Casablanca.</p></section>
+      <section id="changes"><h2>11. Changes to these terms</h2><p>Material changes will be communicated by email or via a notice on the Service at least thirty (30) days in advance.</p></section>
+      <section id="contact"><h2>12. Contact</h2><p>Questions? Email <a href="mailto:legal@virtusoperandi.com">legal@virtusoperandi.com</a>.</p><p><strong>Virtus Operandi SARL</strong><br>[Office address — to be confirmed]<br>Casablanca, Morocco</p></section>
+      <p class="note">Draft. These Terms have not yet been reviewed by legal counsel — pending review before public production launch.</p>
+    </div>
+  </main>
+</BaseLayout>

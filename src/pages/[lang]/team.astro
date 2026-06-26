@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const pageCanonical = makeCanonical(lang, '/team');
+---
+<BaseLayout title="Team — Virtus Operandi" description="The team behind Virtus Operandi." canonical={pageCanonical} lang={lang}>
+  <style slot="head">
+  .btn-pill { display: inline-flex; align-items: center; gap: 8px; padding: 15px 28px; background: var(--blue); color: #fff; font-weight: 600; font-size: 15.5px; border-radius: 999px; transition: background .2s, transform .2s; text-decoration: none; }
+  .btn-pill:hover { background: var(--blue-hover); transform: translateY(-2px); }
+  </style>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Company · team</span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Company · team</span>
+      <h1>The people behind the catalogue.</h1>
+      <p class="lede">Small team, deep operator background. Public team page goes live with the production site — for now, you can meet us on a demo call.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <section>
+        <h2>How we hire.</h2>
+        <p>We hire engineers who have shipped software inside real operations — manufacturing plants, dispatch rooms, back offices. Not engineers who understand operations in theory; engineers who have been called at 3 AM when an MES update broke a shift handover.</p>
+        <p>If that's you, we're hiring. See <a href={`/${lang}/careers`}>open roles</a>.</p>
+      </section>
+      <section>
+        <h2>Meet us.</h2>
+        <p>The fastest way to meet the team is on a demo call. We don't farm those out — when you book, you get the engineer who would actually own your account.</p>
+        <p><a class="btn-pill" href={`/${lang}/contact`}>Book a 15-minute call →</a></p>
+      </section>
+      <p class="note">Public team page (photos, bios, LinkedIn) ships with the production release. Treat this as a preview.</p>
+    </div>
+  </main>
+</BaseLayout>

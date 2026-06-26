@@ -2,7 +2,7 @@
 import BlogLayout from '@layouts/BlogLayout.astro';
 import { LANGS, langPath, canonical as makeCanonical, resolveLang } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
-import { getPostsByLang, coverUrl, primaryTag, authorName, formatDate } from '@lib/wordpress';
+import { getPostsByLang, coverUrl, primaryTag, authorName, formatDate, getSlugForLang } from '@lib/wordpress';
 import type { WpPost } from '@lib/wordpress';
 
 export async function getStaticPaths() {
@@ -26,6 +26,21 @@ const lang = resolveLang(Astro.params.lang);
 const t    = useTranslations(lang);
 
 const pageCanonical = makeCanonical(lang, `/blog/${decodeURIComponent(post.slug)}`);
+
+// Build per-language switcher URLs using Polylang translations map
+const langUrls: Partial<Record<typeof lang, string>> = {};
+if (post.translations) {
+  for (const [l, id] of Object.entries(post.translations)) {
+    if (l === lang) {
+      langUrls[l as typeof lang] = langPath(lang, `/blog/${decodeURIComponent(post.slug)}`);
+    } else {
+      const translatedSlug = await getSlugForLang(id, l as typeof lang);
+      langUrls[l as typeof lang] = translatedSlug
+        ? langPath(l as typeof lang, `/blog/${translatedSlug}`)
+        : langPath(l as typeof lang, '/blog');
+    }
+  }
+}
 const hasFeatured   = !!post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 const cover         = coverUrl(post);
 const coverAlt      = post._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? post.title.rendered;
@@ -52,6 +67,7 @@ const jsonLd = {
   description={post.excerpt.rendered.replace(/<[^>]*>/g, '').trim()}
   canonical={pageCanonical}
   lang={lang}
+  langUrls={langUrls}
   og={{ title: post.title.rendered, description: post.excerpt.rendered.replace(/<[^>]*>/g, '').trim(), image: cover }}
   jsonLd={jsonLd}
 >

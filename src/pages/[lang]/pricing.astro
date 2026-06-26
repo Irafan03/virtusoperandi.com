@@ -1,0 +1,236 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = resolveLang(Astro.params.lang);
+const pageCanonical = makeCanonical(lang, '/pricing');
+---
+<BaseLayout title="Pricing — Virtus Operandi" description="One platform, six products. Pay for what your team actually uses." canonical={pageCanonical} lang={lang}>
+  <style slot="head">
+:root { --max-pricing: 1280px; }
+.ctrl-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; margin-top: 8px; }
+.tog, .cur { display: inline-flex; background: #EDEDF5; border-radius: 999px; padding: 4px; gap: 2px; }
+.tog button, .cur button { padding: 8px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; background: transparent; color: var(--muted); transition: background .2s, color .2s; }
+.tog button.active { background: var(--blue); color: #fff; }
+.cur button { font-family: var(--mono); font-size: 13px; }
+.cur button.active { background: var(--ink); color: #fff; }
+.save-badge { font-family: var(--mono); font-size: 11px; color: #1a8a4a; margin-left: 4px; }
+.plans-section { padding: clamp(40px,6vw,72px) 0; background: var(--page-bg); }
+.plans-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; }
+@media (max-width: 1100px) { .plans-grid { grid-template-columns: repeat(3,1fr); } }
+@media (max-width: 700px)  { .plans-grid { grid-template-columns: 1fr; } }
+.plan-card { background: var(--paper); border: 1.5px solid var(--border); border-radius: 18px; padding: 28px 22px 24px; display: flex; flex-direction: column; gap: 6px; position: relative; transition: box-shadow .2s, transform .2s; }
+.plan-card:hover { box-shadow: 0 12px 32px -8px rgba(0,0,0,.10); transform: translateY(-2px); }
+.plan-card.featured { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+.plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 3px 14px; border-radius: 999px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; white-space: nowrap; }
+.plan-badge.blue { background: var(--blue); color: #fff; }
+.plan-badge.red  { background: #CC2200; color: #fff; }
+.plan-name { font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: -.3px; }
+.plan-price { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--blue-deep); margin: 8px 0 4px; line-height: 1.1; }
+.plan-sub   { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.plan-cta { display: inline-flex; align-items: center; justify-content: center; padding: 11px 18px; border-radius: 999px; font-weight: 600; font-size: 14.5px; text-align: center; transition: background .2s, transform .2s; margin-top: auto; text-decoration: none; }
+.plan-cta.primary { background: var(--blue); color: #fff; }
+.plan-cta.primary:hover { background: var(--blue-hover); transform: translateY(-1px); }
+.plan-cta.outline { border: 1.5px solid var(--border); color: var(--ink); }
+.plan-cta.outline:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
+.plan-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.plan-features { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 8px; }
+.plan-features li { font-size: 13.5px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+.plan-features li::before { content: "✓"; color: #1a8a4a; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.compare-section { padding: clamp(40px,6vw,72px) 0; }
+.compare-section .section-sub { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+.compare-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); }
+table.ctable { width: 100%; border-collapse: collapse; font-size: 15px; }
+.ctable thead tr { background: #1a4fa8; }
+.ctable th { color: #fff; font-family: var(--display); font-weight: 600; font-size: 13px; padding: 18px 20px; text-align: left; white-space: nowrap; }
+.ctable th:first-child { border-radius: 13px 0 0 0; } .ctable th:last-child { border-radius: 0 13px 0 0; }
+.ctable th:not(:first-child) { text-align: center; }
+.ctable td { padding: 15px 20px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.ctable tbody tr:last-child td { border-bottom: none; }
+.ctable tbody tr:nth-child(even) td { background: var(--paper-2); }
+.ctable td:first-child { font-weight: 600; color: var(--ink); min-width: 160px; }
+.ctable td:not(:first-child) { text-align: center; color: var(--muted); }
+.ctable .mono { font-family: var(--mono); font-size: 13.5px; color: var(--blue); font-weight: 500; }
+.ctable .dash { color: var(--border); }
+.faq-section { padding: clamp(40px,6vw,72px) 0; background: var(--page-bg); }
+.faq-section .section-sub { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+details.faq { background: var(--paper); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+details.faq[open] { box-shadow: 0 4px 20px -4px rgba(0,32,96,.10); border-color: rgba(0,102,255,.25); }
+summary.faq-q { padding: 20px 24px; font-family: var(--display); font-weight: 600; font-size: 16.5px; color: var(--ink); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+summary.faq-q > span:first-child { flex: 1; }
+summary.faq-q:hover { color: var(--blue); }
+summary.faq-q::-webkit-details-marker { display: none; }
+.faq-icon { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; color: var(--blue); transition: background .2s, border-color .2s, transform .3s; }
+details.faq[open] .faq-icon { background: var(--blue); border-color: var(--blue); color: #fff; transform: rotate(45deg); }
+.faq-a { padding: 0 24px 20px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.cta-band { padding: clamp(40px,6vw,72px) 0; }
+.closing-card { background: var(--ink); color: #fff; border-radius: 24px; padding: clamp(56px,8vw,100px) clamp(28px,5vw,80px); position: relative; overflow: hidden; display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+@media (max-width: 880px) { .closing-card { grid-template-columns: 1fr; gap: 32px; } }
+.closing-card::before { content: ""; position: absolute; inset: 0; z-index: 0; background: radial-gradient(60% 80% at 80% 50%, rgba(0,102,255,0.30), transparent 65%), radial-gradient(40% 60% at 10% 20%, rgba(0,102,255,0.15), transparent 60%); }
+.closing-card > * { position: relative; z-index: 1; }
+.closing-card h2 { color: #fff; font-size: clamp(28px,3.5vw,44px); letter-spacing: -1.5px; margin-bottom: 14px; }
+.btn-pill { display: inline-flex; align-items: center; gap: 8px; padding: 15px 28px; background: var(--blue); color: #fff; font-weight: 600; font-size: 15.5px; border-radius: 999px; transition: background .2s, transform .2s; text-decoration: none; }
+.btn-pill:hover { background: var(--blue-hover); transform: translateY(-2px); }
+  </style>
+
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Pricing · v0.3 preview</span>
+
+  <section class="page-hero" id="main">
+    <div class="container">
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Pricing · v0.3 preview</span>
+      <h1>Simple, honest pricing.</h1>
+      <p class="lede">One platform, six products. Pay for what your team actually uses.</p>
+      <div class="ctrl-row">
+        <div class="tog" role="group" aria-label="Billing period">
+          <button id="btn-mensuel" class="active" onclick="setBilling('mensuel')">Mensuel</button>
+          <button id="btn-annuel" onclick="setBilling('annuel')">Annuel <span class="save-badge">−20%</span></button>
+        </div>
+        <div class="cur" role="group" aria-label="Currency">
+          <button id="btn-mad" class="active" onclick="setCurrency('mad')">MAD</button>
+          <button id="btn-usd" onclick="setCurrency('usd')">USD</button>
+          <button id="btn-eur" onclick="setCurrency('eur')">EUR</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="plans-section">
+    <div class="container" style="max-width:1280px">
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price" data-mad="0 MAD" data-usd="$0" data-eur="0 €">0 MAD</div>
+          <div class="plan-sub">Get started</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>1 user included</li><li>1 catalog product</li><li>500 MB document storage</li><li>Community support</li>
+          </ul>
+          <a class="plan-cta outline" href={`/${lang}/contact`}>Get started</a>
+        </div>
+        <div class="plan-card">
+          <span class="plan-badge red">Limited</span>
+          <div class="plan-name">Founding</div>
+          <div class="plan-price" data-mad="59 MAD / mois" data-usd="$8 / month" data-eur="7 € / month">59 MAD / mo</div>
+          <div class="plan-sub">Early access · price locked</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>3 users included</li><li>2 catalog products</li><li>5 GB document storage</li><li>Email support</li>
+          </ul>
+          <a class="plan-cta outline" href={`/${lang}/contact`}>Join waitlist</a>
+        </div>
+        <div class="plan-card featured">
+          <span class="plan-badge blue">Most popular</span>
+          <div class="plan-name">Pro</div>
+          <div id="pro-price" class="plan-price" data-mad-mensuel="99 MAD / month" data-mad-annuel="79 MAD / month" data-usd-mensuel="$13 / month" data-usd-annuel="$10 / month" data-eur-mensuel="12 € / month" data-eur-annuel="9 € / month">99 MAD / mo</div>
+          <div class="plan-sub">Best for growing teams</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>10 users included</li><li>3 catalog products</li><li>25 GB document storage</li><li>Standard API access</li><li>Email &amp; chat support</li>
+          </ul>
+          <a id="pro-cta" class="plan-cta primary" href={`/${lang}/contact`}>Get started</a>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Power</div>
+          <div id="pow-price" class="plan-price" data-mad-mensuel="149 MAD / month" data-mad-annuel="129 MAD / month" data-usd-mensuel="$21 / month" data-usd-annuel="$17 / month" data-eur-mensuel="19 € / month" data-eur-annuel="15 € / month">149 MAD / mo</div>
+          <div class="plan-sub">For advanced teams</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>Unlimited users</li><li>All 6 catalog products</li><li>100 GB document storage</li><li>Advanced API access</li><li>Priority support</li>
+          </ul>
+          <a id="pow-cta" class="plan-cta outline" href={`/${lang}/contact`}>Get started</a>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Team / Enterprise</div>
+          <div class="plan-price" data-mad="Custom" data-usd="Custom" data-eur="Custom">Custom</div>
+          <div class="plan-sub">Volume &amp; custom deployment</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>Unlimited users</li><li>All 6 products + custom</li><li>Unlimited storage</li><li>Custom integrations</li><li>Dedicated support (SLA)</li><li>On-prem or cloud</li>
+          </ul>
+          <a class="plan-cta outline" href={`/${lang}/contact`}>Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="compare-section">
+    <div class="container" style="max-width:1280px">
+      <h2>Compare plans.</h2>
+      <p class="section-sub">All prices are ex-tax. Billed monthly or annually.</p>
+      <div class="compare-wrap">
+        <table class="ctable">
+          <thead><tr><th>Feature</th><th>Free</th><th>Founding</th><th>Pro</th><th>Power</th><th>Enterprise</th></tr></thead>
+          <tbody>
+            <tr><td>Price</td><td class="mono" id="table-price-free" data-mad="0 MAD" data-usd="$0" data-eur="0 €">0 MAD</td><td class="mono" id="table-price-founding" data-mad="59 MAD / month" data-usd="$8 / month" data-eur="7 € / month">59 MAD / mo</td><td class="mono" id="table-price-pro" data-mad-mensuel="99 MAD / month" data-mad-annuel="79 MAD / month" data-usd-mensuel="$13 / month" data-usd-annuel="$10 / month" data-eur-mensuel="12 € / month" data-eur-annuel="9 € / month">99 MAD / mo</td><td class="mono" id="table-price-power" data-mad-mensuel="149 MAD / month" data-mad-annuel="129 MAD / month" data-usd-mensuel="$21 / month" data-usd-annuel="$17 / month" data-eur-mensuel="19 € / month" data-eur-annuel="15 € / month">149 MAD / mo</td><td class="mono" data-mad="Custom" data-usd="Custom" data-eur="Custom">Custom</td></tr>
+            <tr><td>Included users</td><td>1</td><td>3</td><td>10</td><td>Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Catalog products</td><td>1</td><td>2</td><td>3</td><td>6</td><td>6 + custom</td></tr>
+            <tr><td>API integrations</td><td><span class="dash">—</span></td><td>Basic</td><td>Standard</td><td>Advanced</td><td>Custom</td></tr>
+            <tr><td>Support</td><td>Community</td><td>Email</td><td>Email &amp; chat</td><td>Priority</td><td>Dedicated (SLA)</td></tr>
+            <tr><td>Document storage</td><td>500 MB</td><td>5 GB</td><td>25 GB</td><td>100 GB</td><td>Unlimited</td></tr>
+            <tr><td>Deployment</td><td>Cloud</td><td>Cloud</td><td>Cloud</td><td>Cloud</td><td>Cloud or on-prem</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="container">
+      <h2>Frequently asked questions.</h2>
+      <p class="section-sub">Everything you need to know before you start.</p>
+      <details class="faq"><summary class="faq-q"><span>Can I switch plans at any time?</span><span class="faq-icon">+</span></summary><p class="faq-a">Yes. Upgrades take effect immediately on a pro-rata basis. Downgrades apply at the start of the next billing period.</p></details>
+      <details class="faq"><summary class="faq-q"><span>What is the Founding plan?</span><span class="faq-icon">+</span></summary><p class="faq-a">Early access at a price-locked rate for the first users. The price will never increase as long as the subscription stays active. Limited seats.</p></details>
+      <details class="faq"><summary class="faq-q"><span>How does annual billing work?</span><span class="faq-icon">+</span></summary><p class="faq-a">Pay 12 months upfront and save ~20% compared to the monthly rate. The discount applies to Pro and Power plans only.</p></details>
+      <details class="faq"><summary class="faq-q"><span>Are prices inclusive or exclusive of tax?</span><span class="faq-icon">+</span></summary><p class="faq-a">All displayed prices are ex-tax. Applicable VAT is added at checkout based on your country of residence.</p></details>
+      <details class="faq"><summary class="faq-q"><span>What does Team / Enterprise include?</span><span class="faq-icon">+</span></summary><p class="faq-a">On-prem or dedicated cloud deployment, guaranteed SLA, guided onboarding, custom integrations, and a dedicated account manager. Contact us for a quote within 24 h.</p></details>
+      <details class="faq"><summary class="faq-q"><span>Is there a free trial?</span><span class="faq-icon">+</span></summary><p class="faq-a">The Free plan is permanent with no credit card required. For Pro and Power, a 14-day trial is available — no payment needed until the trial ends.</p></details>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="container">
+      <div class="closing-card">
+        <div>
+          <h2>Ready to get <span style="color:#66A3FF">started?</span></h2>
+          <p style="color:rgba(255,255,255,0.7); font-size:clamp(16px,1.3vw,19px); max-width:50ch; margin-bottom:0;">Free to start. A real engineer on every demo call.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px; align-items:flex-start;">
+          <a class="btn-pill" href={`/${lang}/contact`} style="background:#fff; color:var(--ink);">Start for free →</a>
+          <a href={`/${lang}/contact`} style="color:rgba(255,255,255,0.7); font-size:14px; font-family:var(--mono); letter-spacing:0.04em; border-bottom:1px solid rgba(255,255,255,0.25); padding-bottom:2px;">Talk to sales →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let billing = 'mensuel', currency = 'mad';
+    function setBilling(b: string) {
+      billing = b;
+      document.getElementById('btn-mensuel')!.classList.toggle('active', b === 'mensuel');
+      document.getElementById('btn-annuel')!.classList.toggle('active', b === 'annuel');
+      const proEl = document.getElementById('pro-price') as HTMLElement;
+      const powEl = document.getElementById('pow-price') as HTMLElement;
+      const suffix = b === 'annuel' ? 'Annuel' : 'Mensuel';
+      proEl.textContent = (proEl.dataset as any)[currency + suffix];
+      powEl.textContent = (powEl.dataset as any)[currency + suffix];
+    }
+    function setCurrency(c: string) {
+      currency = c;
+      ['mad','usd','eur'].forEach(k => document.getElementById('btn-' + k)!.classList.toggle('active', k === c));
+      document.querySelectorAll<HTMLElement>('[data-mad]:not([data-mad-mensuel])').forEach(el => {
+        el.textContent = (el.dataset as any)[c];
+      });
+      const suffix = billing === 'annuel' ? 'Annuel' : 'Mensuel';
+      const proEl = document.getElementById('pro-price') as HTMLElement;
+      const powEl = document.getElementById('pow-price') as HTMLElement;
+      proEl.textContent = (proEl.dataset as any)[c + suffix];
+      powEl.textContent = (powEl.dataset as any)[c + suffix];
+    }
+    (window as any).setBilling = setBilling;
+    (window as any).setCurrency = setCurrency;
+  </script>
+</BaseLayout>
