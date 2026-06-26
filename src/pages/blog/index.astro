@@ -1,6 +1,7 @@
 ---
 import BlogLayout   from '@layouts/BlogLayout.astro';
 import { getAllPosts, coverUrl, primaryTag, categorySlug, authorName, formatDate, stripHtml } from '@lib/wordpress';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 
 const posts      = await getAllPosts();
 const allSlugs   = ['all', ...Array.from(new Set(posts.map(categorySlug).filter(Boolean)))];
@@ -72,6 +73,8 @@ const canonical  = 'https://virtusoperandi.com/blog';
       <nav class="blog-pagination" aria-label="Blog pagination">
         <a class="page-btn" href="/blog" aria-current="page">1</a>
       </nav>
+
+      <NewsletterSignup variant="banner" />
 
     </div>
   </main>

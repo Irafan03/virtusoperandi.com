@@ -1,5 +1,6 @@
 ---
 import LanguageSwitcher from '@components/LanguageSwitcher.astro';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 import { LANG_META, LANGS, langPath, SITE_URL } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
 import type { Lang } from '@i18n/config';
@@ -130,6 +131,7 @@ const currentPath = new URL(canonical).pathname;
     </div>
     <div class="foot-bottom">
       <span>{t.footer.copyright}</span>
+      <NewsletterSignup variant="footer" />
       <span>
         <a href={langPath(lang, '/terms')}>{t.footer.terms}</a>
         <a href={langPath(lang, '/privacy')}>{t.footer.privacy}</a>

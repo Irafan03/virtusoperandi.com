@@ -1,0 +1,53 @@
+---
+interface Props {
+  variant?: 'inline' | 'banner' | 'footer';
+}
+const { variant = 'inline' } = Astro.props;
+---
+
+<form class={`newsletter newsletter--${variant}`} data-newsletter>
+  <input
+    type="email"
+    name="email"
+    required
+    placeholder="votre@email.com"
+    class="newsletter__input"
+    aria-label="Adresse e-mail"
+  />
+  <button type="submit" class="newsletter__btn btn-primary">S'inscrire</button>
+  <p class="newsletter__feedback" aria-live="polite"></p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      const msg = form.querySelector<HTMLParagraphElement>('.newsletter__feedback')!;
+      if (btn.disabled) return;
+
+      btn.disabled = true;
+      msg.textContent = '';
+
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+      const lang  = document.documentElement.lang || 'fr';
+
+      try {
+        const res = await fetch('https://cms.virtusoperandi.com/wp-json/vo/v1/subscribe', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, lang }),
+        });
+        msg.textContent =
+          res.status === 200 ? 'Vérifiez votre boîte mail ✓' :
+          res.status === 409 ? 'Email déjà inscrit' :
+          res.status === 400 ? 'Email invalide' :
+                               'Une erreur est survenue';
+      } catch {
+        msg.textContent = 'Une erreur est survenue';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+</script>

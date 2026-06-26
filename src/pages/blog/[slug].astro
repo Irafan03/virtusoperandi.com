@@ -2,6 +2,7 @@
 import BlogLayout  from '@layouts/BlogLayout.astro';
 import { getAllPosts, getPostBySlug, coverUrl, primaryTag, authorName, formatDate } from '@lib/wordpress';
 import type { WpPost } from '@lib/wordpress';
+import NewsletterSignup from '@components/NewsletterSignup.astro';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -140,6 +141,7 @@ const jsonLd = {
         </nav>
 
         <a class="back-btn" href="/blog">← Back to Blog</a>
+        <NewsletterSignup variant="inline" />
 
       </div>
     </article>
