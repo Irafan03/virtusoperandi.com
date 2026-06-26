@@ -5,7 +5,7 @@ interface Props {
 const { variant = 'inline' } = Astro.props;
 ---
 
-<form class={`newsletter newsletter--${variant}`} data-newsletter>
+<form class={`newsletter newsletter--${variant}`} data-newsletter data-variant={variant}>
   <input
     type="email"
     name="email"
@@ -19,10 +19,63 @@ const { variant = 'inline' } = Astro.props;
 </form>
 
 <script>
+  const i18n = {
+    fr: {
+      heading: 'Restez informé',
+      btn: "S'inscrire",
+      placeholder: 'votre@email.com',
+      aria: 'Adresse e-mail',
+      ok: 'Vérifiez votre boîte mail ✓',
+      dup: 'Email déjà inscrit',
+      bad: 'Email invalide',
+      err: 'Une erreur est survenue',
+    },
+    en: {
+      heading: 'Stay in the loop',
+      btn: 'Subscribe',
+      placeholder: 'your@email.com',
+      aria: 'Email address',
+      ok: 'Check your inbox ✓',
+      dup: 'Already subscribed',
+      bad: 'Invalid email',
+      err: 'Something went wrong',
+    },
+    ar: {
+      heading: 'ابقَ على اطّلاع',
+      btn: 'اشترك',
+      placeholder: 'بريدك@الإلكتروني.com',
+      aria: 'البريد الإلكتروني',
+      ok: 'تحقق من بريدك ✓',
+      dup: 'مشترك بالفعل',
+      bad: 'بريد إلكتروني غير صالح',
+      err: 'حدث خطأ ما',
+    },
+  } as const;
+
+  type LangKey = keyof typeof i18n;
+
   document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
+    const lang = (document.documentElement.lang?.slice(0, 2) as LangKey) || 'fr';
+    const t    = i18n[lang] ?? i18n.fr;
+
+    const input = form.querySelector<HTMLInputElement>('input[name="email"]')!;
+    const btn   = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    input.placeholder = t.placeholder;
+    input.setAttribute('aria-label', t.aria);
+    btn.textContent   = t.btn;
+
+    // Inject heading for inline and banner variants (CSS ::before can't be i18n'd)
+    const variant = form.dataset.variant;
+    if (variant === 'inline' || variant === 'banner') {
+      const h = document.createElement('p');
+      h.className  = 'newsletter__heading';
+      h.textContent = t.heading;
+      form.insertBefore(h, form.firstChild);
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
       const msg = form.querySelector<HTMLParagraphElement>('.newsletter__feedback')!;
       if (btn.disabled) return;
 
@@ -30,7 +83,6 @@ const { variant = 'inline' } = Astro.props;
       msg.textContent = '';
 
       const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-      const lang  = document.documentElement.lang || 'fr';
 
       try {
         const res = await fetch('https://cms.virtusoperandi.com/wp-json/vo/v1/subscribe', {
@@ -39,12 +91,12 @@ const { variant = 'inline' } = Astro.props;
           body:    JSON.stringify({ email, lang }),
         });
         msg.textContent =
-          res.status === 200 ? 'Vérifiez votre boîte mail ✓' :
-          res.status === 409 ? 'Email déjà inscrit' :
-          res.status === 400 ? 'Email invalide' :
-                               'Une erreur est survenue';
+          res.status === 200 ? t.ok  :
+          res.status === 409 ? t.dup :
+          res.status === 400 ? t.bad :
+                               t.err;
       } catch {
-        msg.textContent = 'Une erreur est survenue';
+        msg.textContent = t.err;
       } finally {
         btn.disabled = false;
       }

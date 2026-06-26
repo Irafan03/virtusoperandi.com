@@ -409,15 +409,6 @@ footer {
   flex-direction: column;
   align-items: flex-start;
 }
-.newsletter--inline::before {
-  content: "Stay in the loop";
-  display: block;
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 4px;
-}
 .newsletter--inline .newsletter__input,
 .newsletter--inline .newsletter__btn { flex: none; width: 100%; }
 
@@ -434,16 +425,17 @@ footer {
   text-align: center;
   gap: 16px;
 }
-.newsletter--banner::before {
-  content: "Get the field notes";
-  display: block;
-  font-family: var(--display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--ink);
-}
 .newsletter--banner .newsletter__input { max-width: 320px; }
+
+/* heading injected by JS for inline + banner */
+.newsletter__heading {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.newsletter--inline .newsletter__heading { font-size: 17px; }
+.newsletter--banner .newsletter__heading { font-size: 22px; letter-spacing: -0.5px; }
 
 /* footer strip */
 .newsletter--footer {
