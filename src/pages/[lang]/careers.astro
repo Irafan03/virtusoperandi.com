@@ -1,29 +1,32 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+import { useTranslations } from '@i18n/translations';
 
 export async function getStaticPaths() {
   return LANGS.map((lang) => ({ params: { lang } }));
 }
 
 const lang = resolveLang(Astro.params.lang);
+const t = useTranslations(lang);
+const p = t.careers;
 const pageCanonical = makeCanonical(lang, '/careers');
 ---
-<BaseLayout title="Careers — Virtus Operandi" description="Open roles at Virtus Operandi." canonical={pageCanonical} lang={lang}>
-  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>Company · careers</span>
+<BaseLayout title="Careers — Virtus Operandi" description={p.lede} canonical={pageCanonical} lang={lang}>
+  <span slot="meta-label" class="meta-left"><span class="meta-dot" aria-hidden="true"></span>{p.metaLabel}</span>
 
   <section class="page-hero">
     <div class="container">
-      <span class="eyebrow"><span class="live" aria-hidden="true"></span>Company · careers</span>
-      <h1>We're hiring operators who code.</h1>
-      <p class="lede">Small, distributed team. We hire engineers who have shipped inside real operations — not just understood them.</p>
+      <span class="eyebrow"><span class="live" aria-hidden="true"></span>{p.eyebrow}</span>
+      <h1>{p.h1}</h1>
+      <p class="lede">{p.lede}</p>
     </div>
   </section>
 
   <main id="main">
     <div class="container">
       <section>
-        <h2>How we work.</h2>
+        <h2>{p.h2how}</h2>
         <ul>
           <li><strong>Remote-first</strong> — quarterly week together in Casablanca.</li>
           <li><strong>Ship over plan</strong> — small PRs, fast review, ship before lunch.</li>
@@ -32,8 +35,7 @@ const pageCanonical = makeCanonical(lang, '/careers');
         </ul>
       </section>
       <section>
-        <h2>Open roles.</h2>
-        <p>Currently hiring across the catalogue:</p>
+        <h2>{p.h2roles}</h2>
         <ul>
           <li>Senior MES Engineer (Apriso / Opcenter) — Casablanca or remote.</li>
           <li>AI Engineer — agent orchestration, eval, RAG.</li>
@@ -41,9 +43,9 @@ const pageCanonical = makeCanonical(lang, '/careers');
           <li>Founding Designer — design system + product UI across all 6 apps.</li>
           <li>Sales Engineer — launch-partner acquisition.</li>
         </ul>
-        <p>Email <a href="mailto:careers@virtusoperandi.com">careers@virtusoperandi.com</a> with what you've shipped. No cover letter; no take-home until we've talked.</p>
+        <p>Email <a href="mailto:careers@virtusoperandi.com">careers@virtusoperandi.com</a> with what you've shipped.</p>
       </section>
-      <p class="note">Detailed JDs go up once production launches. For now, mail us — fastest path.</p>
+      <p class="note">{p.note}</p>
     </div>
   </main>
 </BaseLayout>
