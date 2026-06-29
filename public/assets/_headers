@@ -1,2 +1,0 @@
-/*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://client.crisp.chat; connect-src 'self' wss://client.relay.crisp.chat wss://client.relay.rescue.crisp.chat https://client.crisp.chat https://api.crisp.chat; img-src 'self' data: https://image.crisp.chat https://client.crisp.chat; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://game.crisp.chat;
