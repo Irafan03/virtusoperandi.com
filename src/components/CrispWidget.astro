@@ -1,12 +1,18 @@
-<script is:inline>
+---
+import type { Lang } from '@i18n/config';
+interface Props { lang: Lang; canonical: string; }
+const { lang, canonical } = Astro.props;
+const hide = /\/(pricing|blog)(\/|$)/.test(new URL(canonical).pathname);
+---
+<script type="text/javascript" define:vars={{ crispLang: lang, crispHide: hide }}>
   window.$crisp = [];
   window.CRISP_WEBSITE_ID = "3593d11a-1c26-4331-b78c-05a8238999ad";
-
+  window.$crisp.push(["set", "session:locale", [crispLang]]);
+  if (crispHide) window.$crisp.push(["do", "chat:hide"]);
   (function () {
-    const d = document;
-    const s = d.createElement("script");
+    var s = document.createElement("script");
     s.src = "https://client.crisp.chat/l.js";
     s.async = true;
-    d.head.appendChild(s);
+    document.head.appendChild(s);
   })();
 </script>
