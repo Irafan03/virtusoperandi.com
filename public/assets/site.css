@@ -409,6 +409,7 @@ footer {
   flex-direction: column;
   align-items: flex-start;
 }
+.newsletter--inline .newsletter__row   { flex-direction: column; }
 .newsletter--inline .newsletter__input,
 .newsletter--inline .newsletter__btn { flex: none; width: 100%; }
 
@@ -425,7 +426,10 @@ footer {
   text-align: center;
   gap: 16px;
 }
-.newsletter--banner .newsletter__input { max-width: 320px; }
+.newsletter__row { display: flex; gap: 10px; width: 100%; }
+.newsletter--banner .newsletter__row   { max-width: 480px; }
+.newsletter--banner .newsletter__input { flex: 1 1 0; min-width: 0; }
+.newsletter--banner .newsletter__btn   { flex: none; }
 
 /* heading injected by JS for inline + banner */
 .newsletter__heading {

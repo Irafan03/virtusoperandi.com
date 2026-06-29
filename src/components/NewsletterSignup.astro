@@ -6,15 +6,17 @@ const { variant = 'inline' } = Astro.props;
 ---
 
 <form class={`newsletter newsletter--${variant}`} data-newsletter data-variant={variant}>
-  <input
-    type="email"
-    name="email"
-    required
-    placeholder="votre@email.com"
-    class="newsletter__input"
-    aria-label="Adresse e-mail"
-  />
-  <button type="submit" class="newsletter__btn btn-primary">S'inscrire</button>
+  <div class="newsletter__row">
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="votre@email.com"
+      class="newsletter__input"
+      aria-label="Adresse e-mail"
+    />
+    <button type="submit" class="newsletter__btn btn-primary">S'inscrire</button>
+  </div>
   <p class="newsletter__feedback" aria-live="polite"></p>
 </form>
 
