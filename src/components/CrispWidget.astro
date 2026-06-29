@@ -1,16 +1,17 @@
 ---
 import type { Lang } from '@i18n/config';
 interface Props { lang: Lang; }
-const { lang } = Astro.props;
 ---
-<script type="text/javascript" define:vars={{ crispLang: lang }}>
-  window.$crisp = [];
-  window.CRISP_WEBSITE_ID = "3593d11a-1c26-4331-b78c-05a8238999ad";
-  window.$crisp.push(["set", "session:locale", [crispLang]]);
-  (function () {
-    var s = document.createElement("script");
-    s.src = "https://client.crisp.chat/l.js";
-    s.async = true;
-    document.head.appendChild(s);
-  })();
+
+<script>
+window.$crisp = [];
+window.CRISP_WEBSITE_ID = "3593d11a-1c26-4331-b78c-05a8238999ad";
+
+(function () {
+  var d = document;
+  var s = d.createElement("script");
+  s.src = "https://client.crisp.chat/l.js";
+  s.async = true;
+  d.head.appendChild(s);
+})();
 </script>
