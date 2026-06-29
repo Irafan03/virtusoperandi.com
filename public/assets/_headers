@@ -1,0 +1,2 @@
+/*
+  Content-Security-Policy: connect-src 'self' wss://client.relay.crisp.chat wss://client.relay.rescue.crisp.chat https://client.crisp.chat
