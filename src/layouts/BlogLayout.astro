@@ -1,5 +1,5 @@
 ---
-import LanguageSwitcher from '@components/LanguageSwitcher.astro';
+import CrispWidget from '@components/CrispWidget.astro';
 import NewsletterSignup from '@components/NewsletterSignup.astro';
 import { LANG_META, LANGS, langPath, SITE_URL } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
@@ -62,6 +62,7 @@ const currentPath = new URL(canonical).pathname;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/site.css" />
+<CrispWidget lang={lang} canonical={canonical} />
 <slot name="head" />
 </head>
 <body>

@@ -1,5 +1,5 @@
 ---
-import LanguageSwitcher from '@components/LanguageSwitcher.astro';
+import CrispWidget from '@components/CrispWidget.astro';
 import NewsletterSignup from '@components/NewsletterSignup.astro';
 import { LANG_META, LANGS, langPath, SITE_URL } from '@i18n/config';
 import { useTranslations } from '@i18n/translations';
@@ -37,20 +37,8 @@ const currentPath = new URL(canonical).pathname;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/site.css" />
+<CrispWidget lang={lang} canonical={canonical} />
 <slot name="head" />
-<!-- Crisp chat widget -->
-<script type="text/javascript" define:vars={{ crispLang: lang, crispHide: /\/pricing(\/|$)/.test(new URL(canonical).pathname) }}>
-  window.$crisp = [];
-  window.CRISP_WEBSITE_ID = "3593d11a-1c26-4331-b78c-05a8238999ad";
-  window.$crisp.push(["set", "session:locale", [crispLang]]);
-  if (crispHide) window.$crisp.push(["do", "chat:hide"]);
-  (function () {
-    var s = document.createElement("script");
-    s.src = "https://client.crisp.chat/l.js";
-    s.async = true;
-    document.head.appendChild(s);
-  })();
-</script>
 </head>
 <body>
 <a class="skip" href="#main">{t.skipToContent}</a>
