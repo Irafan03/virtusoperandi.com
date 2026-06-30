@@ -11,8 +11,8 @@ const lang    = resolveLang(Astro.params.lang);
 const pagePath = '/products/request-demo-fleet';
 const pageCanonical = makeCanonical(lang, pagePath);
 
-// TODO: Replace with the real CF7 form ID once you create "Demo Request - Fleet"
-const FORM_ID = '3d438db';
+// CF7 WordPress numeric post ID (used in REST URL + hidden fields)
+const WP_FORM_ID = '255';
 
 const meta = {
   fr: {
@@ -103,7 +103,7 @@ const m = meta[lang];
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Fleet" formId={FORM_ID} lang={lang} />
+          <RequestDemoForm product="Virtus Fleet" wpFormId={WP_FORM_ID} lang={lang} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">

@@ -2,10 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import RequestDemoForm from '@components/RequestDemoForm.astro';
 
-// TODO: Replace with the real CF7 form ID once you create "Demo Request - Lever"
-//       in WordPress → Contact → Contact Forms.
-//       Current example uses the Agents form ID as a placeholder.
-const FORM_ID = '91ff790';
+// CF7 WordPress numeric post ID (used in REST URL + hidden fields)
 const WP_FORM_ID = '254';
 ---
 <BaseLayout
@@ -100,7 +97,7 @@ const WP_FORM_ID = '254';
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Lever" formId={FORM_ID} wpFormId={WP_FORM_ID} />
+          <RequestDemoForm product="Virtus Lever" wpFormId={WP_FORM_ID} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">

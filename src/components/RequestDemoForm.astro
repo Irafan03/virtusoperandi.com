@@ -4,28 +4,28 @@
  * Reusable "Request a Demo" form — submits to CF7 REST API (multipart/form-data).
  *
  * Props:
- *   product   – human-readable product name, pre-filled in hidden field
- *   formId    – CF7 hash ID from the shortcode (e.g. "ef796b7"), used in the REST URL
- *   wpFormId  – WordPress post ID of the CF7 form (e.g. "254"), required by CF7 hidden fields
+ *   product   – human-readable product name, injected as hidden field "your-product"
+ *   wpFormId  – WordPress numeric post ID of the CF7 form (e.g. "254")
+ *               Used in:  REST URL  /contact-forms/{wpFormId}/feedback
+ *                         _wpcf7    hidden field
+ *                         _wpcf7_unit_tag  wpcf7-f{wpFormId}-p1-o1
  *   lang      – active language for i18n labels (defaults to 'fr')
  *
- * CF7 REST API requires these hidden fields in the multipart payload:
- *   _wpcf7              → WordPress post ID of the form
- *   _wpcf7_version      → CF7 plugin version (injected at runtime from API)
- *   _wpcf7_locale       → locale string matching the page language
- *   _wpcf7_unit_tag     → unique tag: wpcf7-f{wpFormId}-p1-o1
+ * CF7 REST API hidden fields required (confirmed via Postman):
+ *   _wpcf7              → wpFormId  (numeric WP post ID)
+ *   _wpcf7_version      → "5.9.8"   (installed CF7 version)
+ *   _wpcf7_locale       → fr_FR | en_US | ar
+ *   _wpcf7_unit_tag     → wpcf7-f{wpFormId}-p1-o1
  *   _wpcf7_container_post → 0
  */
 interface Props {
-  product:   string;
-  formId:    string;
-  wpFormId:  string;
-  lang?:     'fr' | 'en' | 'ar';
+  product:  string;
+  wpFormId: string;
+  lang?:    'fr' | 'en' | 'ar';
 }
 
-const { product, formId, wpFormId, lang = 'fr' } = Astro.props;
+const { product, wpFormId, lang = 'fr' } = Astro.props;
 
-// CF7 locale string per language
 const CF7_LOCALE: Record<string, string> = {
   fr: 'fr_FR',
   en: 'en_US',
@@ -34,113 +34,75 @@ const CF7_LOCALE: Record<string, string> = {
 const cf7Locale  = CF7_LOCALE[lang] ?? 'fr_FR';
 const cf7UnitTag = `wpcf7-f${wpFormId}-p1-o1`;
 
-// Unique DOM ID so multiple forms on the same page don't conflict
+// Unique DOM id — prevents collisions when multiple forms on the same page
 const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 ---
 
 <form
   class="demo-form"
   id={uid}
-  data-form-id={formId}
   data-wp-form-id={wpFormId}
   data-product={product}
   novalidate
 >
-  <!-- ── Visible fields ──────────────────────────────────────────────────── -->
+  <!-- ── Visible fields ─────────────────────────────────────────────── -->
   <div class="field">
     <label for={`${uid}-name`} id={`${uid}-name-lbl`}></label>
-    <input
-      type="text"
-      id={`${uid}-name`}
-      name="your-name"
-      required
-      autocomplete="name"
-      aria-labelledby={`${uid}-name-lbl`}
-    />
+    <input type="text"  id={`${uid}-name`}    name="your-name"    required autocomplete="name"         aria-labelledby={`${uid}-name-lbl`}    />
   </div>
-
   <div class="field">
     <label for={`${uid}-email`} id={`${uid}-email-lbl`}></label>
-    <input
-      type="email"
-      id={`${uid}-email`}
-      name="your-email"
-      required
-      autocomplete="email"
-      aria-labelledby={`${uid}-email-lbl`}
-    />
+    <input type="email" id={`${uid}-email`}   name="your-email"   required autocomplete="email"        aria-labelledby={`${uid}-email-lbl`}   />
   </div>
-
   <div class="field">
     <label for={`${uid}-company`} id={`${uid}-company-lbl`}></label>
-    <input
-      type="text"
-      id={`${uid}-company`}
-      name="your-company"
-      autocomplete="organization"
-      aria-labelledby={`${uid}-company-lbl`}
-    />
+    <input type="text"  id={`${uid}-company`} name="your-company"          autocomplete="organization" aria-labelledby={`${uid}-company-lbl`} />
   </div>
-
   <div class="field">
     <label for={`${uid}-phone`} id={`${uid}-phone-lbl`}></label>
-    <input
-      type="tel"
-      id={`${uid}-phone`}
-      name="your-phone"
-      autocomplete="tel"
-      aria-labelledby={`${uid}-phone-lbl`}
-    />
+    <input type="tel"   id={`${uid}-phone`}   name="your-phone"            autocomplete="tel"          aria-labelledby={`${uid}-phone-lbl`}   />
   </div>
-
   <div class="field">
     <label for={`${uid}-message`} id={`${uid}-message-lbl`}></label>
-    <textarea
-      id={`${uid}-message`}
-      name="your-message"
-      rows="4"
-      aria-labelledby={`${uid}-message-lbl`}
-    ></textarea>
+    <textarea id={`${uid}-message`} name="your-message" rows="4" aria-labelledby={`${uid}-message-lbl`}></textarea>
   </div>
 
-  <!-- ── Hidden fields — product name ──────────────────────────────────── -->
-  <input type="hidden" name="your-product" value={product} />
+  <!-- ── Hidden: product name ───────────────────────────────────────── -->
+  <input type="hidden" name="your-product"           value={product}    />
 
-  <!-- ── Hidden fields required by CF7 REST API ────────────────────────── -->
+  <!-- ── Hidden: CF7 required fields ──────────────────────────────── -->
   <input type="hidden" name="_wpcf7"                value={wpFormId}   />
   <input type="hidden" name="_wpcf7_version"        value="5.9.8"      />
   <input type="hidden" name="_wpcf7_locale"         value={cf7Locale}  />
   <input type="hidden" name="_wpcf7_unit_tag"       value={cf7UnitTag} />
   <input type="hidden" name="_wpcf7_container_post" value="0"          />
 
-  <!-- ── Submit row ────────────────────────────────────────────────────── -->
+  <!-- ── Submit row ────────────────────────────────────────────────── -->
   <div class="actions">
-    <button class="btn-pill" type="submit">
-      <!-- label injected by script for i18n -->
-    </button>
+    <button class="btn-pill" type="submit"><!-- injected by script --></button>
     <small class="demo-form__reply"></small>
   </div>
 
-  <!-- aria-live region for status/error feedback -->
+  <!-- Status / error feedback -->
   <p class="demo-form__feedback" aria-live="polite" aria-atomic="true"></p>
 </form>
 
 <script>
-  // ─── i18n labels ────────────────────────────────────────────────────────────
+  // ─── i18n ────────────────────────────────────────────────────────────────────
   const LABELS = {
     fr: {
       name:       'Votre nom',
       email:      'E-mail professionnel',
       company:    'Entreprise',
-      phone:      'Téléphone (optionnel)',
-      message:    'Décrivez votre besoin',
-      submit:     'Demander une démo →',
+      phone:      'T\u00e9l\u00e9phone (optionnel)',
+      message:    'D\u00e9crivez votre besoin',
+      submit:     'Demander une d\u00e9mo \u2192',
       submitting: 'Envoi en cours\u2026',
-      replyTime:  'Nous répondons sous 1 jour ouvré.',
-      ok:         '\u2713 Demande envoyée\u00a0! Nous reviendrons vers vous sous 1 jour ouvré.',
-      err:        'Une erreur est survenue. Veuillez réessayer ou écrire à sales@virtusoperandi.com',
+      replyTime:  'Nous r\u00e9pondons sous 1 jour ouvr\u00e9.',
+      ok:         '\u2713 Demande envoy\u00e9e\u00a0! Nous reviendrons vers vous sous 1 jour ouvr\u00e9.',
+      err:        'Une erreur est survenue. Veuillez r\u00e9essayer ou \u00e9crire \u00e0 sales@virtusoperandi.com',
       validation: 'Veuillez renseigner les champs obligatoires.',
-      spam:       'Votre message a été détecté comme spam. Veuillez réessayer.',
+      spam:       'Votre message a \u00e9t\u00e9 d\u00e9tect\u00e9 comme spam. Veuillez r\u00e9essayer.',
     },
     en: {
       name:       'Your name',
@@ -157,55 +119,51 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
       spam:       'Your message was flagged as spam. Please try again.',
     },
     ar: {
-      name:       'اسمك',
-      email:      'البريد الإلكتروني المهني',
-      company:    'الشركة',
-      phone:      'الهاتف (اختياري)',
-      message:    'صِف حالة الاستخدام لديك',
-      submit:     'طلب عرض توضيحي \u2190',
-      submitting: 'جاري الإرسال\u2026',
-      replyTime:  'نرد خلال يوم عمل واحد.',
-      ok:         '\u2713 تم إرسال الطلب! سنعود إليك خلال يوم عمل واحد.',
-      err:        'حدث خطأ. يرجى المحاولة مجددًا أو مراسلتنا على sales@virtusoperandi.com',
-      validation: 'يرجى ملء الحقول المطلوبة.',
-      spam:       'تم تصنيف رسالتك كبريد مزعج. يرجى المحاولة مجددًا.',
+      name:       '\u0627\u0633\u0645\u0643',
+      email:      '\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0645\u0647\u0646\u064a',
+      company:    '\u0627\u0644\u0634\u0631\u0643\u0629',
+      phone:      '\u0627\u0644\u0647\u0627\u062a\u0641 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)',
+      message:    '\u0635\u0650\u0641 \u062d\u0627\u0644\u0629 \u0627\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0644\u062f\u064a\u0643',
+      submit:     '\u0637\u0644\u0628 \u0639\u0631\u0636 \u062a\u0648\u0636\u064a\u062d\u064a \u2190',
+      submitting: '\u062c\u0627\u0631\u064a \u0627\u0644\u0625\u0631\u0633\u0627\u0644\u2026',
+      replyTime:  '\u0646\u0631\u062f \u062e\u0644\u0627\u0644 \u064a\u0648\u0645 \u0639\u0645\u0644 \u0648\u0627\u062d\u062f.',
+      ok:         '\u2713 \u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628! \u0633\u0646\u0639\u0648\u062f \u0625\u0644\u064a\u0643 \u062e\u0644\u0627\u0644 \u064a\u0648\u0645 \u0639\u0645\u0644 \u0648\u0627\u062d\u062f.',
+      err:        '\u062d\u062f\u062b \u062e\u0637\u0623. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u062c\u062f\u062f\u064b\u0627 \u0623\u0648 \u0645\u0631\u0627\u0633\u0644\u062a\u0646\u0627 \u0639\u0644\u0649 sales@virtusoperandi.com',
+      validation: '\u064a\u0631\u062c\u0649 \u0645\u0644\u0621 \u0627\u0644\u062d\u0642\u0648\u0644 \u0627\u0644\u0645\u0637\u0644\u0648\u0628\u0629.',
+      spam:       '\u062a\u0645 \u062a\u0635\u0646\u064a\u0641 \u0631\u0633\u0627\u0644\u062a\u0643 \u0643\u0628\u0631\u064a\u062f \u0645\u0632\u0639\u0648\u0645. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u062c\u062f\u062f\u064b\u0627.',
     },
   } as const;
 
   type LangKey = keyof typeof LABELS;
 
-  // CF7 response shape
   interface CF7Response {
-    status:         string;           // "mail_sent" | "validation_failed" | "spam" | "mail_failed" | ...
-    message:        string;           // human-readable summary from CF7
-    invalid_fields?: Array<{          // present when status === "validation_failed"
-      field:   string;
-      message: string;
-    }>;
+    status:          string;
+    message:         string;
+    invalid_fields?: Array<{ field: string; message: string }>;
   }
 
-  // ─── Wire up every demo form on the page ────────────────────────────────────
+  // ─── Wire every demo form on the page ────────────────────────────────────────
   document.querySelectorAll<HTMLFormElement>('form.demo-form').forEach((form) => {
-    // Detect active lang from <html lang="...">
     const htmlLang = document.documentElement.lang?.slice(0, 2) as LangKey;
     const lang: LangKey = htmlLang in LABELS ? htmlLang : 'fr';
     const t = LABELS[lang];
 
-    const formId = form.dataset.formId!;   // CF7 hash — used in REST URL
-    const uid    = form.id;
+    // Numeric WP form ID — used for the REST URL endpoint
+    const wpFormId = form.dataset.wpFormId!;
+    const uid      = form.id;
 
-    // ── Inject i18n labels ──────────────────────────────────────────────────
-    const lbl = (suffix: string) =>
-      form.querySelector<HTMLElement>(`#${uid}-${suffix}-lbl`);
-
-    const pairs: Array<[ReturnType<typeof lbl>, string]> = [
-      [lbl('name'),    t.name],
-      [lbl('email'),   t.email],
-      [lbl('company'), t.company],
-      [lbl('phone'),   t.phone],
-      [lbl('message'), t.message],
-    ];
-    pairs.forEach(([el, text]) => { if (el) el.textContent = text; });
+    // Inject i18n labels into the DOM
+    const lbl = (s: string) => form.querySelector<HTMLElement>(`#${uid}-${s}-lbl`);
+    ([
+      ['name',    t.name],
+      ['email',   t.email],
+      ['company', t.company],
+      ['phone',   t.phone],
+      ['message', t.message],
+    ] as [string, string][]).forEach(([s, text]) => {
+      const el = lbl(s);
+      if (el) el.textContent = text;
+    });
 
     const btn      = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const feedback = form.querySelector<HTMLParagraphElement>('.demo-form__feedback')!;
@@ -214,44 +172,40 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
     btn.textContent     = t.submit;
     replyEl.textContent = t.replyTime;
 
-    // ── Helpers ─────────────────────────────────────────────────────────────
-    const setFeedback = (text: string, color: 'ok' | 'err') => {
-      feedback.textContent = text;
-      feedback.style.color = color === 'ok' ? 'var(--blue)' : 'var(--ink)';
+    const setFeedback = (msg: string, tone: 'ok' | 'err') => {
+      feedback.textContent = msg;
+      feedback.style.color = tone === 'ok' ? 'var(--blue)' : 'var(--ink)';
     };
-
     const resetBtn = () => {
       btn.disabled    = false;
       btn.textContent = t.submit;
     };
 
-    // ── Submit handler ───────────────────────────────────────────────────────
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (btn.disabled) return;
 
-      // Client-side HTML5 validation
       if (!form.checkValidity()) {
         setFeedback(t.validation, 'err');
         form.reportValidity();
         return;
       }
 
-      // Loading state
-      btn.disabled        = true;
-      btn.textContent     = t.submitting;
+      btn.disabled         = true;
+      btn.textContent      = t.submitting;
       feedback.textContent = '';
 
-      // Build FormData — includes all visible + hidden fields already in the form
+      // FormData picks up ALL fields including the CF7 hidden inputs
       const fd = new FormData(form);
 
-      // Ensure product field is set (safety net)
+      // Safety net: ensure product field is set
       if (!fd.get('your-product')) {
         fd.set('your-product', form.dataset.product ?? '');
       }
 
+      // REST endpoint uses the numeric WP post ID — NOT the hash
       const endpoint =
-        `https://cms.virtusoperandi.com/wp-json/contact-form-7/v1/contact-forms/${formId}/feedback`;
+        `https://cms.virtusoperandi.com/wp-json/contact-form-7/v1/contact-forms/${wpFormId}/feedback`;
 
       try {
         const res  = await fetch(endpoint, { method: 'POST', body: fd });
@@ -259,20 +213,18 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 
         switch (json.status) {
           case 'mail_sent':
-            // ── Success ──────────────────────────────────────────────────
             setFeedback(t.ok, 'ok');
             form.reset();
             btn.textContent = t.submit;
-            // Leave button disabled to prevent duplicate submissions
+            // Keep disabled — prevents duplicate submission after success
             break;
 
           case 'validation_failed': {
-            // ── Field validation errors — surface CF7 messages if present
-            const fieldErrors = json.invalid_fields
+            const msgs = json.invalid_fields
               ?.map((f) => f.message)
               .filter(Boolean)
               .join(' — ');
-            setFeedback(fieldErrors || t.validation, 'err');
+            setFeedback(msgs || t.validation, 'err');
             resetBtn();
             break;
           }
@@ -283,12 +235,10 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
             break;
 
           default:
-            // mail_failed or any other unexpected status
             setFeedback(json.message || t.err, 'err');
             resetBtn();
         }
       } catch {
-        // Network / CORS / parse error
         setFeedback(t.err, 'err');
         resetBtn();
       }
@@ -297,22 +247,9 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 </script>
 
 <style>
-  /*
-   * Follows the site's existing form pattern from contact.astro:
-   * border-bottom inputs, mono uppercase labels, .btn-pill.
-   * No new CSS variables or palette additions.
-   */
-  .demo-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+  .demo-form { display: flex; flex-direction: column; gap: 18px; }
 
-  .demo-form .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .demo-form .field { display: flex; flex-direction: column; gap: 6px; }
 
   .demo-form label {
     font-family: var(--mono);
@@ -337,66 +274,35 @@ const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
   }
 
   .demo-form input:focus,
-  .demo-form textarea:focus {
-    outline: none;
-    border-bottom-color: var(--blue);
-  }
+  .demo-form textarea:focus { outline: none; border-bottom-color: var(--blue); }
 
-  .demo-form textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
+  .demo-form textarea { min-height: 100px; resize: vertical; }
 
   .demo-form .actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 8px;
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap; margin-top: 8px;
   }
 
   .demo-form .actions small {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.04em;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted); letter-spacing: 0.04em;
   }
 
   .demo-form .btn-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     padding: 15px 28px;
-    background: var(--blue);
-    color: #fff;
-    font-weight: 600;
-    font-size: 15.5px;
-    border-radius: 999px;
-    border: 0;
-    cursor: pointer;
+    background: var(--blue); color: #fff;
+    font-weight: 600; font-size: 15.5px;
+    border-radius: 999px; border: 0; cursor: pointer;
     transition: background .2s, transform .2s;
     text-decoration: none;
   }
-
   .demo-form .btn-pill:hover:not(:disabled) {
-    background: var(--blue-hover);
-    transform: translateY(-2px);
+    background: var(--blue-hover); transform: translateY(-2px);
   }
+  .demo-form .btn-pill:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  .demo-form .btn-pill:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
+  .demo-form__feedback { font-size: 14.5px; line-height: 1.5; min-height: 1.5em; }
 
-  .demo-form__feedback {
-    font-size: 14.5px;
-    line-height: 1.5;
-    min-height: 1.5em;
-  }
-
-  /* RTL support */
-  :global([dir="rtl"]) .demo-form .actions {
-    flex-direction: row-reverse;
-  }
+  :global([dir="rtl"]) .demo-form .actions { flex-direction: row-reverse; }
 </style>

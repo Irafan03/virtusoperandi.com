@@ -2,9 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import RequestDemoForm from '@components/RequestDemoForm.astro';
 
-// CF7 form ID from WordPress shortcode:
-// [contact-form-7 id="ef796b7" title="Demo Request - Agents"]
-const FORM_ID = 'ef796b7';
+// CF7 WordPress numeric post ID (used in REST URL + hidden fields)
 const WP_FORM_ID = '258';
 ---
 <BaseLayout
@@ -79,7 +77,7 @@ const WP_FORM_ID = '258';
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Agents" formId={FORM_ID} wpFormId={WP_FORM_ID} />
+          <RequestDemoForm product="Virtus Agents" wpFormId={WP_FORM_ID} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">

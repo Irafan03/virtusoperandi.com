@@ -11,9 +11,8 @@ const lang    = resolveLang(Astro.params.lang);
 const pagePath = '/products/request-demo-agents';
 const pageCanonical = makeCanonical(lang, pagePath);
 
-// CF7 form ID from WordPress shortcode:
-// [contact-form-7 id="ef796b7" title="Demo Request - Agents"]
-const FORM_ID = 'ef796b7';
+// CF7 WordPress numeric post ID (used in REST URL + hidden fields)
+const WP_FORM_ID = '258';
 
 const meta = {
   fr: {
@@ -101,7 +100,7 @@ const m = meta[lang];
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Agents" formId={FORM_ID} lang={lang} />
+          <RequestDemoForm product="Virtus Agents" wpFormId={WP_FORM_ID} lang={lang} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">
