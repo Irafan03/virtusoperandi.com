@@ -1,0 +1,341 @@
+---
+/**
+ * RequestDemoForm.astro
+ * Reusable "Request a Demo" form — submits to CF7 REST API (multipart/form-data).
+ *
+ * Props:
+ *   product  – human-readable product name, pre-filled in hidden field
+ *   formId   – CF7 form ID (hash, e.g. "ef796b7") — see WordPress CF7 shortcode
+ *   lang     – active language for i18n labels (defaults to 'fr')
+ */
+interface Props {
+  product: string;
+  formId:  string;
+  lang?:   'fr' | 'en' | 'ar';
+}
+
+const { product, formId, lang = 'fr' } = Astro.props;
+
+// Unique ID so multiple forms on the same page don't conflict
+const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
+---
+
+<form
+  class="demo-form"
+  id={uid}
+  data-form-id={formId}
+  data-product={product}
+  novalidate
+>
+  <div class="field">
+    <label for={`${uid}-name`} id={`${uid}-name-lbl`}>
+      <!-- label text injected by script for i18n -->
+    </label>
+    <input
+      type="text"
+      id={`${uid}-name`}
+      name="your-name"
+      required
+      autocomplete="name"
+      aria-labelledby={`${uid}-name-lbl`}
+    />
+  </div>
+
+  <div class="field">
+    <label for={`${uid}-email`} id={`${uid}-email-lbl`}></label>
+    <input
+      type="email"
+      id={`${uid}-email`}
+      name="your-email"
+      required
+      autocomplete="email"
+      aria-labelledby={`${uid}-email-lbl`}
+    />
+  </div>
+
+  <div class="field">
+    <label for={`${uid}-company`} id={`${uid}-company-lbl`}></label>
+    <input
+      type="text"
+      id={`${uid}-company`}
+      name="your-company"
+      autocomplete="organization"
+      aria-labelledby={`${uid}-company-lbl`}
+    />
+  </div>
+
+  <div class="field">
+    <label for={`${uid}-phone`} id={`${uid}-phone-lbl`}></label>
+    <input
+      type="tel"
+      id={`${uid}-phone`}
+      name="your-phone"
+      autocomplete="tel"
+      aria-labelledby={`${uid}-phone-lbl`}
+    />
+  </div>
+
+  <div class="field">
+    <label for={`${uid}-message`} id={`${uid}-message-lbl`}></label>
+    <textarea
+      id={`${uid}-message`}
+      name="your-message"
+      rows="4"
+      aria-labelledby={`${uid}-message-lbl`}
+    ></textarea>
+  </div>
+
+  <!-- Hidden product field — pre-filled from prop -->
+  <input type="hidden" name="your-product" value={product} />
+
+  <div class="actions">
+    <button class="btn-pill" type="submit">
+      <!-- label injected by script -->
+    </button>
+    <small class="demo-form__reply"></small>
+  </div>
+
+  <!-- aria-live region for status feedback -->
+  <p class="demo-form__feedback" aria-live="polite" aria-atomic="true"></p>
+</form>
+
+<script>
+  // ─── i18n labels ────────────────────────────────────────────────────────────
+  const LABELS = {
+    fr: {
+      name:        'Votre nom',
+      email:       'E-mail professionnel',
+      company:     'Entreprise',
+      phone:       'Téléphone (optionnel)',
+      message:     'Décrivez votre besoin',
+      submit:      'Demander une démo →',
+      submitting:  'Envoi en cours…',
+      replyTime:   'Nous répondons sous 1 jour ouvré.',
+      ok:          '✓ Demande envoyée ! Nous reviendrons vers vous sous 1 jour ouvré.',
+      err:         'Une erreur est survenue. Veuillez réessayer ou écrire à sales@virtusoperandi.com',
+      validation:  'Veuillez renseigner les champs obligatoires.',
+    },
+    en: {
+      name:        'Your name',
+      email:       'Work email',
+      company:     'Company',
+      phone:       'Phone (optional)',
+      message:     'Describe your use case',
+      submit:      'Request a demo →',
+      submitting:  'Sending…',
+      replyTime:   'We reply within 1 business day.',
+      ok:          '✓ Request sent! We'll get back to you within 1 business day.',
+      err:         'Something went wrong. Please try again or email sales@virtusoperandi.com',
+      validation:  'Please fill in the required fields.',
+    },
+    ar: {
+      name:        'اسمك',
+      email:       'البريد الإلكتروني المهني',
+      company:     'الشركة',
+      phone:       'الهاتف (اختياري)',
+      message:     'صِف حالة الاستخدام لديك',
+      submit:      'طلب عرض توضيحي →',
+      submitting:  'جاري الإرسال…',
+      replyTime:   'نرد خلال يوم عمل واحد.',
+      ok:          '✓ تم إرسال الطلب! سنعود إليك خلال يوم عمل واحد.',
+      err:         'حدث خطأ. يرجى المحاولة مجددًا أو مراسلتنا على sales@virtusoperandi.com',
+      validation:  'يرجى ملء الحقول المطلوبة.',
+    },
+  } as const;
+
+  type LangKey = keyof typeof LABELS;
+
+  // ─── Wire up every demo form on the page ────────────────────────────────────
+  document.querySelectorAll<HTMLFormElement>('form.demo-form').forEach((form) => {
+    const lang  = (document.documentElement.lang?.slice(0, 2) as LangKey) in LABELS
+      ? (document.documentElement.lang.slice(0, 2) as LangKey)
+      : 'fr';
+    const t      = LABELS[lang];
+    const formId  = form.dataset.formId!;
+
+    // ── Inject i18n labels ──────────────────────────────────────────────────
+    const uid = form.id;
+    const get = (suffix: string) => form.querySelector<HTMLElement>(`#${uid}-${suffix}-lbl`);
+
+    const nameLabel    = get('name');
+    const emailLabel   = get('email');
+    const companyLabel = get('company');
+    const phoneLabel   = get('phone');
+    const msgLabel     = get('message');
+    if (nameLabel)    nameLabel.textContent    = t.name;
+    if (emailLabel)   emailLabel.textContent   = t.email;
+    if (companyLabel) companyLabel.textContent = t.company;
+    if (phoneLabel)   phoneLabel.textContent   = t.phone;
+    if (msgLabel)     msgLabel.textContent     = t.message;
+
+    const btn      = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const feedback = form.querySelector<HTMLParagraphElement>('.demo-form__feedback')!;
+    const replyEl  = form.querySelector<HTMLElement>('.demo-form__reply')!;
+
+    btn.textContent      = t.submit;
+    replyEl.textContent  = t.replyTime;
+
+    // ── Submit handler ──────────────────────────────────────────────────────
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (btn.disabled) return;
+
+      // Basic HTML5 validation
+      if (!form.checkValidity()) {
+        feedback.textContent = t.validation;
+        feedback.style.color = 'var(--ink)';
+        form.reportValidity();
+        return;
+      }
+
+      // ── Loading state ─────────────────────────────────────────────────────
+      btn.disabled        = true;
+      btn.textContent     = t.submitting;
+      feedback.textContent = '';
+
+      // ── Build multipart/form-data ─────────────────────────────────────────
+      const fd = new FormData(form);
+      // CF7 expects the product in a field named "your-product" — already in the form
+      // but we ensure the hidden field value is correct
+      if (!fd.get('your-product')) {
+        fd.set('your-product', form.dataset.product ?? '');
+      }
+
+      const endpoint =
+        `https://cms.virtusoperandi.com/wp-json/contact-form-7/v1/contact-forms/${formId}/feedback`;
+
+      try {
+        const res  = await fetch(endpoint, { method: 'POST', body: fd });
+        const json = await res.json() as { status?: string; message?: string };
+
+        if (json.status === 'mail_sent') {
+          // ── Success state ───────────────────────────────────────────────
+          feedback.textContent = t.ok;
+          feedback.style.color = 'var(--blue)';
+          form.reset();
+          btn.textContent = t.submit;
+          // Keep button disabled to prevent double-submit
+        } else {
+          // CF7 returned a validation or spam error
+          feedback.textContent = json.message ?? t.err;
+          feedback.style.color = 'var(--ink)';
+          btn.disabled    = false;
+          btn.textContent = t.submit;
+        }
+      } catch {
+        // Network / CORS / unexpected error
+        feedback.textContent = t.err;
+        feedback.style.color = 'var(--ink)';
+        btn.disabled    = false;
+        btn.textContent = t.submit;
+      }
+    });
+  });
+</script>
+
+<style>
+  /*
+   * Scoped styles that follow the site's existing form pattern
+   * (contact.astro: border-bottom inputs, mono labels, .btn-pill)
+   * No new variables or palette additions.
+   */
+  .demo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* Re-use the same .field pattern from contact.astro */
+  .demo-form :global(.field) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .demo-form label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .demo-form input,
+  .demo-form textarea {
+    font: inherit;
+    font-size: 16px;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--ink);
+    transition: border-color .2s ease;
+    width: 100%;
+  }
+
+  .demo-form input:focus,
+  .demo-form textarea:focus {
+    outline: none;
+    border-bottom-color: var(--blue);
+  }
+
+  .demo-form textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .demo-form .actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .demo-form .actions small {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* .btn-pill already defined globally in site.css — we just set the colours */
+  .demo-form .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 28px;
+    background: var(--blue);
+    color: #fff;
+    font-weight: 600;
+    font-size: 15.5px;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+    text-decoration: none;
+  }
+
+  .demo-form .btn-pill:hover:not(:disabled) {
+    background: var(--blue-hover);
+    transform: translateY(-2px);
+  }
+
+  .demo-form .btn-pill:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .demo-form__feedback {
+    font-size: 14.5px;
+    line-height: 1.5;
+    min-height: 1.5em; /* reserve space to avoid layout jump */
+  }
+
+  /* RTL support (Arabic) */
+  :global([dir="rtl"]) .demo-form .actions {
+    flex-direction: row-reverse;
+  }
+</style>

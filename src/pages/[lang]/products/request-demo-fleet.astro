@@ -1,0 +1,123 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import RequestDemoForm from '@components/RequestDemoForm.astro';
+import { LANGS, canonical as makeCanonical, resolveLang } from '@i18n/config';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang    = resolveLang(Astro.params.lang);
+const pagePath = '/products/request-demo-fleet';
+const pageCanonical = makeCanonical(lang, pagePath);
+
+// TODO: Replace with the real CF7 form ID once you create "Demo Request - Fleet"
+const FORM_ID = 'REPLACE_WITH_FLEET_FORM_ID';
+
+const meta = {
+  fr: {
+    title: 'Demander une démo — Virtus Fleet · Virtus Operandi',
+    description: "Demandez une démonstration de Virtus Fleet, l'ERP transport et logistique pour les opérateurs de flotte.",
+    badge: 'Transport · Logistics',
+    badgeColor: '#F59E0B',
+    h1: 'Demander une démo — Virtus Fleet',
+    lede: '15 minutes avec un vrai ingénieur. Nous vous montrerons comment Virtus Fleet gère votre flotte, votre dispatch et votre dernier kilomètre.',
+    card1h: 'Ce que vous obtenez',
+    items: ['Démo adaptée à votre type de flotte', 'Réponse sous 1 jour ouvré', 'Appel de 15 min — pas de pitch commercial', 'Ingénieur dédié à votre compte'],
+    card2h: 'À propos de Virtus Fleet',
+    card2p: 'ERP transport conçu pour les opérateurs de flotte — gestion, dispatch, traçabilité dernier kilomètre et maintenance en temps réel.',
+  },
+  en: {
+    title: 'Request a Demo — Virtus Fleet · Virtus Operandi',
+    description: 'Request a demo of Virtus Fleet, the transport ERP built for fleet operators.',
+    badge: 'Transport · Logistics',
+    badgeColor: '#F59E0B',
+    h1: 'Request a Demo — Virtus Fleet',
+    lede: '15 minutes with a real engineer. We\'ll show you how Virtus Fleet manages your fleet, dispatch, and last-mile operations.',
+    card1h: 'What you get',
+    items: ['Demo tailored to your fleet type', 'Reply within 1 business day', '15-min call — no sales pitch', 'Dedicated engineer on your account'],
+    card2h: 'About Virtus Fleet',
+    card2p: 'Transport ERP built for fleet operators — fleet management, dispatch, last-mile tracking, and real-time maintenance dashboards.',
+  },
+  ar: {
+    title: 'طلب عرض توضيحي — Virtus Fleet · Virtus Operandi',
+    description: 'اطلب عرضاً توضيحياً لـ Virtus Fleet، نظام ERP للنقل واللوجستيك.',
+    badge: 'Transport · Logistics',
+    badgeColor: '#F59E0B',
+    h1: 'طلب عرض توضيحي — Virtus Fleet',
+    lede: '15 دقيقة مع مهندس حقيقي. سنريك كيف يدير Virtus Fleet أسطولك وجدولة رحلاتك.',
+    card1h: 'ما ستحصل عليه',
+    items: ['عرض مخصّص لنوع أسطولك', 'ردّ خلال يوم عمل واحد', 'مكالمة 15 دقيقة — بدون عروض بيع', 'مهندس مخصّص لحسابك'],
+    card2h: 'عن Virtus Fleet',
+    card2p: 'نظام ERP للنقل مصمم لمشغّلي الأسطول — إدارة الأسطول، جدولة الرحلات، تتبع التوصيل، ولوحات متابعة الصيانة.',
+  },
+} as const;
+
+const m = meta[lang];
+---
+<BaseLayout
+  title={m.title}
+  description={m.description}
+  canonical={pageCanonical}
+  lang={lang}
+  langUrls={{
+    fr: makeCanonical('fr', pagePath),
+    en: makeCanonical('en', pagePath),
+    ar: makeCanonical('ar', pagePath),
+  }}
+>
+  <style slot="head">
+  .demo-hero-badge {
+    display: inline-block; font-family: var(--mono); font-size: 11px;
+    padding: 4px 10px; border-radius: 999px; background: var(--paper-2);
+    border: 1px solid var(--border); color: #F59E0B; letter-spacing: 0.10em;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 14px;
+  }
+  .demo-grid {
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 64px); align-items: start; margin-top: 40px;
+  }
+  @media (max-width: 860px) { .demo-grid { grid-template-columns: 1fr; } }
+  .demo-sidebar { position: sticky; top: calc(var(--nav-h) + 24px); display: flex; flex-direction: column; gap: 20px; }
+  .demo-card { padding: 24px 26px; background: var(--paper-2); border: 1px solid var(--border); border-radius: 16px; }
+  .demo-card h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
+  .demo-card p { font-size: 14.5px; color: var(--muted); margin: 0; line-height: 1.6; }
+  .demo-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .demo-card ul li { font-size: 14.5px; color: var(--ink); padding-left: 16px; position: relative; }
+  .demo-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--blue); font-size: 12px; }
+  </style>
+
+  <span slot="meta-label" class="meta-left">
+    <span class="meta-dot" aria-hidden="true"></span>Catalogue · Demo Request
+  </span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="demo-hero-badge">{m.badge}</span>
+      <h1>{m.h1}</h1>
+      <p class="lede">{m.lede}</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <div class="demo-grid">
+        <div>
+          <RequestDemoForm product="Virtus Fleet" formId={FORM_ID} lang={lang} />
+        </div>
+        <aside class="demo-sidebar">
+          <div class="demo-card">
+            <h3>{m.card1h}</h3>
+            <ul>
+              {m.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="demo-card">
+            <h3>{m.card2h}</h3>
+            <p>{m.card2p}</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

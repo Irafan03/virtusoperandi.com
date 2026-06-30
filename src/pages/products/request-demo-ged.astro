@@ -1,0 +1,101 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import RequestDemoForm from '@components/RequestDemoForm.astro';
+
+// TODO: Replace with the real CF7 form ID once you create "Demo Request - GED"
+//       in WordPress → Contact → Contact Forms.
+const FORM_ID = 'REPLACE_WITH_GED_FORM_ID';
+---
+<BaseLayout
+  title="Demander une démo — Virtus GED · Virtus Operandi"
+  description="Demandez une démonstration de Virtus GED, la gestion électronique de documents pour les opérations industrielles et de services."
+  canonical="https://virtusoperandi.com/products/request-demo-ged"
+>
+  <style slot="head">
+  .demo-hero-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    border: 1px solid var(--border);
+    color: #EC4899;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .demo-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 64px);
+    align-items: start;
+    margin-top: 40px;
+  }
+  @media (max-width: 860px) { .demo-grid { grid-template-columns: 1fr; } }
+  .demo-sidebar {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .demo-card {
+    padding: 24px 26px;
+    background: var(--paper-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .demo-card h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .demo-card p { font-size: 14.5px; color: var(--muted); margin: 0; line-height: 1.6; }
+  .demo-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .demo-card ul li { font-size: 14.5px; color: var(--ink); padding-left: 16px; position: relative; }
+  .demo-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--blue); font-size: 12px; }
+  </style>
+
+  <span slot="meta-label" class="meta-left">
+    <span class="meta-dot" aria-hidden="true"></span>Catalogue · Demo Request
+  </span>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="demo-hero-badge">Documents · Compliance</span>
+      <h1>Demander une démo — Virtus GED</h1>
+      <p class="lede">15 minutes avec un vrai ingénieur. Nous vous montrerons comment Virtus GED centralise, classe et retrouve vos documents métier sans friction.</p>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <div class="demo-grid">
+        <div>
+          <RequestDemoForm product="Virtus GED" formId={FORM_ID} />
+        </div>
+        <aside class="demo-sidebar">
+          <div class="demo-card">
+            <h3>Ce que vous obtenez</h3>
+            <ul>
+              <li>Démo sur vos flux documentaires actuels</li>
+              <li>Réponse sous 1 jour ouvré</li>
+              <li>Appel de 15 min — pas de pitch commercial</li>
+              <li>Ingénieur dédié à votre compte</li>
+            </ul>
+          </div>
+          <div class="demo-card">
+            <h3>À propos de Virtus GED</h3>
+            <p>Gestion électronique de documents pour l'industrie et les services — capture, classification IA, workflows d'approbation et recherche full-text sur tous vos documents métier.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
