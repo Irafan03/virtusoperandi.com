@@ -5,6 +5,7 @@ import RequestDemoForm from '@components/RequestDemoForm.astro';
 // TODO: Replace with the real CF7 form ID once you create "Demo Request - GED"
 //       in WordPress → Contact → Contact Forms.
 const FORM_ID = '15ec040';
+const WP_FORM_ID = '259';
 ---
 <BaseLayout
   title="Demander une démo — Virtus GED · Virtus Operandi"
@@ -78,7 +79,7 @@ const FORM_ID = '15ec040';
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus GED" formId={FORM_ID} />
+          <RequestDemoForm product="Virtus GED" formId={FORM_ID} wpFormId={WP_FORM_ID} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">

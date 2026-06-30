@@ -6,6 +6,7 @@ import RequestDemoForm from '@components/RequestDemoForm.astro';
 //       in WordPress → Contact → Contact Forms.
 //       Current example uses the Agents form ID as a placeholder.
 const FORM_ID = '91ff790';
+const WP_FORM_ID = '254';
 ---
 <BaseLayout
   title="Demander une démo — Virtus Lever · Virtus Operandi"
@@ -99,7 +100,7 @@ const FORM_ID = '91ff790';
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Lever" formId={FORM_ID} />
+          <RequestDemoForm product="Virtus Lever" formId={FORM_ID} wpFormId={WP_FORM_ID} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">

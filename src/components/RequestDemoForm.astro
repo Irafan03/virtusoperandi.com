@@ -4,33 +4,51 @@
  * Reusable "Request a Demo" form — submits to CF7 REST API (multipart/form-data).
  *
  * Props:
- *   product  – human-readable product name, pre-filled in hidden field
- *   formId   – CF7 form ID (hash, e.g. "ef796b7") — see WordPress CF7 shortcode
- *   lang     – active language for i18n labels (defaults to 'fr')
+ *   product   – human-readable product name, pre-filled in hidden field
+ *   formId    – CF7 hash ID from the shortcode (e.g. "ef796b7"), used in the REST URL
+ *   wpFormId  – WordPress post ID of the CF7 form (e.g. "254"), required by CF7 hidden fields
+ *   lang      – active language for i18n labels (defaults to 'fr')
+ *
+ * CF7 REST API requires these hidden fields in the multipart payload:
+ *   _wpcf7              → WordPress post ID of the form
+ *   _wpcf7_version      → CF7 plugin version (injected at runtime from API)
+ *   _wpcf7_locale       → locale string matching the page language
+ *   _wpcf7_unit_tag     → unique tag: wpcf7-f{wpFormId}-p1-o1
+ *   _wpcf7_container_post → 0
  */
 interface Props {
-  product: string;
-  formId:  string;
-  lang?:   'fr' | 'en' | 'ar';
+  product:   string;
+  formId:    string;
+  wpFormId:  string;
+  lang?:     'fr' | 'en' | 'ar';
 }
 
-const { product, formId, lang = 'fr' } = Astro.props;
+const { product, formId, wpFormId, lang = 'fr' } = Astro.props;
 
-// Unique ID so multiple forms on the same page don't conflict
-const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
+// CF7 locale string per language
+const CF7_LOCALE: Record<string, string> = {
+  fr: 'fr_FR',
+  en: 'en_US',
+  ar: 'ar',
+};
+const cf7Locale  = CF7_LOCALE[lang] ?? 'fr_FR';
+const cf7UnitTag = `wpcf7-f${wpFormId}-p1-o1`;
+
+// Unique DOM ID so multiple forms on the same page don't conflict
+const uid = `rdf-${wpFormId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 ---
 
 <form
   class="demo-form"
   id={uid}
   data-form-id={formId}
+  data-wp-form-id={wpFormId}
   data-product={product}
   novalidate
 >
+  <!-- ── Visible fields ──────────────────────────────────────────────────── -->
   <div class="field">
-    <label for={`${uid}-name`} id={`${uid}-name-lbl`}>
-      <!-- label text injected by script for i18n -->
-    </label>
+    <label for={`${uid}-name`} id={`${uid}-name-lbl`}></label>
     <input
       type="text"
       id={`${uid}-name`}
@@ -85,17 +103,25 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
     ></textarea>
   </div>
 
-  <!-- Hidden product field — pre-filled from prop -->
+  <!-- ── Hidden fields — product name ──────────────────────────────────── -->
   <input type="hidden" name="your-product" value={product} />
 
+  <!-- ── Hidden fields required by CF7 REST API ────────────────────────── -->
+  <input type="hidden" name="_wpcf7"                value={wpFormId}   />
+  <input type="hidden" name="_wpcf7_version"        value="5.9.8"      />
+  <input type="hidden" name="_wpcf7_locale"         value={cf7Locale}  />
+  <input type="hidden" name="_wpcf7_unit_tag"       value={cf7UnitTag} />
+  <input type="hidden" name="_wpcf7_container_post" value="0"          />
+
+  <!-- ── Submit row ────────────────────────────────────────────────────── -->
   <div class="actions">
     <button class="btn-pill" type="submit">
-      <!-- label injected by script -->
+      <!-- label injected by script for i18n -->
     </button>
     <small class="demo-form__reply"></small>
   </div>
 
-  <!-- aria-live region for status feedback -->
+  <!-- aria-live region for status/error feedback -->
   <p class="demo-form__feedback" aria-live="polite" aria-atomic="true"></p>
 </form>
 
@@ -103,100 +129,123 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
   // ─── i18n labels ────────────────────────────────────────────────────────────
   const LABELS = {
     fr: {
-      name:        'Votre nom',
-      email:       'E-mail professionnel',
-      company:     'Entreprise',
-      phone:       'Téléphone (optionnel)',
-      message:     'Décrivez votre besoin',
-      submit:      'Demander une démo →',
-      submitting:  'Envoi en cours…',
-      replyTime:   'Nous répondons sous 1 jour ouvré.',
-      ok:          '✓ Demande envoyée ! Nous reviendrons vers vous sous 1 jour ouvré.',
-      err:         'Une erreur est survenue. Veuillez réessayer ou écrire à sales@virtusoperandi.com',
-      validation:  'Veuillez renseigner les champs obligatoires.',
+      name:       'Votre nom',
+      email:      'E-mail professionnel',
+      company:    'Entreprise',
+      phone:      'Téléphone (optionnel)',
+      message:    'Décrivez votre besoin',
+      submit:     'Demander une démo →',
+      submitting: 'Envoi en cours\u2026',
+      replyTime:  'Nous répondons sous 1 jour ouvré.',
+      ok:         '\u2713 Demande envoyée\u00a0! Nous reviendrons vers vous sous 1 jour ouvré.',
+      err:        'Une erreur est survenue. Veuillez réessayer ou écrire à sales@virtusoperandi.com',
+      validation: 'Veuillez renseigner les champs obligatoires.',
+      spam:       'Votre message a été détecté comme spam. Veuillez réessayer.',
     },
     en: {
-      name:        'Your name',
-      email:       'Work email',
-      company:     'Company',
-      phone:       'Phone (optional)',
-      message:     'Describe your use case',
-      submit:      'Request a demo →',
-      submitting:  'Sending…',
-      replyTime:   'We reply within 1 business day.',
-      ok:          '✓ Request sent! We\u2019ll get back to you within 1 business day.',
-      err:         'Something went wrong. Please try again or email sales@virtusoperandi.com',
-      validation:  'Please fill in the required fields.',
+      name:       'Your name',
+      email:      'Work email',
+      company:    'Company',
+      phone:      'Phone (optional)',
+      message:    'Describe your use case',
+      submit:     'Request a demo \u2192',
+      submitting: 'Sending\u2026',
+      replyTime:  'We reply within 1 business day.',
+      ok:         '\u2713 Request sent! We\u2019ll get back to you within 1 business day.',
+      err:        'Something went wrong. Please try again or email sales@virtusoperandi.com',
+      validation: 'Please fill in the required fields.',
+      spam:       'Your message was flagged as spam. Please try again.',
     },
     ar: {
-      name:        'اسمك',
-      email:       'البريد الإلكتروني المهني',
-      company:     'الشركة',
-      phone:       'الهاتف (اختياري)',
-      message:     'صِف حالة الاستخدام لديك',
-      submit:      'طلب عرض توضيحي →',
-      submitting:  'جاري الإرسال…',
-      replyTime:   'نرد خلال يوم عمل واحد.',
-      ok:          '✓ تم إرسال الطلب! سنعود إليك خلال يوم عمل واحد.',
-      err:         'حدث خطأ. يرجى المحاولة مجددًا أو مراسلتنا على sales@virtusoperandi.com',
-      validation:  'يرجى ملء الحقول المطلوبة.',
+      name:       'اسمك',
+      email:      'البريد الإلكتروني المهني',
+      company:    'الشركة',
+      phone:      'الهاتف (اختياري)',
+      message:    'صِف حالة الاستخدام لديك',
+      submit:     'طلب عرض توضيحي \u2190',
+      submitting: 'جاري الإرسال\u2026',
+      replyTime:  'نرد خلال يوم عمل واحد.',
+      ok:         '\u2713 تم إرسال الطلب! سنعود إليك خلال يوم عمل واحد.',
+      err:        'حدث خطأ. يرجى المحاولة مجددًا أو مراسلتنا على sales@virtusoperandi.com',
+      validation: 'يرجى ملء الحقول المطلوبة.',
+      spam:       'تم تصنيف رسالتك كبريد مزعج. يرجى المحاولة مجددًا.',
     },
   } as const;
 
   type LangKey = keyof typeof LABELS;
 
+  // CF7 response shape
+  interface CF7Response {
+    status:         string;           // "mail_sent" | "validation_failed" | "spam" | "mail_failed" | ...
+    message:        string;           // human-readable summary from CF7
+    invalid_fields?: Array<{          // present when status === "validation_failed"
+      field:   string;
+      message: string;
+    }>;
+  }
+
   // ─── Wire up every demo form on the page ────────────────────────────────────
   document.querySelectorAll<HTMLFormElement>('form.demo-form').forEach((form) => {
-    const lang  = (document.documentElement.lang?.slice(0, 2) as LangKey) in LABELS
-      ? (document.documentElement.lang.slice(0, 2) as LangKey)
-      : 'fr';
-    const t      = LABELS[lang];
-    const formId  = form.dataset.formId!;
+    // Detect active lang from <html lang="...">
+    const htmlLang = document.documentElement.lang?.slice(0, 2) as LangKey;
+    const lang: LangKey = htmlLang in LABELS ? htmlLang : 'fr';
+    const t = LABELS[lang];
+
+    const formId = form.dataset.formId!;   // CF7 hash — used in REST URL
+    const uid    = form.id;
 
     // ── Inject i18n labels ──────────────────────────────────────────────────
-    const uid = form.id;
-    const get = (suffix: string) => form.querySelector<HTMLElement>(`#${uid}-${suffix}-lbl`);
+    const lbl = (suffix: string) =>
+      form.querySelector<HTMLElement>(`#${uid}-${suffix}-lbl`);
 
-    const nameLabel    = get('name');
-    const emailLabel   = get('email');
-    const companyLabel = get('company');
-    const phoneLabel   = get('phone');
-    const msgLabel     = get('message');
-    if (nameLabel)    nameLabel.textContent    = t.name;
-    if (emailLabel)   emailLabel.textContent   = t.email;
-    if (companyLabel) companyLabel.textContent = t.company;
-    if (phoneLabel)   phoneLabel.textContent   = t.phone;
-    if (msgLabel)     msgLabel.textContent     = t.message;
+    const pairs: Array<[ReturnType<typeof lbl>, string]> = [
+      [lbl('name'),    t.name],
+      [lbl('email'),   t.email],
+      [lbl('company'), t.company],
+      [lbl('phone'),   t.phone],
+      [lbl('message'), t.message],
+    ];
+    pairs.forEach(([el, text]) => { if (el) el.textContent = text; });
 
     const btn      = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const feedback = form.querySelector<HTMLParagraphElement>('.demo-form__feedback')!;
     const replyEl  = form.querySelector<HTMLElement>('.demo-form__reply')!;
 
-    btn.textContent      = t.submit;
-    replyEl.textContent  = t.replyTime;
+    btn.textContent     = t.submit;
+    replyEl.textContent = t.replyTime;
 
-    // ── Submit handler ──────────────────────────────────────────────────────
+    // ── Helpers ─────────────────────────────────────────────────────────────
+    const setFeedback = (text: string, color: 'ok' | 'err') => {
+      feedback.textContent = text;
+      feedback.style.color = color === 'ok' ? 'var(--blue)' : 'var(--ink)';
+    };
+
+    const resetBtn = () => {
+      btn.disabled    = false;
+      btn.textContent = t.submit;
+    };
+
+    // ── Submit handler ───────────────────────────────────────────────────────
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (btn.disabled) return;
 
-      // Basic HTML5 validation
+      // Client-side HTML5 validation
       if (!form.checkValidity()) {
-        feedback.textContent = t.validation;
-        feedback.style.color = 'var(--ink)';
+        setFeedback(t.validation, 'err');
         form.reportValidity();
         return;
       }
 
-      // ── Loading state ─────────────────────────────────────────────────────
+      // Loading state
       btn.disabled        = true;
       btn.textContent     = t.submitting;
       feedback.textContent = '';
 
-      // ── Build multipart/form-data ─────────────────────────────────────────
+      // Build FormData — includes all visible + hidden fields already in the form
       const fd = new FormData(form);
-      // CF7 expects the product in a field named "your-product" — already in the form
-      // but we ensure the hidden field value is correct
+
+      // Ensure product field is set (safety net)
       if (!fd.get('your-product')) {
         fd.set('your-product', form.dataset.product ?? '');
       }
@@ -206,28 +255,42 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 
       try {
         const res  = await fetch(endpoint, { method: 'POST', body: fd });
-        const json = await res.json() as { status?: string; message?: string };
+        const json = await res.json() as CF7Response;
 
-        if (json.status === 'mail_sent') {
-          // ── Success state ───────────────────────────────────────────────
-          feedback.textContent = t.ok;
-          feedback.style.color = 'var(--blue)';
-          form.reset();
-          btn.textContent = t.submit;
-          // Keep button disabled to prevent double-submit
-        } else {
-          // CF7 returned a validation or spam error
-          feedback.textContent = json.message ?? t.err;
-          feedback.style.color = 'var(--ink)';
-          btn.disabled    = false;
-          btn.textContent = t.submit;
+        switch (json.status) {
+          case 'mail_sent':
+            // ── Success ──────────────────────────────────────────────────
+            setFeedback(t.ok, 'ok');
+            form.reset();
+            btn.textContent = t.submit;
+            // Leave button disabled to prevent duplicate submissions
+            break;
+
+          case 'validation_failed': {
+            // ── Field validation errors — surface CF7 messages if present
+            const fieldErrors = json.invalid_fields
+              ?.map((f) => f.message)
+              .filter(Boolean)
+              .join(' — ');
+            setFeedback(fieldErrors || t.validation, 'err');
+            resetBtn();
+            break;
+          }
+
+          case 'spam':
+            setFeedback(t.spam, 'err');
+            resetBtn();
+            break;
+
+          default:
+            // mail_failed or any other unexpected status
+            setFeedback(json.message || t.err, 'err');
+            resetBtn();
         }
       } catch {
-        // Network / CORS / unexpected error
-        feedback.textContent = t.err;
-        feedback.style.color = 'var(--ink)';
-        btn.disabled    = false;
-        btn.textContent = t.submit;
+        // Network / CORS / parse error
+        setFeedback(t.err, 'err');
+        resetBtn();
       }
     });
   });
@@ -235,9 +298,9 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
 
 <style>
   /*
-   * Scoped styles that follow the site's existing form pattern
-   * (contact.astro: border-bottom inputs, mono labels, .btn-pill)
-   * No new variables or palette additions.
+   * Follows the site's existing form pattern from contact.astro:
+   * border-bottom inputs, mono uppercase labels, .btn-pill.
+   * No new CSS variables or palette additions.
    */
   .demo-form {
     display: flex;
@@ -245,8 +308,7 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
     gap: 18px;
   }
 
-  /* Re-use the same .field pattern from contact.astro */
-  .demo-form :global(.field) {
+  .demo-form .field {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -300,7 +362,6 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
     letter-spacing: 0.04em;
   }
 
-  /* .btn-pill already defined globally in site.css — we just set the colours */
   .demo-form .btn-pill {
     display: inline-flex;
     align-items: center;
@@ -331,10 +392,10 @@ const uid = `rdf-${formId}-${product.replace(/\s+/g, '-').toLowerCase()}`;
   .demo-form__feedback {
     font-size: 14.5px;
     line-height: 1.5;
-    min-height: 1.5em; /* reserve space to avoid layout jump */
+    min-height: 1.5em;
   }
 
-  /* RTL support (Arabic) */
+  /* RTL support */
   :global([dir="rtl"]) .demo-form .actions {
     flex-direction: row-reverse;
   }

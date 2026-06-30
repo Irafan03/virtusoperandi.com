@@ -5,6 +5,7 @@ import RequestDemoForm from '@components/RequestDemoForm.astro';
 // TODO: Replace with the real CF7 form ID once you create "Demo Request - Fleet"
 //       in WordPress → Contact → Contact Forms.
 const FORM_ID = '3d438db';
+const WP_FORM_ID = '255';
 ---
 <BaseLayout
   title="Demander une démo — Virtus Fleet · Virtus Operandi"
@@ -78,7 +79,7 @@ const FORM_ID = '3d438db';
     <div class="container">
       <div class="demo-grid">
         <div>
-          <RequestDemoForm product="Virtus Fleet" formId={FORM_ID} />
+          <RequestDemoForm product="Virtus Fleet" formId={FORM_ID} wpFormId={WP_FORM_ID} />
         </div>
         <aside class="demo-sidebar">
           <div class="demo-card">
