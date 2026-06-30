@@ -8,7 +8,7 @@ export const LANG_META: Record<Lang, { label: string; dir: 'ltr' | 'rtl'; locale
   ar: { label: 'AR', dir: 'rtl', locale: 'ar' },
 };
 
-export const SITE_URL = 'https://virtusoperandi.com';
+export const SITE_URL = 'https://virtusoperandi.pages.dev';
 
 /** Prefix any internal path with the active language: /fr/blog */
 export function langPath(lang: Lang, path = ''): string {

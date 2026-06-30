@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://virtusoperandi.com',
+  site: 'https://virtusoperandi.pages.dev',
   outDir: './dist',
   integrations: [
     sitemap({
