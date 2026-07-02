@@ -5,15 +5,19 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/copy-docs.mjs",
-    "preview": "astro preview",
-    "test:visual": "playwright test"
+    "preview": "npm run build && wrangler dev",
+    "test:visual": "playwright test",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "11",
     "@astrojs/sitemap": "3.2.1",
     "astro": "4.16.18"
   },
   "devDependencies": {
     "@playwright/test": "1.48.2",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "wrangler": "^4.106.0"
   }
 }

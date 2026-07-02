@@ -1,9 +1,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+import cloudflare from "@astrojs/cloudflare";
+
 export default defineConfig({
   site: 'https://virtusoperandi.pages.dev',
   outDir: './dist',
+
   integrations: [
     sitemap({
       i18n: {
@@ -16,4 +19,7 @@ export default defineConfig({
       },
     }),
   ],
+
+  output: "hybrid",
+  adapter: cloudflare()
 });
