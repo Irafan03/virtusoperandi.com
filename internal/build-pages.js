@@ -376,7 +376,7 @@ function nav(active, back) {
       <a class="nav-link" href="${back}pricing.html"${cur('pricing')}>Tarifs</a>
       <a class="nav-link" href="${back}about.html"${cur('company')}>Company</a>
       <a class="nav-link" href="${back}insights.html"${cur('insights')}>Insights</a>
-      <a class="nav-link" href="${back}blog.html"${cur('blog')}>Blog</a>
+      <a class="nav-link" href="/fr/blog/"${cur('blog')}>Blog</a>
       <a class="nav-link" href="${back}contact.html"${cur('contact')}>Contact</a>
       <a class="nav-cta" href="${back}contact.html">Book a demo</a>
     </nav>
@@ -391,7 +391,7 @@ function nav(active, back) {
   <a href="${back}pricing.html"${cur('pricing')}>Tarifs</a>
   <a href="${back}about.html"${cur('company')}>Company</a>
   <a href="${back}insights.html"${cur('insights')}>Insights</a>
-  <a href="${back}blog.html"${cur('blog')}>Blog</a>
+  <a href="/fr/blog/"${cur('blog')}>Blog</a>
   <a href="${back}contact.html"${cur('contact')}>Contact</a>
   <a href="${back}contact.html" class="mob-cta">Book a demo</a>
 </aside>`;
